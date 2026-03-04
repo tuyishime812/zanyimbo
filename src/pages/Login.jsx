@@ -21,12 +21,8 @@ export default function Login() {
 
     try {
       await signIn(email, password)
-      toast.success('Login successful! Redirecting to dashboard...')
-      
-      // Small delay to ensure auth state updates
-      setTimeout(() => {
-        navigate('/admin', { replace: true })
-      }, 500)
+      toast.success('Login successful! Redirecting...')
+      navigate('/admin', { replace: true })
     } catch (err) {
       console.error('Login error:', err)
       const errorMessage = err.message.includes('Invalid login credentials')

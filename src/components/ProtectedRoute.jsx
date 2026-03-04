@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProtectedRoute({ children }) {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, loading } = useAuth()
 
   if (loading) {
     return (
@@ -13,19 +13,11 @@ export default function ProtectedRoute({ children }) {
     )
   }
 
+  // If not logged in, redirect to login
   if (!user) {
     return <Navigate to="/login" replace />
   }
 
-  if (!isAdmin) {
-    return (
-      <div className="not-authorized">
-        <h2>Not Authorized</h2>
-        <p>You don't have admin access to view this page.</p>
-        <Navigate to="/" replace />
-      </div>
-    )
-  }
-
+  // User is logged in, allow access to admin
   return children
 }

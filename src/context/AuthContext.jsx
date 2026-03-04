@@ -34,39 +34,10 @@ export function AuthProvider({ children }) {
       return
     }
 
-    // Check if user has admin role in metadata
-    // Supabase stores custom claims in app_metadata (from JWT token)
-    const appMetadataRole = user.app_metadata?.role
-    const userMetadataRole = user.user_metadata?.role
-    
-    let isAdmin = appMetadataRole === 'admin' || userMetadataRole === 'admin'
-
-    // If not in metadata, query the database directly
-    if (!isAdmin) {
-      try {
-        const { data, error } = await supabase
-          .from('admin_users')
-          .select('is_super_admin')
-          .eq('email', user.email)
-          .single()
-        
-        if (!error && data) {
-          isAdmin = data.is_super_admin === true
-        }
-      } catch (e) {
-        // admin_users table might not have the user yet
-        console.log('Admin check fallback:', e.message)
-      }
-    }
-
-    console.log('🔐 Admin Status Check:', { 
-      email: user.email,
-      isAdmin,
-      appMetadataRole,
-      userMetadataRole
-    })
-
-    setIsAdmin(isAdmin)
+    // Any authenticated user is considered admin
+    // This simplifies setup - just create user in Supabase Authentication
+    console.log('🔐 User logged in:', user.email)
+    setIsAdmin(true)
   }
 
   const signIn = async (email, password) => {
