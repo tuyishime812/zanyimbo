@@ -6,10 +6,12 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import MusicPlayer from './components/MusicPlayer'
+import PWAInstall from './components/PWAInstall'
 import NotFound from './pages/NotFound'
 import Home from './pages/Home'
 import MusicPage from './pages/MusicPage'
 import Top10 from './pages/Top10'
+import SearchPage from './pages/SearchPage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import TVPage from './pages/TVPage'
@@ -42,7 +44,7 @@ const pagesWithPlayer = [
   '/', '/music', '/top-10', '/tv', '/beats', '/events', '/podcasts',
   '/getting-started', '/how-to-buy', '/payment-methods', '/faq',
   '/early-access', '/team', '/pricing', '/blog', '/contact',
-  '/terms', '/privacy', '/legal'
+  '/terms', '/privacy', '/legal', '/search'
 ]
 
 function AppContent() {
@@ -86,6 +88,10 @@ function AppContent() {
         <Route
           path="/top-10"
           element={<Top10 />}
+        />
+        <Route
+          path="/search"
+          element={<SearchPage />}
         />
 
         {/* Platform Routes */}
@@ -207,6 +213,9 @@ function AppContent() {
 
       {/* Music Player - Shows on most pages */}
       {currentSong && <MusicPlayer />}
+      
+      {/* PWA Install Prompt */}
+      <PWAInstall />
     </div>
   )
 }

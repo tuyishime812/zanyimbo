@@ -7,8 +7,6 @@ import './Header.css'
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const userMenuRef = useRef(null)
   const { user, isAdmin, signOut } = useAuth()
   const navigate = useNavigate()
@@ -27,15 +25,6 @@ export default function Header() {
     await signOut()
     setUserMenuOpen(false)
     navigate('/')
-  }
-
-  const handleSearch = (e) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      navigate(`/music?search=${encodeURIComponent(searchQuery)}`)
-      setSearchOpen(false)
-      setSearchQuery('')
-    }
   }
 
   return (
@@ -123,34 +112,13 @@ export default function Header() {
         {/* Right Actions */}
         <div className="header-actions">
           {/* Search */}
-          <div className="search-container">
-            {searchOpen ? (
-              <form className="search-form" onSubmit={handleSearch}>
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  autoFocus
-                />
-                <button type="submit" className="search-submit">Go</button>
-                <button
-                  type="button"
-                  className="search-close"
-                  onClick={() => setSearchOpen(false)}
-                >
-                  ×
-                </button>
-              </form>
-            ) : (
-              <button
-                className="action-btn search-btn"
-                onClick={() => setSearchOpen(true)}
-              >
-                <Search size={20} />
-              </button>
-            )}
-          </div>
+          <a
+            href="/search"
+            className="action-btn search-btn"
+            title="Advanced Search"
+          >
+            <Search size={20} />
+          </a>
 
           {/* Notifications */}
           <button className="action-btn notification-btn">
