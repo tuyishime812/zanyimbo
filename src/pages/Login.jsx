@@ -21,11 +21,16 @@ export default function Login() {
 
     try {
       await signIn(email, password)
-      toast.success('Welcome back! Redirecting...')
-      navigate('/admin')
+      toast.success('Login successful! Redirecting to dashboard...')
+      
+      // Small delay to ensure auth state updates
+      setTimeout(() => {
+        navigate('/admin', { replace: true })
+      }, 500)
     } catch (err) {
-      const errorMessage = err.message.includes('Invalid login credentials') 
-        ? 'Invalid email or password' 
+      console.error('Login error:', err)
+      const errorMessage = err.message.includes('Invalid login credentials')
+        ? 'Invalid email or password'
         : err.message
       toast.error(errorMessage)
       setError(errorMessage)
