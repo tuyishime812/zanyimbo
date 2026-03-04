@@ -61,6 +61,10 @@ export default function Header() {
                 <span className="status-dot live"></span>
                 Music
               </Link>
+              <Link to="/top-10" className="dropdown-item">
+                <span className="status-dot live"></span>
+                🔥 Top 10
+              </Link>
               <Link to="/tv" className="dropdown-item">
                 <span className="status-dot coming-soon"></span>
                 TV & Movies
@@ -216,6 +220,7 @@ export default function Header() {
             <div className="mobile-nav-section">
               <h4>PLATFORM</h4>
               <Link to="/music" onClick={() => setMobileMenuOpen(false)}>Music</Link>
+              <Link to="/top-10" onClick={() => setMobileMenuOpen(false)}>🔥 Top 10</Link>
               <Link to="/tv" onClick={() => setMobileMenuOpen(false)}>TV & Movies</Link>
               <Link to="/beats" onClick={() => setMobileMenuOpen(false)}>Beats</Link>
               <Link to="/events" onClick={() => setMobileMenuOpen(false)}>Events</Link>

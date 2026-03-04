@@ -1,32 +1,61 @@
 import { useState, useEffect, useRef } from 'react'
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Shuffle, Repeat } from 'lucide-react'
+import { useMusic } from '../context/MusicContext'
+import { 
+  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
+  Shuffle, Repeat, Heart, Share2, Download, Music2 
+} from 'lucide-react'
+import { useToast } from '../context/ToastContext'
 import './MusicPlayer.css'
 
-export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, onPlayPause }) {
-  const [isPlaying, setIsPlaying] = useState(false)
+export default function MusicPlayer() {
+  const { 
+    currentSong, 
+    isPlaying, 
+    togglePlayPause, 
+    playNext, 
+    playPrevious,
+    toggleLike,
+    isLiked
+  } = useMusic()
+  
+  const toast = useToast()
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [volume, setVolume] = useState(0.7)
   const [isMuted, setIsMuted] = useState(false)
   const [isShuffle, setIsShuffle] = useState(false)
-  const [repeatMode, setRepeatMode] = useState('off') // 'off', 'all', 'one'
-  
+  const [repeatMode, setRepeatMode] = useState('off')
+  const [showVisualizer, setShowVisualizer] = useState(false)
+
   const audioRef = useRef(null)
   const progressRef = useRef(null)
-
-  useEffect(() => {
-    setIsPlaying(parentIsPlaying)
-  }, [parentIsPlaying])
+  const visualizerRef = useRef(null)
+  const animationRef = useRef(null)
 
   useEffect(() => {
     if (audioRef.current && currentSong) {
       audioRef.current.src = currentSong.audioUrl || ''
       if (isPlaying) {
-        audioRef.current.play().catch(() => {})
+        audioRef.current.play()
+          .then(() => {
+            startVisualizer()
+          })
+          .catch(err => console.error('Playback error:', err))
       }
     }
   }, [currentSong])
+
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play().catch(() => {})
+      } else {
+        audioRef.current.pause()
+        stopVisualizer()
+      }
+    }
+  }, [isPlaying])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -39,7 +68,12 @@ export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, o
     }
 
     const handleEnded = () => {
-      setIsPlaying(false)
+      if (repeatMode === 'one') {
+        audio.currentTime = 0
+        audio.play()
+      } else {
+        playNext()
+      }
     }
 
     audio.addEventListener('timeupdate', handleTimeUpdate)
@@ -49,23 +83,101 @@ export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, o
       audio.removeEventListener('timeupdate', handleTimeUpdate)
       audio.removeEventListener('ended', handleEnded)
     }
-  }, [])
+  }, [playNext, repeatMode])
 
-  const togglePlayPause = () => {
-    if (!audioRef.current) return
-    
-    if (isPlaying) {
-      audioRef.current.pause()
-    } else {
-      audioRef.current.play().catch(() => {})
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ignore if typing in input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+
+      switch(e.code) {
+        case 'Space':
+          e.preventDefault()
+          togglePlayPause()
+          break
+        case 'ArrowRight':
+          if (audioRef.current) {
+            audioRef.current.currentTime += 5
+          }
+          break
+        case 'ArrowLeft':
+          if (audioRef.current) {
+            audioRef.current.currentTime -= 5
+          }
+          break
+        case 'ArrowUp':
+          e.preventDefault()
+          setVolume(prev => Math.min(1, prev + 0.1))
+          if (audioRef.current) audioRef.current.volume = Math.min(1, volume + 0.1)
+          break
+        case 'ArrowDown':
+          e.preventDefault()
+          setVolume(prev => Math.max(0, prev - 0.1))
+          if (audioRef.current) audioRef.current.volume = Math.max(0, volume - 0.1)
+          break
+        case 'KeyM':
+          toggleMute()
+          break
+        case 'KeyN':
+          playNext()
+          break
+        case 'KeyP':
+          playPrevious()
+          break
+        case 'KeyL':
+          if (currentSong) toggleLike(currentSong.id)
+          break
+        default:
+          break
+      }
     }
-    setIsPlaying(!isPlaying)
-    onPlayPause && onPlayPause(!isPlaying)
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentSong, togglePlayPause, playNext, playPrevious, toggleLike, volume])
+
+  const startVisualizer = () => {
+    if (!visualizerRef.current || !showVisualizer) return
+    
+    const canvas = visualizerRef.current
+    const ctx = canvas.getContext('2d')
+    const bars = 32
+    
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
+      gradient.addColorStop(0, '#ff6b35')
+      gradient.addColorStop(1, '#4a3b6e')
+      ctx.fillStyle = gradient
+      
+      for (let i = 0; i < bars; i++) {
+        const height = Math.random() * canvas.height * 0.8 + 5
+        const x = i * (canvas.width / bars)
+        const y = canvas.height - height
+        ctx.fillRect(x, y, canvas.width / bars - 2, height)
+      }
+      
+      animationRef.current = requestAnimationFrame(animate)
+    }
+    
+    animate()
+  }
+
+  const stopVisualizer = () => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+    }
+    if (visualizerRef.current) {
+      const ctx = visualizerRef.current.getContext('2d')
+      ctx.clearRect(0, 0, visualizerRef.current.width, visualizerRef.current.height)
+    }
   }
 
   const handleProgressClick = (e) => {
     if (!audioRef.current || !progressRef.current) return
-    
+
     const rect = progressRef.current.getBoundingClientRect()
     const percent = (e.clientX - rect.left) / rect.width
     audioRef.current.currentTime = percent * duration
@@ -89,12 +201,51 @@ export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, o
 
   const toggleShuffle = () => {
     setIsShuffle(!isShuffle)
+    toast.info(isShuffle ? 'Shuffle off' : 'Shuffle on')
   }
 
   const toggleRepeat = () => {
     const modes = ['off', 'all', 'one']
     const currentIndex = modes.indexOf(repeatMode)
-    setRepeatMode(modes[(currentIndex + 1) % modes.length])
+    const newMode = modes[(currentIndex + 1) % modes.length]
+    setRepeatMode(newMode)
+    toast.info(`Repeat: ${newMode === 'off' ? 'Off' : newMode === 'all' ? 'All' : 'One'}`)
+  }
+
+  const handleLike = () => {
+    if (currentSong) {
+      toggleLike(currentSong.id)
+      toast.success(isLiked(currentSong.id) ? 'Removed from favorites' : 'Added to favorites! ❤️')
+    }
+  }
+
+  const handleShare = async () => {
+    if (!currentSong) return
+    
+    const shareData = {
+      title: currentSong.title,
+      text: `Check out "${currentSong.title}" by ${currentSong.artist} on Zanyimbo!`,
+      url: window.location.href
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+        toast.success('Shared successfully!')
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error('Share error:', err)
+        }
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`)
+        toast.success('Link copied to clipboard!')
+      } catch (err) {
+        toast.error('Failed to share')
+      }
+    }
   }
 
   const formatTime = (time) => {
@@ -108,7 +259,13 @@ export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, o
     return (
       <div className="music-player empty">
         <div className="player-container">
+          <Music2 size={48} className="music-icon" />
           <p className="no-song-text">Select a song to play</p>
+          <p className="keyboard-hint">
+            <kbd>Space</kbd> Play/Pause &nbsp;
+            <kbd>←</kbd><kbd>→</kbd> Seek &nbsp;
+            <kbd>↑</kbd><kbd>↓</kbd> Volume
+          </p>
         </div>
       </div>
     )
@@ -117,12 +274,12 @@ export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, o
   return (
     <div className="music-player">
       <audio ref={audioRef} />
-      
+
       <div className="player-container">
         {/* Song Info */}
         <div className="player-song-info">
-          <img 
-            src={currentSong.coverUrl || 'https://via.placeholder.com/60x60/2d1f4e/ffffff?text=Music'} 
+          <img
+            src={currentSong.coverUrl || 'https://via.placeholder.com/60x60/2d1f4e/ffffff?text=Music'}
             alt={currentSong.title}
             className="player-cover"
             onError={(e) => {
@@ -133,28 +290,35 @@ export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, o
             <span className="player-song-title">{currentSong.title}</span>
             <span className="player-song-artist">{currentSong.artist}</span>
           </div>
+          <button 
+            className={`control-btn like-btn ${isLiked(currentSong.id) ? 'liked' : ''}`}
+            onClick={handleLike}
+            title="Like/Favorite"
+          >
+            <Heart size={20} fill={isLiked(currentSong.id) ? '#ff6b35' : 'none'} />
+          </button>
         </div>
 
         {/* Player Controls */}
         <div className="player-controls">
           <div className="control-buttons">
-            <button 
+            <button
               className={`control-btn ${isShuffle ? 'active' : ''}`}
               onClick={toggleShuffle}
-              title="Shuffle"
+              title="Shuffle (Toggle)"
             >
               <Shuffle size={18} />
             </button>
-            <button className="control-btn" title="Previous">
+            <button className="control-btn" onClick={playPrevious} title="Previous (P)">
               <SkipBack size={20} />
             </button>
-            <button className="control-btn play-btn" onClick={togglePlayPause}>
+            <button className="control-btn play-btn" onClick={togglePlayPause} title="Play/Pause (Space)">
               {isPlaying ? <Pause size={24} fill="white" /> : <Play size={24} fill="white" />}
             </button>
-            <button className="control-btn" title="Next">
+            <button className="control-btn" onClick={playNext} title="Next (N)">
               <SkipForward size={20} />
             </button>
-            <button 
+            <button
               className={`control-btn ${repeatMode !== 'off' ? 'active' : ''}`}
               onClick={toggleRepeat}
               title={`Repeat: ${repeatMode}`}
@@ -171,11 +335,34 @@ export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, o
             </div>
             <span className="time-total">{formatTime(duration)}</span>
           </div>
+
+          <div className="player-actions">
+            <button className="control-btn action-btn" onClick={handleShare} title="Share">
+              <Share2 size={18} />
+            </button>
+            {currentSong.is_downloadable && (
+              <a 
+                href={currentSong.audioUrl} 
+                download 
+                className="control-btn action-btn"
+                title="Download"
+              >
+                <Download size={18} />
+              </a>
+            )}
+            <button 
+              className={`control-btn action-btn ${showVisualizer ? 'active' : ''}`}
+              onClick={() => setShowVisualizer(!showVisualizer)}
+              title="Toggle Visualizer"
+            >
+              <Music2 size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Volume Controls */}
         <div className="player-volume">
-          <button className="control-btn volume-btn" onClick={toggleMute}>
+          <button className="control-btn volume-btn" onClick={toggleMute} title="Mute (M)">
             {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </button>
           <input
@@ -186,9 +373,22 @@ export default function MusicPlayer({ currentSong, isPlaying: parentIsPlaying, o
             step="0.01"
             value={isMuted ? 0 : volume}
             onChange={handleVolumeChange}
+            title="Volume (↑/↓)"
           />
         </div>
       </div>
+
+      {/* Audio Visualizer */}
+      {showVisualizer && (
+        <div className="visualizer-container">
+          <canvas 
+            ref={visualizerRef} 
+            width={200} 
+            height={60}
+            className="audio-visualizer"
+          />
+        </div>
+      )}
     </div>
   )
 }
