@@ -24,6 +24,18 @@
 
 #### Step 3: Configure Settings
 
+**For Static Site (Recommended):**
+```
+Name: zanyimbo
+Region: Choose closest to your users
+Branch: main
+Root Directory: (leave blank)
+Runtime: Static Site
+Build Command: npm install && npm run build
+Publish Directory: dist
+```
+
+**OR For Web Service:**
 ```
 Name: zanyimbo
 Region: Choose closest to your users
@@ -34,6 +46,11 @@ Build Command: npm install && npm run build
 Start Command: npx serve -s dist -l $PORT
 Instance Type: Free
 ```
+
+⚠️ **Important:** 
+- DO NOT use `npm run dev` - this is for local development only
+- Use `npx serve -s dist -l $PORT` for production
+- The `$PORT` environment variable is required by Render
 
 #### Step 4: Add Environment Variables
 
