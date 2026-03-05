@@ -249,7 +249,7 @@ export default function MusicPlayer() {
     }
   }
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!currentSong) return
     const audioUrl = currentSong.audio_url || currentSong.audioUrl
     if (!audioUrl || !currentSong.is_downloadable) {
@@ -257,16 +257,29 @@ export default function MusicPlayer() {
       return
     }
     
-    // Create download link and trigger download
-    const link = document.createElement('a')
-    link.href = audioUrl
-    link.download = `${currentSong.title} - ${currentSong.artist}.mp3`
-    link.target = '_blank'
-    link.rel = 'noopener noreferrer'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    toast.success('Download started!')
+    try {
+      // Fetch the file as blob
+      const response = await fetch(audioUrl)
+      const blob = await response.blob()
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${currentSong.title} - ${currentSong.artist}.mp3`
+      document.body.appendChild(link)
+      link.click()
+      
+      // Cleanup
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      toast.success('Download started!')
+    } catch (error) {
+      console.error('Download error:', error)
+      toast.error('Download failed. Opening in new tab...')
+      // Fallback: open in new tab
+      window.open(audioUrl, '_blank')
+    }
   }
 
   const formatTime = (time) => {

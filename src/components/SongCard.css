@@ -1,3 +1,9 @@
+.song-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .song-card {
   position: relative;
   min-width: 180px;
@@ -10,7 +16,7 @@
   cursor: pointer;
 }
 
-.song-card:hover {
+.song-card-link:hover .song-card {
   background: var(--bg-card-hover);
   transform: translateX(4px);
 }

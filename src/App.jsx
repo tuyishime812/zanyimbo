@@ -13,6 +13,7 @@ import MusicPage from './pages/MusicPage'
 import Top10 from './pages/Top10'
 import SearchPage from './pages/SearchPage'
 import Login from './pages/Login'
+import SongDetail from './pages/SongDetail'
 import TVPage from './pages/TVPage'
 import BeatsPage from './pages/BeatsPage'
 import EventsPage from './pages/EventsPage'
@@ -34,7 +35,7 @@ import './App.css'
 // Pages with player
 const pagesWithPlayer = [
   '/', '/music', '/top-10', '/tv', '/beats', '/events', '/podcasts',
-  '/faq', '/team', '/contact',
+  '/faq', '/team', '/contact', '/song',
   '/terms', '/privacy', '/legal', '/search'
 ]
 
@@ -82,6 +83,16 @@ function AppContent() {
         <Route
           path="/search"
           element={<SearchPage />}
+        />
+        <Route
+          path="/song/:id"
+          element={
+            <>
+              <Header />
+              <SongDetail />
+              <Footer />
+            </>
+          }
         />
 
         {/* Platform Routes */}
