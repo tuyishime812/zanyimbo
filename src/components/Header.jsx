@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Menu, Search, Music2, LayoutDashboard, LogIn } from 'lucide-react'
+import { Menu, Search, Music2, LogIn } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import './Header.css'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { user, isAdmin, signOut } = useAuth()
+  const { user, signOut } = useAuth()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
@@ -91,13 +91,6 @@ export default function Header() {
           >
             <Search size={20} />
           </a>
-
-          {/* Admin Dashboard */}
-          {user && isAdmin && (
-            <Link to="/admin" className="action-btn admin-btn" title="Admin Dashboard">
-              <LayoutDashboard size={20} />
-            </Link>
-          )}
 
           {/* Login/Logout */}
           {user ? (
