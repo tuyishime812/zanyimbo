@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { useToast } from '../../context/ToastContext'
 import AdminLayout from '../../components/admin/AdminLayout'
-import { Users, Search, Edit, Trash2, Check, X } from 'lucide-react'
+import { Users, Search, Trash2, Check } from 'lucide-react'
 import './Users.css'
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const toast = useToast()
 
   useEffect(() => {
     fetchUsers()
@@ -15,12 +17,8 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      setUsers(data || [])
+      const { data } = await supabase.auth.admin.listUsers()
+      setUsers(data.users || [])
     } catch (error) {
       console.error('Error fetching users:', error)
     } finally {
@@ -29,9 +27,21 @@ export default function AdminUsers() {
   }
 
   const filteredUsers = users.filter(user =>
-    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.username?.toLowerCase().includes(searchQuery.toLowerCase())
+    user.email?.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const handleDeleteUser = async (userId) => {
+    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return
+
+    try {
+      const { error } = await supabase.auth.admin.deleteUser(userId)
+      if (error) throw error
+      fetchUsers()
+      toast.success('User deleted successfully!')
+    } catch (error) {
+      toast.error('Failed to delete user: ' + error.message)
+    }
+  }
 
   return (
     <AdminLayout>
@@ -58,10 +68,10 @@ export default function AdminUsers() {
             <table>
               <thead>
                 <tr>
-                  <th>User</th>
                   <th>Email</th>
-                  <th>Creator</th>
-                  <th>Joined</th>
+                  <th>Role</th>
+                  <th>Last Sign In</th>
+                  <th>Created</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -75,33 +85,32 @@ export default function AdminUsers() {
                     <tr key={user.id}>
                       <td>
                         <div className="user-info">
-                          {user.avatar_url ? (
-                            <img src={user.avatar_url} alt={user.username} className="user-avatar" />
-                          ) : (
-                            <div className="user-avatar-placeholder">
-                              {user.username?.charAt(0).toUpperCase() || 'U'}
-                            </div>
-                          )}
-                          <span>{user.username || 'No username'}</span>
+                          <div className="user-avatar-placeholder">
+                            {user.email?.charAt(0).toUpperCase()}
+                          </div>
+                          <span>{user.email}</span>
                         </div>
                       </td>
-                      <td>{user.email}</td>
                       <td>
-                        {user.is_creator ? (
-                          <span className="badge badge-creator">
-                            <Check size={14} /> Creator
+                        {user.app_metadata?.role === 'admin' ? (
+                          <span className="badge badge-admin">
+                            <Check size={14} /> Admin
                           </span>
                         ) : (
                           <span className="badge badge-user">User</span>
                         )}
                       </td>
+                      <td>
+                        {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Never'}
+                      </td>
                       <td>{new Date(user.created_at).toLocaleDateString()}</td>
                       <td>
                         <div className="actions">
-                          <button className="btn-icon" title="Edit">
-                            <Edit size={18} />
-                          </button>
-                          <button className="btn-icon btn-danger" title="Delete">
+                          <button
+                            className="btn-icon btn-danger"
+                            onClick={() => handleDeleteUser(user.id)}
+                            title="Delete User"
+                          >
                             <Trash2 size={18} />
                           </button>
                         </div>
@@ -123,8 +132,8 @@ export default function AdminUsers() {
             </div>
           </div>
           <div className="stat-box">
-            <div className="stat-value">{users.filter(u => u.is_creator).length}</div>
-            <span className="stat-label">Creators</span>
+            <div className="stat-value">{users.filter(u => u.app_metadata?.role === 'admin').length}</div>
+            <span className="stat-label">Admins</span>
           </div>
         </div>
       </div>

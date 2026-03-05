@@ -2,10 +2,9 @@ import { Link } from 'react-router-dom'
 import { Headphones, Play, ShoppingBag } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import MusicPlayer from '../components/MusicPlayer'
 import './ComingSoonPage.css'
 
-export default function BeatsPage({ onPlaySong, currentSong, isPlaying, onPlayPause }) {
+export default function BeatsPage() {
   const beatCategories = ['Afrobeats', 'Amapiano', 'Hip Hop', 'R&B', 'Gospel', 'Traditional']
 
   return (
@@ -71,11 +70,6 @@ export default function BeatsPage({ onPlaySong, currentSong, isPlaying, onPlayPa
         </div>
       </main>
       <Footer />
-      <MusicPlayer
-        currentSong={currentSong}
-        isPlaying={isPlaying}
-        onPlayPause={onPlayPause}
-      />
     </div>
   )
 }

@@ -2,10 +2,9 @@ import { Link } from 'react-router-dom'
 import { Mic, Play, Headphones, Radio } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import MusicPlayer from '../components/MusicPlayer'
 import './ComingSoonPage.css'
 
-export default function PodcastsPage({ onPlaySong, currentSong, isPlaying, onPlayPause }) {
+export default function PodcastsPage() {
   const podcastCategories = ['Music', 'Culture', 'Business', 'Technology', 'Lifestyle', 'News']
 
   const featuredPodcasts = [
@@ -82,11 +81,6 @@ export default function PodcastsPage({ onPlaySong, currentSong, isPlaying, onPla
         </div>
       </main>
       <Footer />
-      <MusicPlayer
-        currentSong={currentSong}
-        isPlaying={isPlaying}
-        onPlayPause={onPlayPause}
-      />
     </div>
   )
 }

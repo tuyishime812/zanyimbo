@@ -47,7 +47,7 @@ export function ToastProvider({ children }) {
   )
 }
 
-function Toast({ id, message, type, onClose }) {
+function Toast({ message, type, onClose }) {
   const icons = {
     success: CheckCircle,
     error: AlertCircle,
@@ -70,6 +70,7 @@ function Toast({ id, message, type, onClose }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useToast = () => {
   const context = useContext(ToastContext)
   if (!context) {

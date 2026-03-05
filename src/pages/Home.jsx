@@ -66,9 +66,9 @@ export default function Home({ onPlaySong }) {
     }
   }
 
-  const handlePlayAlbum = (album) => {
+  const handlePlayAlbum = () => {
     // Find first song from this album
-    const albumSong = songs.find(s => true)
+    const albumSong = songs[0]
     if (albumSong) {
       onPlaySong(albumSong)
     }

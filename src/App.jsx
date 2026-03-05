@@ -13,20 +13,12 @@ import MusicPage from './pages/MusicPage'
 import Top10 from './pages/Top10'
 import SearchPage from './pages/SearchPage'
 import Login from './pages/Login'
-import Signup from './pages/Signup'
 import TVPage from './pages/TVPage'
 import BeatsPage from './pages/BeatsPage'
 import EventsPage from './pages/EventsPage'
 import PodcastsPage from './pages/PodcastsPage'
-import CreatorStudio from './pages/CreatorStudio'
-import GettingStarted from './pages/GettingStarted'
-import HowToBuy from './pages/HowToBuy'
-import PaymentMethods from './pages/PaymentMethods'
 import FAQ from './pages/FAQ'
-import EarlyAccess from './pages/EarlyAccess'
 import Team from './pages/Team'
-import Pricing from './pages/Pricing'
-import Blog from './pages/Blog'
 import Contact from './pages/Contact'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
@@ -42,27 +34,25 @@ import './App.css'
 // Pages with player
 const pagesWithPlayer = [
   '/', '/music', '/top-10', '/tv', '/beats', '/events', '/podcasts',
-  '/getting-started', '/how-to-buy', '/payment-methods', '/faq',
-  '/early-access', '/team', '/pricing', '/blog', '/contact',
+  '/faq', '/team', '/contact',
   '/terms', '/privacy', '/legal', '/search'
 ]
 
 function AppContent() {
-  const { currentSong, isPlaying, togglePlayPause } = useMusic()
-  const [currentPage, setCurrentPage] = useState('/')
+  const { currentSong } = useMusic()
+  const [currentPage, _] = useState('/')
 
-  const handlePlaySong = (song, queue = null) => {
+  const handlePlaySong = () => {
     // This will be handled by MusicContext
   }
 
-  const showPlayer = pagesWithPlayer.includes(currentPage) && currentSong
+  const _showPlayer = pagesWithPlayer.includes(currentPage) && currentSong
 
   return (
     <div className="app">
       <Routes>
         {/* Auth Routes - No Header/Footer */}
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
 
         {/* Public Site Routes */}
         <Route
@@ -136,20 +126,11 @@ function AppContent() {
           }
         />
 
-        {/* Creator Routes */}
-        <Route path="/creator-studio" element={<CreatorStudio />} />
-
         {/* Resource Routes */}
-        <Route path="/getting-started" element={<GettingStarted />} />
-        <Route path="/how-to-buy" element={<HowToBuy />} />
-        <Route path="/payment-methods" element={<PaymentMethods />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/early-access" element={<EarlyAccess />} />
 
         {/* Company Routes */}
         <Route path="/team" element={<Team />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/blog" element={<Blog />} />
         <Route path="/contact" element={<Contact />} />
 
         {/* Legal Routes */}

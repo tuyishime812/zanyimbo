@@ -2,7 +2,7 @@ import { Play } from 'lucide-react'
 import './SongCard.css'
 
 export default function SongCard({ song, onPlay }) {
-  const { id, title, artist, coverUrl, duration } = song
+  const { title, artist, coverUrl, duration } = song
 
   const formatDuration = (seconds) => {
     if (!seconds) return '--:--'

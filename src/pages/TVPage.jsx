@@ -2,10 +2,9 @@ import { Link } from 'react-router-dom'
 import { Play, Tv, Star, TrendingUp } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import MusicPlayer from '../components/MusicPlayer'
 import './ComingSoonPage.css'
 
-export default function TVPage({ onPlaySong, currentSong, isPlaying, onPlayPause }) {
+export default function TVPage() {
   const featuredShows = [
     { id: 1, title: 'Nollywood Classics', category: 'Drama', rating: 4.8 },
     { id: 2, title: 'Afro Beats TV', category: 'Music', rating: 4.9 },
@@ -67,11 +66,6 @@ export default function TVPage({ onPlaySong, currentSong, isPlaying, onPlayPause
         </div>
       </main>
       <Footer />
-      <MusicPlayer
-        currentSong={currentSong}
-        isPlaying={isPlaying}
-        onPlayPause={onPlayPause}
-      />
     </div>
   )
 }

@@ -51,17 +51,17 @@ export default function Top10() {
       id: s.id,
       title: s.title,
       artist: s.artist,
-      audioUrl: s.audio_url,
-      coverUrl: s.cover_url,
+      audio_url: s.audio_url || s.audioUrl,
+      cover_url: s.cover_url || s.coverUrl,
       is_downloadable: s.is_downloadable
     }))
-    
+
     playSong({
       id: song.id,
       title: song.title,
       artist: song.artist,
-      audioUrl: song.audio_url,
-      coverUrl: song.cover_url,
+      audio_url: song.audio_url || song.audioUrl,
+      cover_url: song.cover_url || song.coverUrl,
       is_downloadable: song.is_downloadable
     }, queue)
   }
@@ -106,9 +106,9 @@ export default function Top10() {
 
       <div className="top10-container">
         <div className="top10-list">
-          {topSongs.map((song, index) => (
-            <div 
-              key={song.id} 
+          {topSongs.map((song) => (
+            <div
+              key={song.id}
               className={`top10-card ${getRankClass(song.rank)} ${currentSong?.id === song.id ? 'playing' : ''}`}
             >
               <div className="song-rank">

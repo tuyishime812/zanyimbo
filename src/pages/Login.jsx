@@ -95,7 +95,7 @@ export default function Login() {
           </form>
 
           <p className="auth-footer">
-            Don't have an account? <Link to="/signup">Sign up</Link>
+            Admin access only. Contact the administrator to create an account.
           </p>
         </div>
       </div>

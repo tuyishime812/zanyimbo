@@ -11,6 +11,19 @@ export function MusicProvider({ children }) {
   const [likedSongs, setLikedSongs] = useState([])
   const [user, setUser] = useState(null)
 
+  const fetchLikedSongs = async (userId) => {
+    try {
+      const { data } = await supabase
+        .from('likes')
+        .select('song_id')
+        .eq('user_id', userId)
+
+      setLikedSongs(data?.map(l => l.song_id) || [])
+    } catch (error) {
+      console.error('Error fetching liked songs:', error)
+    }
+  }
+
   useEffect(() => {
     // Get current user
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -34,19 +47,6 @@ export function MusicProvider({ children }) {
 
     return () => subscription.unsubscribe()
   }, [])
-
-  const fetchLikedSongs = async (userId) => {
-    try {
-      const { data } = await supabase
-        .from('likes')
-        .select('song_id')
-        .eq('user_id', userId)
-      
-      setLikedSongs(data?.map(l => l.song_id) || [])
-    } catch (error) {
-      console.error('Error fetching liked songs:', error)
-    }
-  }
 
   const playSong = (song, newQueue = null) => {
     if (newQueue) {
@@ -175,6 +175,7 @@ export function MusicProvider({ children }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useMusic = () => {
   const context = useContext(MusicContext)
   if (!context) {

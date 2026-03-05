@@ -1,23 +1,23 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useMusic } from '../context/MusicContext'
-import { 
-  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, 
-  Shuffle, Repeat, Heart, Share2, Download, Music2 
+import {
+  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
+  Shuffle, Repeat, Heart, Share2, Download, Music2
 } from 'lucide-react'
 import { useToast } from '../context/ToastContext'
 import './MusicPlayer.css'
 
 export default function MusicPlayer() {
-  const { 
-    currentSong, 
-    isPlaying, 
-    togglePlayPause, 
-    playNext, 
+  const {
+    currentSong,
+    isPlaying,
+    togglePlayPause,
+    playNext,
     playPrevious,
     toggleLike,
     isLiked
   } = useMusic()
-  
+
   const toast = useToast()
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
@@ -33,18 +33,64 @@ export default function MusicPlayer() {
   const visualizerRef = useRef(null)
   const animationRef = useRef(null)
 
+  // Define functions before useEffects that use them
+  const startVisualizer = useCallback(() => {
+    if (!visualizerRef.current || !showVisualizer) return
+
+    const canvas = visualizerRef.current
+    const ctx = canvas.getContext('2d')
+    const bars = 32
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
+      gradient.addColorStop(0, '#ff6b35')
+      gradient.addColorStop(1, '#4a3b6e')
+      ctx.fillStyle = gradient
+
+      for (let i = 0; i < bars; i++) {
+        const height = Math.random() * canvas.height * 0.8 + 5
+        const x = i * (canvas.width / bars)
+        const y = canvas.height - height
+        ctx.fillRect(x, y, canvas.width / bars - 2, height)
+      }
+
+      animationRef.current = requestAnimationFrame(animate)
+    }
+
+    animate()
+  }, [showVisualizer])
+
+  const stopVisualizer = useCallback(() => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+    }
+    if (visualizerRef.current) {
+      const ctx = visualizerRef.current.getContext('2d')
+      ctx.clearRect(0, 0, visualizerRef.current.width, visualizerRef.current.height)
+    }
+  }, [])
+
+  const toggleMute = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted
+      setIsMuted(!isMuted)
+    }
+  }, [isMuted])
+
   useEffect(() => {
     if (audioRef.current && currentSong) {
-      audioRef.current.src = currentSong.audioUrl || ''
+      audioRef.current.src = currentSong.audio_url || currentSong.audioUrl || ''
       if (isPlaying) {
         audioRef.current.play()
           .then(() => {
             startVisualizer()
           })
-          .catch(err => console.error('Playback error:', err))
+          .catch((err) => console.error('Playback error:', err))
       }
     }
-  }, [currentSong])
+  }, [currentSong, isPlaying, startVisualizer])
 
   useEffect(() => {
     if (audioRef.current) {
@@ -55,7 +101,7 @@ export default function MusicPlayer() {
         stopVisualizer()
       }
     }
-  }, [isPlaying])
+  }, [isPlaying, startVisualizer, stopVisualizer])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -135,45 +181,7 @@ export default function MusicPlayer() {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [currentSong, togglePlayPause, playNext, playPrevious, toggleLike, volume])
-
-  const startVisualizer = () => {
-    if (!visualizerRef.current || !showVisualizer) return
-    
-    const canvas = visualizerRef.current
-    const ctx = canvas.getContext('2d')
-    const bars = 32
-    
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
-      gradient.addColorStop(0, '#ff6b35')
-      gradient.addColorStop(1, '#4a3b6e')
-      ctx.fillStyle = gradient
-      
-      for (let i = 0; i < bars; i++) {
-        const height = Math.random() * canvas.height * 0.8 + 5
-        const x = i * (canvas.width / bars)
-        const y = canvas.height - height
-        ctx.fillRect(x, y, canvas.width / bars - 2, height)
-      }
-      
-      animationRef.current = requestAnimationFrame(animate)
-    }
-    
-    animate()
-  }
-
-  const stopVisualizer = () => {
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current)
-    }
-    if (visualizerRef.current) {
-      const ctx = visualizerRef.current.getContext('2d')
-      ctx.clearRect(0, 0, visualizerRef.current.width, visualizerRef.current.height)
-    }
-  }
+  }, [currentSong, togglePlayPause, playNext, playPrevious, toggleLike, volume, toggleMute])
 
   const handleProgressClick = (e) => {
     if (!audioRef.current || !progressRef.current) return
@@ -190,13 +198,6 @@ export default function MusicPlayer() {
       audioRef.current.volume = newVolume
     }
     setIsMuted(newVolume === 0)
-  }
-
-  const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted
-      setIsMuted(!isMuted)
-    }
   }
 
   const toggleShuffle = () => {
@@ -221,7 +222,7 @@ export default function MusicPlayer() {
 
   const handleShare = async () => {
     if (!currentSong) return
-    
+
     const shareData = {
       title: currentSong.title,
       text: `Check out "${currentSong.title}" by ${currentSong.artist} on Zanyimbo!`,
@@ -242,10 +243,23 @@ export default function MusicPlayer() {
       try {
         await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`)
         toast.success('Link copied to clipboard!')
-      } catch (err) {
+      } catch {
         toast.error('Failed to share')
       }
     }
+  }
+
+  const handleDownload = () => {
+    if (!currentSong) return
+    const audioUrl = currentSong.audio_url || currentSong.audioUrl
+    if (!audioUrl || !currentSong.is_downloadable) return
+    
+    const link = document.createElement('a')
+    link.href = audioUrl
+    link.download = `${currentSong.title} - ${currentSong.artist}.mp3`
+    link.target = '_blank'
+    link.click()
+    toast.success('Download started!')
   }
 
   const formatTime = (time) => {
@@ -279,7 +293,7 @@ export default function MusicPlayer() {
         {/* Song Info */}
         <div className="player-song-info">
           <img
-            src={currentSong.coverUrl || 'https://via.placeholder.com/60x60/2d1f4e/ffffff?text=Music'}
+            src={currentSong.cover_url || currentSong.coverUrl || 'https://via.placeholder.com/60x60/2d1f4e/ffffff?text=Music'}
             alt={currentSong.title}
             className="player-cover"
             onError={(e) => {
@@ -341,16 +355,15 @@ export default function MusicPlayer() {
               <Share2 size={18} />
             </button>
             {currentSong.is_downloadable && (
-              <a 
-                href={currentSong.audioUrl} 
-                download 
+              <button
                 className="control-btn action-btn"
+                onClick={handleDownload}
                 title="Download"
               >
                 <Download size={18} />
-              </a>
+              </button>
             )}
-            <button 
+            <button
               className={`control-btn action-btn ${showVisualizer ? 'active' : ''}`}
               onClick={() => setShowVisualizer(!showVisualizer)}
               title="Toggle Visualizer"

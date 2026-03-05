@@ -29,11 +29,11 @@ export default function AdminAlbums() {
 
   const fetchAlbums = async () => {
     try {
-      const { data } = await supabase
+      const { data: albumsData } = await supabase
         .from('albums')
         .select('*, artists(name)')
         .order('created_at', { ascending: false })
-      setAlbums(data || [])
+      setAlbums(albumsData || [])
     } catch (error) {
       console.error('Error fetching albums:', error)
     } finally {
@@ -84,12 +84,12 @@ export default function AdminAlbums() {
     try {
       const fileExt = file.name.split('.').pop()
       const fileName = `album-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-      
-      const { data, error } = await supabase.storage
+
+      const { error: uploadError } = await supabase.storage
         .from('covers')
         .upload(fileName, file)
 
-      if (error) throw error
+      if (uploadError) throw uploadError
 
       const { data: { publicUrl } } = supabase.storage
         .from('covers')

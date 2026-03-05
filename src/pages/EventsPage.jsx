@@ -2,10 +2,9 @@ import { Link } from 'react-router-dom'
 import { Calendar, MapPin, Music, Users } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import MusicPlayer from '../components/MusicPlayer'
 import './ComingSoonPage.css'
 
-export default function EventsPage({ onPlaySong, currentSong, isPlaying, onPlayPause }) {
+export default function EventsPage() {
   const upcomingEvents = [
     { id: 1, name: 'Afrobeats Festival 2026', date: 'Jun 15, 2026', location: 'Lagos, Nigeria' },
     { id: 2, name: 'Amapiano Night', date: 'Apr 20, 2026', location: 'Johannesburg, SA' },
@@ -88,11 +87,6 @@ export default function EventsPage({ onPlaySong, currentSong, isPlaying, onPlayP
         </div>
       </main>
       <Footer />
-      <MusicPlayer
-        currentSong={currentSong}
-        isPlaying={isPlaying}
-        onPlayPause={onPlayPause}
-      />
     </div>
   )
 }

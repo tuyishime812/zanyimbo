@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Headphones, Mic, Video, Upload, DollarSign, Users } from 'lucide-react'
+import { Headphones, Mic, Video, Upload, DollarSign, Users, Music } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import './CreatorStudio.css'

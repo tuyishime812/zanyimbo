@@ -19,7 +19,6 @@ export default function SearchPage() {
   const [filterType, setFilterType] = useState('all') // all, songs, albums, artists
   const [selectedGenre, setSelectedGenre] = useState('all')
   const [sortBy, setSortBy] = useState('relevance') // relevance, popular, recent, alphabetical
-  const [yearRange, setYearRange] = useState([2020, 2026])
   
   // Genres
   const [genres, setGenres] = useState([])
@@ -165,7 +164,6 @@ export default function SearchPage() {
     setFilterType('all')
     setSelectedGenre('all')
     setSortBy('relevance')
-    setYearRange([2020, 2026])
   }
 
   const handlePlay = (song) => {
@@ -173,8 +171,8 @@ export default function SearchPage() {
       id: song.id,
       title: song.title,
       artist: song.artist,
-      audioUrl: song.audio_url,
-      coverUrl: song.cover_url,
+      audio_url: song.audio_url || song.audioUrl,
+      cover_url: song.cover_url || song.coverUrl,
       is_downloadable: song.is_downloadable
     })
   }

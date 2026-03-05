@@ -8,6 +8,18 @@ export function AuthProvider({ children }) {
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  const checkAdminStatus = async (user) => {
+    if (!user) {
+      setIsAdmin(false)
+      return
+    }
+
+    // Any authenticated user is considered admin
+    // This simplifies setup - just create user in Supabase Authentication
+    console.log('🔐 User logged in:', user.email)
+    setIsAdmin(true)
+  }
+
   useEffect(() => {
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -27,18 +39,6 @@ export function AuthProvider({ children }) {
 
     return () => subscription.unsubscribe()
   }, [])
-
-  const checkAdminStatus = async (user) => {
-    if (!user) {
-      setIsAdmin(false)
-      return
-    }
-
-    // Any authenticated user is considered admin
-    // This simplifies setup - just create user in Supabase Authentication
-    console.log('🔐 User logged in:', user.email)
-    setIsAdmin(true)
-  }
 
   const signIn = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -79,6 +79,7 @@ export function AuthProvider({ children }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (!context) {

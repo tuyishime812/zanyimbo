@@ -1,29 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Menu, Search, Bell, User, Music2, LogOut, LayoutDashboard } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { Menu, Search, Music2, LayoutDashboard, LogIn } from 'lucide-react'
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import './Header.css'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const userMenuRef = useRef(null)
   const { user, isAdmin, signOut } = useAuth()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setUserMenuOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
   const handleSignOut = async () => {
     await signOut()
-    setUserMenuOpen(false)
     navigate('/')
   }
 
@@ -75,22 +62,9 @@ export default function Header() {
 
           <div className="nav-item dropdown">
             <button className="nav-link">
-              CREATORS
-            </button>
-            <div className="dropdown-menu">
-              <Link to="/creator-studio" className="dropdown-item">Creator Studio</Link>
-              <Link to="/getting-started" className="dropdown-item">Getting Started</Link>
-              <Link to="/how-to-buy" className="dropdown-item">How to Buy Music</Link>
-            </div>
-          </div>
-
-          <div className="nav-item dropdown">
-            <button className="nav-link">
               RESOURCES
             </button>
             <div className="dropdown-menu">
-              <Link to="/payment-methods" className="dropdown-item">Payment Methods</Link>
-              <Link to="/early-access" className="dropdown-item">Early Access</Link>
               <Link to="/faq" className="dropdown-item">FAQ</Link>
               <Link to="/contact" className="dropdown-item">Contact Support</Link>
             </div>
@@ -102,8 +76,6 @@ export default function Header() {
             </button>
             <div className="dropdown-menu">
               <Link to="/team" className="dropdown-item">Our Team</Link>
-              <Link to="/pricing" className="dropdown-item">Pricing</Link>
-              <Link to="/blog" className="dropdown-item">Blog</Link>
               <Link to="/contact" className="dropdown-item">Contact Us</Link>
             </div>
           </div>
@@ -120,54 +92,23 @@ export default function Header() {
             <Search size={20} />
           </a>
 
-          {/* Notifications */}
-          <button className="action-btn notification-btn">
-            <Bell size={20} />
-            <span className="notification-badge">3</span>
-          </button>
+          {/* Admin Dashboard */}
+          {user && isAdmin && (
+            <Link to="/admin" className="action-btn admin-btn" title="Admin Dashboard">
+              <LayoutDashboard size={20} />
+            </Link>
+          )}
 
-          {/* User Menu */}
+          {/* Login/Logout */}
           {user ? (
-            <div className="user-menu-container" ref={userMenuRef}>
-              <button
-                className="action-btn user-btn"
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-              >
-                <User size={20} />
-              </button>
-              {userMenuOpen && (
-                <div className="user-dropdown">
-                  <div className="user-info">
-                    <div className="user-avatar">
-                      {user.email?.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="user-details">
-                      <span className="user-email">{user.email}</span>
-                      {isAdmin && <span className="user-role">Admin</span>}
-                    </div>
-                  </div>
-                  <div className="dropdown-divider"></div>
-                  {isAdmin && (
-                    <Link to="/admin" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                      <LayoutDashboard size={18} />
-                      Admin Dashboard
-                    </Link>
-                  )}
-                  <Link to="/creator-studio" className="dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                    <Music2 size={18} />
-                    Creator Studio
-                  </Link>
-                  <div className="dropdown-divider"></div>
-                  <button className="dropdown-item logout-item" onClick={handleSignOut}>
-                    <LogOut size={18} />
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
+            <button className="btn btn-sm btn-secondary" onClick={handleSignOut}>
+              <LogIn size={16} style={{ transform: 'rotate(180deg)' }} />
+              Sign Out
+            </button>
           ) : (
             <Link to="/login" className="btn btn-sm btn-primary">
-              Sign In
+              <LogIn size={16} />
+              Admin Login
             </Link>
           )}
 
@@ -195,31 +136,24 @@ export default function Header() {
               <Link to="/podcasts" onClick={() => setMobileMenuOpen(false)}>Podcasts</Link>
             </div>
             <div className="mobile-nav-section">
-              <h4>CREATORS</h4>
-              <Link to="/creator-studio" onClick={() => setMobileMenuOpen(false)}>Creator Studio</Link>
-              <Link to="/getting-started" onClick={() => setMobileMenuOpen(false)}>Getting Started</Link>
-              <Link to="/how-to-buy" onClick={() => setMobileMenuOpen(false)}>How to Buy Music</Link>
-            </div>
-            <div className="mobile-nav-section">
               <h4>RESOURCES</h4>
-              <Link to="/payment-methods" onClick={() => setMobileMenuOpen(false)}>Payment Methods</Link>
-              <Link to="/early-access" onClick={() => setMobileMenuOpen(false)}>Early Access</Link>
               <Link to="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Support</Link>
             </div>
             <div className="mobile-nav-section">
               <h4>COMPANY</h4>
               <Link to="/team" onClick={() => setMobileMenuOpen(false)}>Our Team</Link>
-              <Link to="/pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-              <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</Link>
             </div>
-            {!user && (
-              <div className="mobile-nav-section mobile-auth">
-                <Link to="/login" className="btn btn-sm btn-primary btn-block">Sign In</Link>
-                <Link to="/signup" className="btn btn-sm btn-secondary btn-block">Sign Up</Link>
-              </div>
-            )}
+            <div className="mobile-nav-section mobile-auth">
+              {user ? (
+                <button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} className="btn btn-sm btn-secondary btn-block">
+                  Sign Out
+                </button>
+              ) : (
+                <Link to="/login" className="btn btn-sm btn-primary btn-block">Admin Login</Link>
+              )}
+            </div>
           </nav>
         </div>
       )}

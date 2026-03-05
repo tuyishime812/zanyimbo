@@ -2,7 +2,7 @@ import { Play } from 'lucide-react'
 import './AlbumCard.css'
 
 export default function AlbumCard({ album, onPlay }) {
-  const { id, title, artist, coverUrl, trackCount, featured } = album
+  const { title, artist, coverUrl, trackCount, featured } = album
 
   return (
     <div className={`album-card ${featured ? 'featured' : ''}`}>
