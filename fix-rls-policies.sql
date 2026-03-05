@@ -2,7 +2,24 @@
 -- Run this in your Supabase SQL Editor
 
 -- ============================================
--- FIX ROW LEVEL SECURITY POLICIES
+-- CREATE HELPER FUNCTION TO CHECK ADMIN ROLE
+-- ============================================
+
+-- Create a security definer function to check if current user is admin
+CREATE OR REPLACE FUNCTION is_admin_user()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 
+    FROM auth.users
+    WHERE id = auth.uid()
+    AND (raw_app_meta_data->>'role') = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ============================================
+-- DROP EXISTING POLICIES
 -- ============================================
 
 -- Drop existing policies that might conflict
@@ -16,96 +33,48 @@ DROP POLICY IF EXISTS "Admins can insert songs" ON songs;
 DROP POLICY IF EXISTS "Admins can update songs" ON songs;
 DROP POLICY IF EXISTS "Admins can delete songs" ON songs;
 
--- Create new policies that check admin role in raw_app_meta_data
+-- ============================================
+-- CREATE NEW POLICIES USING HELPER FUNCTION
+-- ============================================
+
+-- Artists policies
 CREATE POLICY "Admins can insert artists"
   ON artists FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  WITH CHECK (is_admin_user());
 
 CREATE POLICY "Admins can update artists"
   ON artists FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  USING (is_admin_user());
 
 CREATE POLICY "Admins can delete artists"
   ON artists FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  USING (is_admin_user());
 
+-- Albums policies
 CREATE POLICY "Admins can insert albums"
   ON albums FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  WITH CHECK (is_admin_user());
 
 CREATE POLICY "Admins can update albums"
   ON albums FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  USING (is_admin_user());
 
 CREATE POLICY "Admins can delete albums"
   ON albums FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  USING (is_admin_user());
 
+-- Songs policies
 CREATE POLICY "Admins can insert songs"
   ON songs FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  WITH CHECK (is_admin_user());
 
 CREATE POLICY "Admins can update songs"
   ON songs FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  USING (is_admin_user());
 
 CREATE POLICY "Admins can delete songs"
   ON songs FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-    )
-  );
+  USING (is_admin_user());
 
 -- ============================================
 -- VERIFY ADMIN USER SETUP

@@ -2,6 +2,7 @@
 
 ## Problem
 If you're getting errors like:
+- "permission denied for table users"
 - "new row violates row-level security policy for table 'artists'"
 - "new row violates row-level security policy for table 'albums'"
 - "new row violates row-level security policy for table 'songs'"
@@ -19,7 +20,7 @@ This is because the Row Level Security (RLS) policies need to be updated to prop
 3. Copy the contents of `fix-rls-policies.sql`
 4. Paste and click **Run**
 
-This will update the RLS policies to properly check for admin role.
+**Important:** Make sure you run the ENTIRE script, not just parts of it.
 
 ---
 
@@ -28,18 +29,27 @@ This will update the RLS policies to properly check for admin role.
 After running the SQL, verify your admin user has the correct role:
 
 ```sql
--- Check if your user has admin role
+-- Check if your user has admin role (replace with your email)
 SELECT email, raw_app_meta_data->>'role' as role 
 FROM auth.users 
 WHERE email = 'your-admin-email@example.com';
 ```
 
-If the role is not 'admin', run this:
+If the role is not 'admin' or shows NULL, run this:
 
 ```sql
 -- Make your user an admin
 UPDATE auth.users 
 SET raw_app_meta_data = raw_app_meta_data || '{"role": "admin"}' 
+WHERE email = 'your-admin-email@example.com';
+```
+
+Then verify it worked:
+
+```sql
+-- Should show 'admin' in the role column
+SELECT email, raw_app_meta_data->>'role' as role 
+FROM auth.users 
 WHERE email = 'your-admin-email@example.com';
 ```
 
@@ -49,13 +59,13 @@ WHERE email = 'your-admin-email@example.com';
 
 After running the SQL:
 
-1. **Refresh** your app (Ctrl+R or F5)
+1. **Logout** and **login again** (important to refresh the session)
 2. Go to **Admin → Songs**
 3. Click **Add Song**
 4. Fill in the form:
    - Song Title: "Test Song"
-   - Artist Name: "Test Artist" (will be created automatically)
-   - Album Name: "Test Album" (optional, will be created)
+   - Artist Name: "Test Artist"
+   - Album Name: "Test Album" (optional)
    - Upload an audio file
    - Click **Add Song**
 
@@ -67,20 +77,20 @@ After running the SQL:
 
 The SQL script:
 
-1. **Drops old RLS policies** that might conflict
-2. **Creates new policies** that properly check for admin role in `raw_app_meta_data`
-3. **Verifies** current admin users
+1. **Creates a helper function** `is_admin_user()` with SECURITY DEFINER
+   - This function can safely query auth.users table
+   - Returns TRUE if current user is admin
 
-The new policies check:
-```sql
-EXISTS (
-  SELECT 1 FROM auth.users
-  WHERE auth.users.id = auth.uid()
-  AND (auth.users.raw_app_meta_data->>'role') = 'admin'
-)
-```
+2. **Drops old RLS policies** that might conflict
 
-This ensures only users with `role: "admin"` in their metadata can insert/update/delete.
+3. **Creates new policies** that use the helper function:
+   ```sql
+   CREATE POLICY "Admins can insert artists"
+     ON artists FOR INSERT
+     WITH CHECK (is_admin_user());
+   ```
+
+4. **Verifies** current admin users
 
 ---
 
@@ -128,6 +138,16 @@ This ensures only users with `role: "admin"` in their metadata can insert/update
 
 ## 🐛 Still Having Issues?
 
+### Error: "permission denied for table users"
+
+**Solution:** Make sure you ran the ENTIRE SQL script including the `CREATE OR REPLACE FUNCTION is_admin_user()` part.
+
+The function must be created FIRST before the policies.
+
+### Error: "function is_admin_user() does not exist"
+
+**Solution:** Run the SQL script again. The function might not have been created properly.
+
 ### Check Supabase Console
 
 1. Go to **Authentication** → **Users**
@@ -149,15 +169,49 @@ Open browser DevTools (F12) and check the Console tab for detailed error message
 
 ---
 
-## 📞 Need Help?
+## 📞 Quick Checklist
 
-If you're still stuck:
+- [ ] Ran `fix-rls-policies.sql` in Supabase SQL Editor
+- [ ] Verified admin user has `role: "admin"` in raw_app_meta_data
+- [ ] Logged out and logged back in after running SQL
+- [ ] Storage buckets `music` and `covers` exist and are public
+- [ ] Browser console shows no errors
 
-1. Check the browser console for error messages
-2. Check Supabase logs in the Dashboard
-3. Make sure your `.env` has correct Supabase credentials
-4. Verify you're logged in as admin
+---
+
+## 🆘 Emergency Reset
+
+If nothing works, try this complete reset:
+
+```sql
+-- Drop all policies
+DROP POLICY IF EXISTS "Anyone can view artists" ON artists;
+DROP POLICY IF EXISTS "Admins can insert artists" ON artists;
+DROP POLICY IF EXISTS "Admins can update artists" ON artists;
+DROP POLICY IF EXISTS "Admins can delete artists" ON artists;
+
+DROP POLICY IF EXISTS "Anyone can view albums" ON albums;
+DROP POLICY IF EXISTS "Admins can insert albums" ON albums;
+DROP POLICY IF EXISTS "Admins can update albums" ON albums;
+DROP POLICY IF EXISTS "Admins can delete albums" ON albums;
+
+DROP POLICY IF EXISTS "Anyone can view songs" ON songs;
+DROP POLICY IF EXISTS "Admins can insert songs" ON songs;
+DROP POLICY IF EXISTS "Admins can update songs" ON songs;
+DROP POLICY IF EXISTS "Admins can delete songs" ON songs;
+
+-- Drop function
+DROP FUNCTION IF EXISTS is_admin_user();
+
+-- Disable RLS temporarily (for testing only!)
+ALTER TABLE artists DISABLE ROW LEVEL SECURITY;
+ALTER TABLE albums DISABLE ROW LEVEL SECURITY;
+ALTER TABLE songs DISABLE ROW LEVEL SECURITY;
+```
+
+⚠️ **Warning:** Disabling RLS removes all security! Only do this for testing, then re-enable with the proper policies.
 
 ---
 
 **Good luck! 🚀**
+
