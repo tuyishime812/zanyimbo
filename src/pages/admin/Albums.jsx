@@ -7,13 +7,12 @@ import './Albums.css'
 
 export default function AdminAlbums() {
   const [albums, setAlbums] = useState([])
-  const [artists, setArtists] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingAlbum, setEditingAlbum] = useState(null)
   const [formData, setFormData] = useState({
     title: '',
-    artist_id: '',
+    artist_name: '',
     cover_url: '',
     release_date: '',
     featured: false
@@ -24,7 +23,6 @@ export default function AdminAlbums() {
 
   useEffect(() => {
     fetchAlbums()
-    fetchArtists()
   }, [])
 
   const fetchAlbums = async () => {
@@ -41,17 +39,12 @@ export default function AdminAlbums() {
     }
   }
 
-  const fetchArtists = async () => {
-    const { data } = await supabase.from('artists').select('*').order('name')
-    setArtists(data || [])
-  }
-
   const handleOpenModal = (album = null) => {
     if (album) {
       setEditingAlbum(album)
       setFormData({
         title: album.title,
-        artist_id: album.artist_id,
+        artist_name: album.artists?.name || '',
         cover_url: album.cover_url || '',
         release_date: album.release_date || '',
         featured: album.featured
@@ -60,7 +53,7 @@ export default function AdminAlbums() {
       setEditingAlbum(null)
       setFormData({
         title: '',
-        artist_id: '',
+        artist_name: '',
         cover_url: '',
         release_date: '',
         featured: false
@@ -107,15 +100,35 @@ export default function AdminAlbums() {
     e.preventDefault()
     setError('')
 
-    if (!formData.title || !formData.artist_id) {
+    if (!formData.title || !formData.artist_name) {
       setError('Please fill in required fields')
       return
     }
 
     try {
+      // Find or create artist
+      let artistId = null
+      const { data: existingArtist } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('name', formData.artist_name)
+        .single()
+
+      if (existingArtist) {
+        artistId = existingArtist.id
+      } else {
+        const { data: newArtist, error: artistError } = await supabase
+          .from('artists')
+          .insert([{ name: formData.artist_name }])
+          .select('id')
+          .single()
+        if (artistError) throw artistError
+        artistId = newArtist.id
+      }
+
       const albumData = {
         title: formData.title,
-        artist_id: formData.artist_id,
+        artist_id: artistId,
         cover_url: formData.cover_url || null,
         release_date: formData.release_date || null,
         featured: formData.featured
@@ -237,17 +250,14 @@ export default function AdminAlbums() {
                 </div>
 
                 <div className="form-group">
-                  <label>Artist *</label>
-                  <select
-                    value={formData.artist_id}
-                    onChange={(e) => setFormData({ ...formData, artist_id: e.target.value })}
+                  <label>Artist Name *</label>
+                  <input
+                    type="text"
+                    value={formData.artist_name}
+                    onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
                     required
-                  >
-                    <option value="">Select Artist</option>
-                    {artists.map((artist) => (
-                      <option key={artist.id} value={artist.id}>{artist.name}</option>
-                    ))}
-                  </select>
+                    placeholder="Enter artist name (will be created if new)"
+                  />
                 </div>
 
                 <div className="form-group">

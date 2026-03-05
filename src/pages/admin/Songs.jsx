@@ -7,15 +7,13 @@ import './Songs.css'
 
 export default function AdminSongs() {
   const [songs, setSongs] = useState([])
-  const [artists, setArtists] = useState([])
-  const [albums, setAlbums] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingSong, setEditingSong] = useState(null)
   const [formData, setFormData] = useState({
     title: '',
-    artist_id: '',
-    album_id: '',
+    artist_name: '',
+    album_name: '',
     audio_url: '',
     cover_url: '',
     duration: '',
@@ -28,8 +26,6 @@ export default function AdminSongs() {
 
   useEffect(() => {
     fetchSongs()
-    fetchArtists()
-    fetchAlbums()
   }, [])
 
   const fetchSongs = async () => {
@@ -51,23 +47,13 @@ export default function AdminSongs() {
     }
   }
 
-  const fetchArtists = async () => {
-    const { data: artistsData } = await supabase.from('artists').select('*').order('name')
-    setArtists(artistsData || [])
-  }
-
-  const fetchAlbums = async () => {
-    const { data: albumsData } = await supabase.from('albums').select('*').order('title')
-    setAlbums(albumsData || [])
-  }
-
   const handleOpenModal = (song = null) => {
     if (song) {
       setEditingSong(song)
       setFormData({
         title: song.title,
-        artist_id: song.artist_id,
-        album_id: song.album_id || '',
+        artist_name: song.artists?.name || '',
+        album_name: song.albums?.title || '',
         audio_url: song.audio_url,
         cover_url: song.cover_url || '',
         duration: song.duration || '',
@@ -78,8 +64,8 @@ export default function AdminSongs() {
       setEditingSong(null)
       setFormData({
         title: '',
-        artist_id: '',
-        album_id: '',
+        artist_name: '',
+        album_name: '',
         audio_url: '',
         cover_url: '',
         duration: '',
@@ -155,16 +141,59 @@ export default function AdminSongs() {
     e.preventDefault()
     setError('')
 
-    if (!formData.title || !formData.artist_id || !formData.audio_url) {
+    if (!formData.title || !formData.artist_name || !formData.audio_url) {
       setError('Please fill in all required fields')
       return
     }
 
     try {
+      // Find or create artist
+      let artistId = null
+      const { data: existingArtist } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('name', formData.artist_name)
+        .single()
+
+      if (existingArtist) {
+        artistId = existingArtist.id
+      } else {
+        const { data: newArtist, error: artistError } = await supabase
+          .from('artists')
+          .insert([{ name: formData.artist_name }])
+          .select('id')
+          .single()
+        if (artistError) throw artistError
+        artistId = newArtist.id
+      }
+
+      // Find or create album (if album name provided)
+      let albumId = null
+      if (formData.album_name) {
+        const { data: existingAlbum } = await supabase
+          .from('albums')
+          .select('id')
+          .eq('title', formData.album_name)
+          .eq('artist_id', artistId)
+          .single()
+
+        if (existingAlbum) {
+          albumId = existingAlbum.id
+        } else {
+          const { data: newAlbum, error: albumError } = await supabase
+            .from('albums')
+            .insert([{ title: formData.album_name, artist_id: artistId }])
+            .select('id')
+            .single()
+          if (albumError) throw albumError
+          albumId = newAlbum.id
+        }
+      }
+
       const songData = {
         title: formData.title,
-        artist_id: formData.artist_id,
-        album_id: formData.album_id || null,
+        artist_id: artistId,
+        album_id: albumId || null,
         audio_url: formData.audio_url,
         cover_url: formData.cover_url || null,
         duration: parseInt(formData.duration) || null,
@@ -324,30 +353,24 @@ export default function AdminSongs() {
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Artist *</label>
-                    <select
-                      value={formData.artist_id}
-                      onChange={(e) => setFormData({ ...formData, artist_id: e.target.value })}
+                    <label>Artist Name *</label>
+                    <input
+                      type="text"
+                      value={formData.artist_name}
+                      onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
                       required
-                    >
-                      <option value="">Select Artist</option>
-                      {artists.map((artist) => (
-                        <option key={artist.id} value={artist.id}>{artist.name}</option>
-                      ))}
-                    </select>
+                      placeholder="Enter artist name (will be created if new)"
+                    />
                   </div>
 
                   <div className="form-group">
-                    <label>Album (Optional)</label>
-                    <select
-                      value={formData.album_id}
-                      onChange={(e) => setFormData({ ...formData, album_id: e.target.value })}
-                    >
-                      <option value="">No Album</option>
-                      {albums.map((album) => (
-                        <option key={album.id} value={album.id}>{album.title}</option>
-                      ))}
-                    </select>
+                    <label>Album Name (Optional)</label>
+                    <input
+                      type="text"
+                      value={formData.album_name}
+                      onChange={(e) => setFormData({ ...formData, album_name: e.target.value })}
+                      placeholder="Enter album name (will be created if new)"
+                    />
                   </div>
                 </div>
 
