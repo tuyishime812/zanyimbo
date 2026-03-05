@@ -17,6 +17,7 @@ export default function SongDetail() {
 
   useEffect(() => {
     fetchSong()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const fetchSong = async () => {
@@ -34,8 +35,8 @@ export default function SongDetail() {
 
       if (error) throw error
       setSong(data)
-    } catch (error) {
-      console.error('Error fetching song:', error)
+    } catch (err) {
+      console.error('Error fetching song:', err)
       toast.error('Song not found')
     } finally {
       setLoading(false)
@@ -73,7 +74,7 @@ export default function SongDetail() {
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
       toast.success('Download started!')
-    } catch (error) {
+    } catch {
       toast.error('Download failed')
     }
   }
