@@ -252,13 +252,20 @@ export default function MusicPlayer() {
   const handleDownload = () => {
     if (!currentSong) return
     const audioUrl = currentSong.audio_url || currentSong.audioUrl
-    if (!audioUrl || !currentSong.is_downloadable) return
+    if (!audioUrl || !currentSong.is_downloadable) {
+      toast.error('Download not available for this song')
+      return
+    }
     
+    // Create download link and trigger download
     const link = document.createElement('a')
     link.href = audioUrl
     link.download = `${currentSong.title} - ${currentSong.artist}.mp3`
     link.target = '_blank'
+    link.rel = 'noopener noreferrer'
+    document.body.appendChild(link)
     link.click()
+    document.body.removeChild(link)
     toast.success('Download started!')
   }
 

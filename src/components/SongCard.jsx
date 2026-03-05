@@ -5,27 +5,39 @@ export default function SongCard({ song, onPlay }) {
   const { title, artist, coverUrl, duration } = song
 
   const formatDuration = (seconds) => {
-    if (!seconds) return '--:--'
+    if (!seconds && seconds !== 0) return '--:--'
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  const handleClick = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (onPlay) {
+      onPlay(song)
+    }
+  }
+
   return (
-    <div className="song-card">
+    <div className="song-card" onClick={handleClick}>
       <div className="song-cover">
-        <img 
-          src={coverUrl || 'https://via.placeholder.com/150x150/2d1f4e/ffffff?text=Song'} 
+        <img
+          src={coverUrl || 'https://via.placeholder.com/150x150/2d1f4e/ffffff?text=Song'}
           alt={title}
           onError={(e) => {
             e.target.src = 'https://via.placeholder.com/150x150/2d1f4e/ffffff?text=Song'
           }}
         />
-        <button className="play-overlay" onClick={() => onPlay && onPlay(song)}>
+        <button 
+          className="play-overlay" 
+          onClick={handleClick}
+          type="button"
+        >
           <Play size={24} fill="white" />
         </button>
       </div>
-      
+
       <div className="song-info">
         <h3 className="song-title">{title}</h3>
         <p className="song-artist">{artist}</p>

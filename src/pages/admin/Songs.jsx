@@ -10,6 +10,7 @@ export default function AdminSongs() {
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingSong, setEditingSong] = useState(null)
+  const [genres, setGenres] = useState([])
   const [formData, setFormData] = useState({
     title: '',
     artist_name: '',
@@ -17,6 +18,7 @@ export default function AdminSongs() {
     audio_url: '',
     cover_url: '',
     duration: '',
+    genre_id: '',
     is_downloadable: true,
     featured: false
   })
@@ -26,6 +28,7 @@ export default function AdminSongs() {
 
   useEffect(() => {
     fetchSongs()
+    fetchGenres()
   }, [])
 
   const fetchSongs = async () => {
@@ -35,7 +38,9 @@ export default function AdminSongs() {
         .select(`
           *,
           artists (name),
-          albums (title)
+          albums (title),
+          song_genres (genre_id),
+          genres (name)
         `)
         .order('created_at', { ascending: false })
 
@@ -47,9 +52,19 @@ export default function AdminSongs() {
     }
   }
 
+  const fetchGenres = async () => {
+    try {
+      const { data } = await supabase.from('genres').select('*').order('name')
+      setGenres(data || [])
+    } catch (error) {
+      console.error('Error fetching genres:', error)
+    }
+  }
+
   const handleOpenModal = (song = null) => {
     if (song) {
       setEditingSong(song)
+      const genreId = song.song_genres?.[0]?.genre_id || song.genres?.[0]?.id || ''
       setFormData({
         title: song.title,
         artist_name: song.artists?.name || '',
@@ -57,6 +72,7 @@ export default function AdminSongs() {
         audio_url: song.audio_url,
         cover_url: song.cover_url || '',
         duration: song.duration || '',
+        genre_id: genreId,
         is_downloadable: song.is_downloadable,
         featured: song.featured
       })
@@ -69,6 +85,7 @@ export default function AdminSongs() {
         audio_url: '',
         cover_url: '',
         duration: '',
+        genre_id: '',
         is_downloadable: true,
         featured: false
       })
@@ -219,9 +236,22 @@ export default function AdminSongs() {
       if (editingSong) {
         const { error } = await supabase.from('songs').update(songData).eq('id', editingSong.id)
         if (error) throw error
+        
+        // Update genre relationship
+        if (formData.genre_id) {
+          // Delete existing genre relationships
+          await supabase.from('song_genres').delete().eq('song_id', editingSong.id)
+          // Add new genre relationship
+          await supabase.from('song_genres').insert([{ song_id: editingSong.id, genre_id: formData.genre_id }])
+        }
       } else {
-        const { error } = await supabase.from('songs').insert([songData])
+        const { data: inserted, error } = await supabase.from('songs').insert([songData]).select('id').single()
         if (error) throw error
+        
+        // Add genre relationship if selected
+        if (formData.genre_id && inserted?.id) {
+          await supabase.from('song_genres').insert([{ song_id: inserted.id, genre_id: formData.genre_id }])
+        }
       }
 
       handleCloseModal()
@@ -388,6 +418,19 @@ export default function AdminSongs() {
                       placeholder="Enter album name (will be created if new)"
                     />
                   </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Genre</label>
+                  <select
+                    value={formData.genre_id}
+                    onChange={(e) => setFormData({ ...formData, genre_id: e.target.value })}
+                  >
+                    <option value="">Select Genre (Optional)</option>
+                    {genres.map(genre => (
+                      <option key={genre.id} value={genre.id}>{genre.name}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="form-group">

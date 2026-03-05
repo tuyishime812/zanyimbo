@@ -12,6 +12,9 @@ export default function Top10() {
 
   useEffect(() => {
     fetchTopSongs()
+    // Refresh top songs every 30 seconds to show real-time updates
+    const interval = setInterval(fetchTopSongs, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const fetchTopSongs = async () => {
