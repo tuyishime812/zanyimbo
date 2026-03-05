@@ -35,10 +35,14 @@ export default function AdminUsers() {
 
     try {
       const { error } = await supabase.auth.admin.deleteUser(userId)
-      if (error) throw error
+      if (error) {
+        console.error('Delete user error:', error)
+        throw error
+      }
       fetchUsers()
       toast.success('User deleted successfully!')
     } catch (error) {
+      console.error('Failed to delete user:', error)
       toast.error('Failed to delete user: ' + error.message)
     }
   }
