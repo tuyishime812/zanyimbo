@@ -4,12 +4,12 @@ import Hero from '../components/Hero'
 import PlatformFeatures from '../components/PlatformFeatures'
 import Carousel from '../components/Carousel'
 import AlbumCard from '../components/AlbumCard'
-import SongCard from '../components/SongCard'
+import SongGrid from '../components/SongGrid'
 import './Home.css'
 
 export default function Home({ onPlaySong }) {
   const [albums, setAlbums] = useState([])
-  const [songs, setSongs] = useState([])
+  const [topSongs, setTopSongs] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -39,24 +39,26 @@ export default function Home({ onPlaySong }) {
         })))
       }
 
-      // Fetch featured songs
+      // Fetch most streamed and downloaded songs
       const { data: songsData } = await supabase
         .from('songs')
         .select(`
           *,
           artists (name)
         `)
-        .order('created_at', { ascending: false })
-        .limit(8)
+        .order('play_count', { ascending: false })
+        .limit(20)
 
       if (songsData) {
-        setSongs(songsData.map(song => ({
+        setTopSongs(songsData.map(song => ({
           id: song.id,
           title: song.title,
           artist: song.artists?.name || 'Unknown Artist',
           coverUrl: song.cover_url,
           duration: song.duration,
-          audioUrl: song.audio_url
+          audioUrl: song.audio_url,
+          playCount: song.play_count || 0,
+          downloadCount: song.download_count || 0
         })))
       }
     } catch (error) {
@@ -68,7 +70,7 @@ export default function Home({ onPlaySong }) {
 
   const handlePlayAlbum = () => {
     // Find first song from this album
-    const albumSong = songs[0]
+    const albumSong = topSongs[0]
     if (albumSong) {
       onPlaySong(albumSong)
     }
@@ -82,29 +84,26 @@ export default function Home({ onPlaySong }) {
     <div className="home">
       <Hero />
       <PlatformFeatures />
-      
+
       {albums.length > 0 && (
         <Carousel title="Curated Albums" badge="EXCLUSIVE">
           {albums.map((album) => (
-            <AlbumCard 
-              key={album.id} 
-              album={album} 
+            <AlbumCard
+              key={album.id}
+              album={album}
               onPlay={handlePlayAlbum}
             />
           ))}
         </Carousel>
       )}
 
-      {songs.length > 0 && (
-        <Carousel title="Curated Singles" badge="EXCLUSIVE">
-          {songs.map((song) => (
-            <SongCard 
-              key={song.id} 
-              song={song} 
-              onPlay={handlePlaySong}
-            />
-          ))}
-        </Carousel>
+      {topSongs.length > 0 && (
+        <SongGrid
+          title="Most Streamed & Downloaded"
+          badge="HOT"
+          songs={topSongs}
+          onPlay={handlePlaySong}
+        />
       )}
 
       {loading && (
@@ -114,7 +113,7 @@ export default function Home({ onPlaySong }) {
         </div>
       )}
 
-      {!loading && albums.length === 0 && songs.length === 0 && (
+      {!loading && albums.length === 0 && topSongs.length === 0 && (
         <div className="no-content">
           <h2>No Music Yet</h2>
           <p>Check back soon for the latest African music!</p>
