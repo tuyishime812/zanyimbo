@@ -30,7 +30,7 @@ export default function Footer() {
               </div>
               <div className="contact-item">
                 <Phone size={16} />
-                <span>+265 982 961 565</span>
+                <span>+265 990 342 825</span>
               </div>
               <div className="contact-item">
                 <MapPin size={16} />

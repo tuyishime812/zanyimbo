@@ -54,7 +54,7 @@ export default function Contact() {
                 <Phone size={20} color="#ff6b35" />
                 <div>
                   <h3>Phone</h3>
-                  <p>+265 982 961 565</p>
+                  <p>+265 990 342 825</p>
                 </div>
               </div>
               
