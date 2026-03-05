@@ -106,9 +106,9 @@ export default function Header() {
               Sign Out
             </button>
           ) : (
-            <Link to="/login" className="btn btn-sm btn-primary">
+            <Link to="/login" className="action-btn login-link">
               <LogIn size={16} />
-              Admin Login
+              Admin
             </Link>
           )}
 
@@ -147,11 +147,13 @@ export default function Header() {
             </div>
             <div className="mobile-nav-section mobile-auth">
               {user ? (
-                <button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} className="btn btn-sm btn-secondary btn-block">
+                <button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} className="mobile-link btn-block">
                   Sign Out
                 </button>
               ) : (
-                <Link to="/login" className="btn btn-sm btn-primary btn-block">Admin Login</Link>
+                <Link to="/login" className="mobile-link">
+                  Admin
+                </Link>
               )}
             </div>
           </nav>
