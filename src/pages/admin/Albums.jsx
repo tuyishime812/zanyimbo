@@ -169,10 +169,14 @@ export default function AdminAlbums() {
 
     try {
       const { error } = await supabase.from('albums').delete().eq('id', id)
-      if (error) throw error
+      if (error) {
+        console.error('Delete error:', error)
+        throw error
+      }
       fetchAlbums()
       toast.success('Album deleted successfully!')
     } catch (error) {
+      console.error('Failed to delete album:', error)
       toast.error('Failed to delete album: ' + error.message)
     }
   }

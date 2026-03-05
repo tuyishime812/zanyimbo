@@ -270,10 +270,14 @@ export default function AdminSongs() {
 
     try {
       const { error } = await supabase.from('songs').delete().eq('id', id)
-      if (error) throw error
+      if (error) {
+        console.error('Delete error:', error)
+        throw error
+      }
       fetchSongs()
       toast.success('Song deleted successfully!')
     } catch (error) {
+      console.error('Failed to delete song:', error)
       toast.error('Failed to delete song: ' + error.message)
     }
   }

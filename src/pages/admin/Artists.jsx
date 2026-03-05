@@ -129,10 +129,14 @@ export default function AdminArtists() {
 
     try {
       const { error } = await supabase.from('artists').delete().eq('id', id)
-      if (error) throw error
+      if (error) {
+        console.error('Delete error:', error)
+        throw error
+      }
       fetchArtists()
       toast.success('Artist deleted successfully!')
     } catch (error) {
+      console.error('Failed to delete artist:', error)
       toast.error('Failed to delete artist: ' + error.message)
     }
   }
