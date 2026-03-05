@@ -93,16 +93,11 @@ export default function Header() {
           </a>
 
           {/* Login/Logout */}
-          {user ? (
+          {user && (
             <button className="btn btn-sm btn-secondary" onClick={handleSignOut}>
               <LogIn size={16} style={{ transform: 'rotate(180deg)' }} />
               Sign Out
             </button>
-          ) : (
-            <Link to="/login" className="action-btn login-link">
-              <LogIn size={16} />
-              Admin
-            </Link>
           )}
 
           {/* Mobile Menu Button */}
@@ -143,11 +138,7 @@ export default function Header() {
                 <button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} className="mobile-link btn-block">
                   Sign Out
                 </button>
-              ) : (
-                <Link to="/login" className="mobile-link">
-                  Admin
-                </Link>
-              )}
+              ) : null}
             </div>
           </nav>
         </div>
