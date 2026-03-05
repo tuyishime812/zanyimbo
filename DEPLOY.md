@@ -2,13 +2,24 @@
 
 ## ✅ Quick Deploy Guide
 
+### ⚠️ IMPORTANT: Choose STATIC SITE Not Web Service!
+
+When creating your service on Render:
+- **DO NOT** choose "Web Service" 
+- **DO** choose "Static Site"
+
+This is the key to making it work!
+
+---
+
 ### Option 1: One-Click Deploy (Recommended)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tuyishime812/zanyimbo)
 
 1. Click the button above
 2. Connect your GitHub account
-3. Render will auto-configure everything!
+3. **Make sure it's set to Static Site**
+4. Render will auto-configure everything!
 
 ---
 
@@ -18,39 +29,25 @@
 - Visit: **https://render.com**
 - Sign up/Login with GitHub
 
-#### Step 2: Create Web Service
-1. Click **New +** → **Web Service**
+#### Step 2: Create Static Site (NOT Web Service!)
+1. Click **New +** → **Static Site**
 2. Connect your repository: **tuyishime812/zanyimbo**
 
 #### Step 3: Configure Settings
 
-**For Static Site (Recommended):**
 ```
 Name: zanyimbo
 Region: Choose closest to your users
 Branch: main
 Root Directory: (leave blank)
-Runtime: Static Site
 Build Command: npm install && npm run build
 Publish Directory: dist
 ```
 
-**OR For Web Service:**
-```
-Name: zanyimbo
-Region: Choose closest to your users
-Branch: main
-Root Directory: (leave blank)
-Runtime: Node
-Build Command: npm install && npm run build
-Start Command: npx serve -s dist -l $PORT
-Instance Type: Free
-```
-
 ⚠️ **Important:** 
-- DO NOT use `npm run dev` - this is for local development only
-- Use `npx serve -s dist -l $PORT` for production
-- The `$PORT` environment variable is required by Render
+- Choose **Static Site** NOT Web Service
+- No start command needed for Static Site
+- Do NOT use `npm run dev`
 
 #### Step 4: Add Environment Variables
 

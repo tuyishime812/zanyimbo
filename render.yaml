@@ -21,3 +21,6 @@ services:
       - path: /*
         name: X-XSS-Protection
         value: 1; mode=block
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=300
