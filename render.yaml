@@ -24,3 +24,6 @@ services:
       - path: /*
         name: Cache-Control
         value: public, max-age=300
+    rewrites:
+      - source: /*
+        destination: /index.html
