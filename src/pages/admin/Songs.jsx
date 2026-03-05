@@ -149,21 +149,32 @@ export default function AdminSongs() {
     try {
       // Find or create artist
       let artistId = null
-      const { data: existingArtist } = await supabase
+      
+      // Check if artist exists
+      const { data: existingArtist, error: fetchArtistError } = await supabase
         .from('artists')
         .select('id')
         .eq('name', formData.artist_name)
-        .single()
+        .maybeSingle()
+
+      if (fetchArtistError && !fetchArtistError.message.includes('No rows')) {
+        throw new Error('Error finding artist: ' + fetchArtistError.message)
+      }
 
       if (existingArtist) {
         artistId = existingArtist.id
       } else {
+        // Create new artist
         const { data: newArtist, error: artistError } = await supabase
           .from('artists')
           .insert([{ name: formData.artist_name }])
           .select('id')
           .single()
-        if (artistError) throw artistError
+        
+        if (artistError) {
+          console.error('Artist creation error:', artistError)
+          throw new Error('Failed to create artist: ' + artistError.message)
+        }
         artistId = newArtist.id
       }
 
@@ -175,7 +186,7 @@ export default function AdminSongs() {
           .select('id')
           .eq('title', formData.album_name)
           .eq('artist_id', artistId)
-          .single()
+          .maybeSingle()
 
         if (existingAlbum) {
           albumId = existingAlbum.id
@@ -185,7 +196,11 @@ export default function AdminSongs() {
             .insert([{ title: formData.album_name, artist_id: artistId }])
             .select('id')
             .single()
-          if (albumError) throw albumError
+          
+          if (albumError) {
+            console.error('Album creation error:', albumError)
+            throw new Error('Failed to create album: ' + albumError.message)
+          }
           albumId = newAlbum.id
         }
       }
@@ -213,6 +228,7 @@ export default function AdminSongs() {
       fetchSongs()
       toast.success(editingSong ? 'Song updated successfully!' : 'Song added successfully!')
     } catch (error) {
+      console.error('Song save error:', error)
       const errorMsg = 'Failed to save song: ' + error.message
       toast.error(errorMsg)
       setError(errorMsg)

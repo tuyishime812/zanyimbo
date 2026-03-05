@@ -108,21 +108,32 @@ export default function AdminAlbums() {
     try {
       // Find or create artist
       let artistId = null
-      const { data: existingArtist } = await supabase
+      
+      // Check if artist exists
+      const { data: existingArtist, error: fetchArtistError } = await supabase
         .from('artists')
         .select('id')
         .eq('name', formData.artist_name)
-        .single()
+        .maybeSingle()
+
+      if (fetchArtistError && !fetchArtistError.message.includes('No rows')) {
+        throw new Error('Error finding artist: ' + fetchArtistError.message)
+      }
 
       if (existingArtist) {
         artistId = existingArtist.id
       } else {
+        // Create new artist
         const { data: newArtist, error: artistError } = await supabase
           .from('artists')
           .insert([{ name: formData.artist_name }])
           .select('id')
           .single()
-        if (artistError) throw artistError
+        
+        if (artistError) {
+          console.error('Artist creation error:', artistError)
+          throw new Error('Failed to create artist: ' + artistError.message)
+        }
         artistId = newArtist.id
       }
 
@@ -146,6 +157,7 @@ export default function AdminAlbums() {
       fetchAlbums()
       toast.success(editingAlbum ? 'Album updated successfully!' : 'Album added successfully!')
     } catch (error) {
+      console.error('Album save error:', error)
       const errorMsg = 'Failed to save album: ' + error.message
       toast.error(errorMsg)
       setError(errorMsg)
