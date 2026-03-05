@@ -1,7 +1,7 @@
 {
   "name": "Zanyimbo - African Music Streaming",
   "short_name": "Zanyimbo",
-  "description": "Stream Africa's hottest tracks - Afrobeats, Hip Hop, R&B, Amapiano and more",
+  "description": "Stream hottest tracks - Afrobeats, Hip Hop, R&B, Amapiano and more",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a0f2e",

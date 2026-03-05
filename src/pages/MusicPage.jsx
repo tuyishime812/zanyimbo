@@ -101,7 +101,7 @@ export default function MusicPage({ onPlaySong }) {
     <div className="music-page">
       <div className="music-header">
         <h1 className="page-title">MUSIC</h1>
-        <p className="page-subtitle">Stream Africa's hottest tracks</p>
+        <p className="page-subtitle">Stream hottest tracks</p>
       </div>
 
       <div className="music-toolbar">

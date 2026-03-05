@@ -5,7 +5,7 @@ const features = [
   {
     id: 'music',
     title: 'ZANYIMBO MUSIC',
-    description: "Stream Africa's hottest tracks",
+    description: "Stream hottest tracks",
     icon: Music,
     status: 'live',
     link: '/music'
