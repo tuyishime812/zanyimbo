@@ -16,6 +16,8 @@ export default defineConfig({
           icons: ['lucide-react']
         }
       }
-    }
+    },
+    // Ensure public assets are copied
+    copyPublicDir: true
   }
 })
