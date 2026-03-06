@@ -17,6 +17,33 @@ export default function MusicPage({ onPlaySong }) {
 
   useEffect(() => {
     fetchMusic()
+    
+    // Realtime subscription for songs
+    const songsChannel = supabase
+      .channel('music-songs-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'songs' },
+        () => {
+          fetchMusic()
+        }
+      )
+      .subscribe()
+
+    // Realtime subscription for albums
+    const albumsChannel = supabase
+      .channel('music-albums-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'albums' },
+        () => {
+          fetchMusic()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(songsChannel)
+      supabase.removeChannel(albumsChannel)
+    }
   }, [])
 
   const fetchMusic = async () => {

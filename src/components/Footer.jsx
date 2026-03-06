@@ -69,18 +69,10 @@ export default function Footer() {
             </div>
 
             <div className="footer-column">
-              <h4>FOR CREATORS</h4>
-              <Link to="/creator-studio">Creator Studio</Link>
-              <Link to="/pricing">Pricing</Link>
-              <Link to="/how-to-buy">How to Buy</Link>
-            </div>
-
-            <div className="footer-column">
               <h4>RESOURCES</h4>
               <Link to="/faq">FAQ</Link>
               <Link to="/getting-started">Getting Started</Link>
               <Link to="/early-access">Early Access</Link>
-              <Link to="/blog">Blog</Link>
               <Link to="/contact">Contact Support</Link>
             </div>
 

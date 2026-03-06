@@ -14,6 +14,33 @@ export default function Home({ onPlaySong }) {
 
   useEffect(() => {
     fetchMusic()
+    
+    // Realtime subscription for songs
+    const songsChannel = supabase
+      .channel('songs-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'songs' },
+        () => {
+          fetchMusic()
+        }
+      )
+      .subscribe()
+
+    // Realtime subscription for albums
+    const albumsChannel = supabase
+      .channel('albums-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'albums' },
+        () => {
+          fetchMusic()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(songsChannel)
+      supabase.removeChannel(albumsChannel)
+    }
   }, [])
 
   const fetchMusic = async () => {

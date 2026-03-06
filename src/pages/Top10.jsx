@@ -117,7 +117,7 @@ export default function Top10() {
               <div className="song-rank">
                 {getRankIcon(song.rank)}
               </div>
-              
+
               <div className="song-cover-wrapper">
                 <img
                   src={song.cover_url || 'https://via.placeholder.com/100x100/2d1f4e/ffffff?text=Music'}
@@ -127,7 +127,7 @@ export default function Top10() {
                     e.target.src = 'https://via.placeholder.com/100x100/2d1f4e/ffffff?text=Music'
                   }}
                 />
-                <button 
+                <button
                   className="play-overlay"
                   onClick={() => handlePlay(song)}
                 >
@@ -138,7 +138,7 @@ export default function Top10() {
               <div className="song-info">
                 <h3 className="song-title">{song.title}</h3>
                 <p className="song-artist">{song.artist}</p>
-                
+
                 <div className="song-stats">
                   <span className="stat" title="Plays">
                     <Play size={14} /> {song.play_count || 0}
@@ -146,14 +146,11 @@ export default function Top10() {
                   <span className="stat" title="Downloads">
                     <Download size={14} /> {song.download_count || 0}
                   </span>
-                  <span className="stat popularity" title="Popularity Score">
-                    <TrendingUp size={14} /> {song.popularityScore}
-                  </span>
                 </div>
               </div>
 
               <div className="song-actions">
-                <button 
+                <button
                   className="btn-play"
                   onClick={() => handlePlay(song)}
                 >
@@ -162,29 +159,6 @@ export default function Top10() {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="top10-info">
-          <div className="info-card">
-            <h3>📊 How Ranking Works</h3>
-            <p>Songs are ranked by a combination of:</p>
-            <ul>
-              <li>▶️ Play count (1 point per play)</li>
-              <li>⬇️ Downloads (5 points per download)</li>
-            </ul>
-            <p className="update-note">Updates in real-time as users play and download!</p>
-          </div>
-
-          <div className="info-card">
-            <h3>🎵 Keyboard Shortcuts</h3>
-            <ul className="shortcuts-list">
-              <li><kbd>Space</kbd> Play/Pause</li>
-              <li><kbd>N</kbd> Next song</li>
-              <li><kbd>P</kbd> Previous song</li>
-              <li><kbd>L</kbd> Like song</li>
-              <li><kbd>↑/↓</kbd> Volume</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>

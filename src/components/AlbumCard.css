@@ -39,6 +39,7 @@
   width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
+  background: var(--bg-card);
 }
 
 .album-cover img {
@@ -46,6 +47,7 @@
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-normal);
+  display: block;
 }
 
 .album-card:hover .album-cover img {

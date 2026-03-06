@@ -25,12 +25,9 @@ import Contact from './pages/Contact'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
 import Legal from './pages/Legal'
-import CreatorStudio from './pages/CreatorStudio'
 import Pricing from './pages/Pricing'
-import Blog from './pages/Blog'
 import GettingStarted from './pages/GettingStarted'
 import EarlyAccess from './pages/EarlyAccess'
-import HowToBuy from './pages/HowToBuy'
 import Dashboard from './pages/admin/Dashboard'
 import AdminSongs from './pages/admin/Songs'
 import AdminAlbums from './pages/admin/Albums'
@@ -44,7 +41,7 @@ const pagesWithPlayer = [
   '/', '/music', '/top-10', '/tv', '/beats', '/events', '/podcasts',
   '/faq', '/team', '/contact', '/song',
   '/terms', '/privacy', '/legal', '/search',
-  '/creator-studio', '/pricing', '/blog', '/getting-started', '/early-access', '/how-to-buy'
+  '/pricing', '/getting-started', '/early-access'
 ]
 
 function AppContent() {
@@ -146,18 +143,6 @@ function AppContent() {
           }
         />
 
-        {/* Creator Routes */}
-        <Route
-          path="/creator-studio"
-          element={
-            <>
-              <Header />
-              <CreatorStudio />
-              <Footer />
-            </>
-          }
-        />
-
         {/* Resource Routes */}
         <Route
           path="/faq"
@@ -185,16 +170,6 @@ function AppContent() {
             <>
               <Header />
               <EarlyAccess />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/how-to-buy"
-          element={
-            <>
-              <Header />
-              <HowToBuy />
               <Footer />
             </>
           }
@@ -227,16 +202,6 @@ function AppContent() {
             <>
               <Header />
               <Pricing />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/blog"
-          element={
-            <>
-              <Header />
-              <Blog />
               <Footer />
             </>
           }

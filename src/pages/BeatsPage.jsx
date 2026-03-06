@@ -1,11 +1,77 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Headphones, Play, ShoppingBag } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+import { useMusic } from '../context/MusicContext'
+import { Headphones, Play, ShoppingBag, Download } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import './ComingSoonPage.css'
 
 export default function BeatsPage() {
-  const beatCategories = ['Afrobeats', 'Amapiano', 'Hip Hop', 'R&B', 'Gospel', 'Traditional']
+  const [beats, setBeats] = useState([])
+  const [loading, setLoading] = useState(true)
+  const { playSong } = useMusic()
+
+  useEffect(() => {
+    fetchBeats()
+  }, [])
+
+  const fetchBeats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('beats')
+        .select(`
+          *,
+          artists (name)
+        `)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setBeats(data || [])
+    } catch (error) {
+      console.error('Error fetching beats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handlePlay = (beat) => {
+    playSong({
+      id: beat.id,
+      title: beat.title,
+      artist: beat.artists?.name || 'Unknown Producer',
+      audio_url: beat.audio_url,
+      cover_url: beat.cover_url,
+      is_downloadable: beat.is_downloadable,
+      price: beat.price
+    })
+  }
+
+  const handleDownload = async (beat) => {
+    if (!beat.is_downloadable) {
+      alert('This beat is not available for purchase')
+      return
+    }
+
+    try {
+      // Track download/purchase intent
+      await supabase.from('beat_downloads').insert({
+        beat_id: beat.id
+      })
+
+      // Trigger download
+      const link = document.createElement('a')
+      link.href = beat.audio_url
+      link.download = `${beat.title} - ${beat.artists?.name}.mp3`
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error('Download error:', error)
+      alert('Failed to download beat')
+    }
+  }
 
   return (
     <div className="coming-soon-page">
@@ -15,57 +81,88 @@ export default function BeatsPage() {
           <div className="hero-content">
             <div className="badge-live">
               <Headphones size={16} />
-              Coming Soon
+              Beats Marketplace
             </div>
             <h1>BEATS MARKETPLACE</h1>
-            <p>Buy and sell production-ready beats from Africa's top producers.</p>
+            <p>Buy production-ready beats from Africa's top producers.</p>
             <div className="cta-buttons">
               <Link to="/music" className="btn btn-primary">
                 <Play size={18} />
-                Stream Music Now
+                Stream Music
               </Link>
-              <Link to="/creator-studio" className="btn btn-secondary">
-                Join as Producer
+              <Link to="/contact" className="btn btn-secondary">
+                Become a Producer
               </Link>
             </div>
           </div>
         </div>
 
-        <div className="features-preview">
-          <h2>What's Coming</h2>
-          <div className="features-grid">
-            <div className="feature-preview-card">
-              <ShoppingBag size={40} color="#ff6b35" />
-              <h3>Buy Beats</h3>
-              <p>Browse thousands of beats with instant download licenses.</p>
-            </div>
-            <div className="feature-preview-card">
-              <Headphones size={40} color="#4a3b6e" />
-              <h3>Sell Your Beats</h3>
-              <p>Upload your productions and earn from your creativity.</p>
-            </div>
-            <div className="feature-preview-card">
-              <Play size={40} color="#22c55e" />
-              <h3>Preview Before Buy</h3>
-              <p>Listen to full previews with watermark protection.</p>
+        {loading ? (
+          <div className="loading-section">
+            <div className="loading-spinner"></div>
+            <p>Loading beats...</p>
+          </div>
+        ) : beats.length > 0 ? (
+          <div className="beats-section">
+            <h2>Available Beats</h2>
+            <div className="beats-grid">
+              {beats.map((beat) => (
+                <div key={beat.id} className="beat-card">
+                  <div className="beat-cover">
+                    <img
+                      src={beat.cover_url || 'https://via.placeholder.com/200x200/2d1f4e/ffffff?text=Beat'}
+                      alt={beat.title}
+                    />
+                    <button
+                      className="play-overlay"
+                      onClick={() => handlePlay(beat)}
+                    >
+                      <Play size={32} fill="white" />
+                    </button>
+                  </div>
+                  <div className="beat-info">
+                    <h3>{beat.title}</h3>
+                    <p className="producer">{beat.artists?.name || 'Unknown Producer'}</p>
+                    <div className="beat-meta">
+                      <span>{beat.bpm || '--'} BPM</span>
+                      <span>{beat.key || '--'}</span>
+                    </div>
+                    <div className="beat-price">
+                      <span className="price">${beat.price || '0.00'}</span>
+                    </div>
+                    <div className="beat-actions">
+                      <button
+                        className="btn btn-sm btn-primary"
+                        onClick={() => handlePlay(beat)}
+                      >
+                        <Play size={16} /> Preview
+                      </button>
+                      {beat.is_downloadable && (
+                        <button
+                          className="btn btn-sm btn-secondary"
+                          onClick={() => handleDownload(beat)}
+                        >
+                          <Download size={16} /> Purchase
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-
-        <div className="categories-preview">
-          <h2>Beat Categories</h2>
-          <div className="category-tags">
-            {beatCategories.map((cat) => (
-              <span key={cat} className="category-tag">{cat}</span>
-            ))}
+        ) : (
+          <div className="no-beats">
+            <h2>No Beats Available Yet</h2>
+            <p>Check back soon for new beats from our producers!</p>
           </div>
-        </div>
+        )}
 
-        <div className="notify-section">
-          <h2>Start Selling Your Beats</h2>
-          <p>Join our producer community and monetize your productions.</p>
-          <Link to="/creator-studio" className="btn btn-primary">
-            Become a Producer
+        <div className="producer-cta">
+          <h2>Are You a Producer?</h2>
+          <p>Join Zanyimbo to sell your beats and earn revenue from your productions.</p>
+          <Link to="/contact" className="btn btn-primary btn-lg">
+            Register as Producer
           </Link>
         </div>
       </main>

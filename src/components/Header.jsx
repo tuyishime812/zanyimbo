@@ -63,33 +63,12 @@ export default function Header() {
 
           <div className="nav-item dropdown">
             <button className="nav-link">
-              FOR CREATORS
-            </button>
-            <div className="dropdown-menu">
-              <Link to="/creator-studio" className="dropdown-item">
-                <span className="status-dot live"></span>
-                Creator Studio
-              </Link>
-              <Link to="/pricing" className="dropdown-item">
-                <span className="status-dot live"></span>
-                Pricing
-              </Link>
-              <Link to="/how-to-buy" className="dropdown-item">
-                <span className="status-dot live"></span>
-                How to Buy
-              </Link>
-            </div>
-          </div>
-
-          <div className="nav-item dropdown">
-            <button className="nav-link">
               RESOURCES
             </button>
             <div className="dropdown-menu">
               <Link to="/faq" className="dropdown-item">FAQ</Link>
               <Link to="/getting-started" className="dropdown-item">Getting Started</Link>
               <Link to="/early-access" className="dropdown-item">Early Access</Link>
-              <Link to="/blog" className="dropdown-item">Blog</Link>
               <Link to="/contact" className="dropdown-item">Contact Support</Link>
             </div>
           </div>
@@ -155,17 +134,10 @@ export default function Header() {
               <Link to="/podcasts" onClick={() => setMobileMenuOpen(false)}>Podcasts</Link>
             </div>
             <div className="mobile-nav-section">
-              <h4>FOR CREATORS</h4>
-              <Link to="/creator-studio" onClick={() => setMobileMenuOpen(false)}>Creator Studio</Link>
-              <Link to="/pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-              <Link to="/how-to-buy" onClick={() => setMobileMenuOpen(false)}>How to Buy</Link>
-            </div>
-            <div className="mobile-nav-section">
               <h4>RESOURCES</h4>
               <Link to="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</Link>
               <Link to="/getting-started" onClick={() => setMobileMenuOpen(false)}>Getting Started</Link>
               <Link to="/early-access" onClick={() => setMobileMenuOpen(false)}>Early Access</Link>
-              <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Support</Link>
             </div>
             <div className="mobile-nav-section">
