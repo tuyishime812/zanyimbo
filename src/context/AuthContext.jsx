@@ -14,17 +14,58 @@ export function AuthProvider({ children }) {
       return
     }
 
-    // Any authenticated user is considered admin
-    // This simplifies setup - just create user in Supabase Authentication
-    console.log('🔐 User logged in:', user.email)
-    setIsAdmin(true)
+    // Check if user has admin role in the database
+    try {
+      const { data, error } = await supabase
+        .from('admin_roles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single()
+
+      if (data) {
+        console.log('✅ User has admin role:', user.email)
+        setIsAdmin(true)
+      } else if (!error) {
+        // Fallback: check if user email matches admin email
+        // This is for initial setup before admin_roles table is created
+        const adminEmails = ['admin@zanyimbo.com', 'mikemasanga@gmail.com']
+        if (adminEmails.includes(user.email)) {
+          console.log('✅ Admin email detected:', user.email)
+          setIsAdmin(true)
+        } else {
+          console.log('⚠️ User does not have admin role:', user.email)
+          setIsAdmin(false)
+        }
+      } else {
+        // If table doesn't exist, fall back to email check
+        const adminEmails = ['admin@zanyimbo.com', 'mikemasanga@gmail.com']
+        if (adminEmails.includes(user.email)) {
+          console.log('✅ Admin email detected:', user.email)
+          setIsAdmin(true)
+        } else {
+          console.log('⚠️ User does not have admin role:', user.email)
+          setIsAdmin(false)
+        }
+      }
+    } catch (err) {
+      console.log('Error checking admin status:', err)
+      // Fallback to email check
+      const adminEmails = ['admin@zanyimbo.com', 'mikemasanga@gmail.com']
+      if (adminEmails.includes(user.email)) {
+        setIsAdmin(true)
+      } else {
+        setIsAdmin(false)
+      }
+    }
   }
 
   useEffect(() => {
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
-      checkAdminStatus(session?.user)
+      if (session?.user) {
+        checkAdminStatus(session.user)
+      }
       setLoading(false)
     })
 
@@ -32,7 +73,11 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null)
-        await checkAdminStatus(session?.user)
+        if (session?.user) {
+          await checkAdminStatus(session.user)
+        } else {
+          setIsAdmin(false)
+        }
         setLoading(false)
       }
     )

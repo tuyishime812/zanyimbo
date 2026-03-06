@@ -14,10 +14,16 @@ export default function Dashboard() {
   })
   const [recentSongs, setRecentSongs] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetchStats()
-    fetchRecentSongs()
+    try {
+      fetchStats()
+      fetchRecentSongs()
+    } catch (err) {
+      console.error('Dashboard error:', err)
+      setError(err.message)
+    }
   }, [])
 
   const fetchStats = async () => {
@@ -79,6 +85,12 @@ export default function Dashboard() {
   return (
     <AdminLayout>
       <div className="dashboard">
+        {error && (
+          <div className="error-banner" style={{ padding: '20px', background: 'rgba(239, 68, 68, 0.2)', borderRadius: '8px', marginBottom: '20px' }}>
+            <h3>Error Loading Dashboard</h3>
+            <p>{error}</p>
+          </div>
+        )}
         <div className="stats-grid">
           {statCards.map((stat, index) => (
             <div key={index} className="stat-card">

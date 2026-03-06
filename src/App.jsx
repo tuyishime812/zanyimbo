@@ -13,6 +13,7 @@ import MusicPage from './pages/MusicPage'
 import Top10 from './pages/Top10'
 import SearchPage from './pages/SearchPage'
 import Login from './pages/Login'
+import Signup from './pages/Signup'
 import SongDetail from './pages/SongDetail'
 import TVPage from './pages/TVPage'
 import BeatsPage from './pages/BeatsPage'
@@ -24,6 +25,12 @@ import Contact from './pages/Contact'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
 import Legal from './pages/Legal'
+import CreatorStudio from './pages/CreatorStudio'
+import Pricing from './pages/Pricing'
+import Blog from './pages/Blog'
+import GettingStarted from './pages/GettingStarted'
+import EarlyAccess from './pages/EarlyAccess'
+import HowToBuy from './pages/HowToBuy'
 import Dashboard from './pages/admin/Dashboard'
 import AdminSongs from './pages/admin/Songs'
 import AdminAlbums from './pages/admin/Albums'
@@ -36,7 +43,8 @@ import './App.css'
 const pagesWithPlayer = [
   '/', '/music', '/top-10', '/tv', '/beats', '/events', '/podcasts',
   '/faq', '/team', '/contact', '/song',
-  '/terms', '/privacy', '/legal', '/search'
+  '/terms', '/privacy', '/legal', '/search',
+  '/creator-studio', '/pricing', '/blog', '/getting-started', '/early-access', '/how-to-buy'
 ]
 
 function AppContent() {
@@ -54,6 +62,7 @@ function AppContent() {
       <Routes>
         {/* Auth Routes - No Header/Footer */}
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
         {/* Public Site Routes */}
         <Route
@@ -137,12 +146,101 @@ function AppContent() {
           }
         />
 
+        {/* Creator Routes */}
+        <Route
+          path="/creator-studio"
+          element={
+            <>
+              <Header />
+              <CreatorStudio />
+              <Footer />
+            </>
+          }
+        />
+
         {/* Resource Routes */}
-        <Route path="/faq" element={<FAQ />} />
+        <Route
+          path="/faq"
+          element={
+            <>
+              <Header />
+              <FAQ />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/getting-started"
+          element={
+            <>
+              <Header />
+              <GettingStarted />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/early-access"
+          element={
+            <>
+              <Header />
+              <EarlyAccess />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/how-to-buy"
+          element={
+            <>
+              <Header />
+              <HowToBuy />
+              <Footer />
+            </>
+          }
+        />
 
         {/* Company Routes */}
-        <Route path="/team" element={<Team />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route
+          path="/team"
+          element={
+            <>
+              <Header />
+              <Team />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <>
+              <Header />
+              <Contact />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/pricing"
+          element={
+            <>
+              <Header />
+              <Pricing />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/blog"
+          element={
+            <>
+              <Header />
+              <Blog />
+              <Footer />
+            </>
+          }
+        />
 
         {/* Legal Routes */}
         <Route path="/terms" element={<Terms />} />

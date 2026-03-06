@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Music2, Mail, Lock, AlertCircle } from 'lucide-react'
@@ -13,6 +13,9 @@ export default function Login() {
   const { signIn } = useAuth()
   const toast = useToast()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const from = location.state?.from || '/admin'
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -22,7 +25,7 @@ export default function Login() {
     try {
       await signIn(email, password)
       toast.success('Login successful! Redirecting...')
-      navigate('/admin', { replace: true })
+      navigate(from, { replace: true })
     } catch (err) {
       console.error('Login error:', err)
       const errorMessage = err.message.includes('Invalid login credentials')

@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Menu, Search, Music2, LogIn } from 'lucide-react'
+import { Menu, Search, Music2, LayoutDashboard } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import './Header.css'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { user, signOut } = useAuth()
+  const { user, isAdmin, signOut } = useAuth()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
@@ -62,10 +62,33 @@ export default function Header() {
 
           <div className="nav-item dropdown">
             <button className="nav-link">
+              FOR CREATORS
+            </button>
+            <div className="dropdown-menu">
+              <Link to="/creator-studio" className="dropdown-item">
+                <span className="status-dot live"></span>
+                Creator Studio
+              </Link>
+              <Link to="/pricing" className="dropdown-item">
+                <span className="status-dot live"></span>
+                Pricing
+              </Link>
+              <Link to="/how-to-buy" className="dropdown-item">
+                <span className="status-dot live"></span>
+                How to Buy
+              </Link>
+            </div>
+          </div>
+
+          <div className="nav-item dropdown">
+            <button className="nav-link">
               RESOURCES
             </button>
             <div className="dropdown-menu">
               <Link to="/faq" className="dropdown-item">FAQ</Link>
+              <Link to="/getting-started" className="dropdown-item">Getting Started</Link>
+              <Link to="/early-access" className="dropdown-item">Early Access</Link>
+              <Link to="/blog" className="dropdown-item">Blog</Link>
               <Link to="/contact" className="dropdown-item">Contact Support</Link>
             </div>
           </div>
@@ -93,12 +116,19 @@ export default function Header() {
           </a>
 
           {/* Login/Logout */}
-          {user && (
-            <button className="btn btn-sm btn-secondary" onClick={handleSignOut}>
-              <LogIn size={16} style={{ transform: 'rotate(180deg)' }} />
-              Sign Out
-            </button>
-          )}
+          {user ? (
+            <>
+              {isAdmin && (
+                <Link to="/admin" className="btn btn-sm btn-secondary">
+                  <LayoutDashboard size={16} />
+                  Admin
+                </Link>
+              )}
+              <button className="btn btn-sm btn-secondary" onClick={handleSignOut}>
+                Sign Out
+              </button>
+            </>
+          ) : null}
 
           {/* Mobile Menu Button */}
           <button
@@ -124,8 +154,17 @@ export default function Header() {
               <Link to="/podcasts" onClick={() => setMobileMenuOpen(false)}>Podcasts</Link>
             </div>
             <div className="mobile-nav-section">
+              <h4>FOR CREATORS</h4>
+              <Link to="/creator-studio" onClick={() => setMobileMenuOpen(false)}>Creator Studio</Link>
+              <Link to="/pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
+              <Link to="/how-to-buy" onClick={() => setMobileMenuOpen(false)}>How to Buy</Link>
+            </div>
+            <div className="mobile-nav-section">
               <h4>RESOURCES</h4>
               <Link to="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</Link>
+              <Link to="/getting-started" onClick={() => setMobileMenuOpen(false)}>Getting Started</Link>
+              <Link to="/early-access" onClick={() => setMobileMenuOpen(false)}>Early Access</Link>
+              <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Support</Link>
             </div>
             <div className="mobile-nav-section">
@@ -135,9 +174,16 @@ export default function Header() {
             </div>
             <div className="mobile-nav-section mobile-auth">
               {user ? (
-                <button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} className="mobile-link btn-block">
-                  Sign Out
-                </button>
+                <>
+                  {isAdmin && (
+                    <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="mobile-link btn-block">
+                      Admin Panel
+                    </Link>
+                  )}
+                  <button onClick={() => { handleSignOut(); setMobileMenuOpen(false); }} className="mobile-link btn-block">
+                    Sign Out
+                  </button>
+                </>
               ) : null}
             </div>
           </nav>

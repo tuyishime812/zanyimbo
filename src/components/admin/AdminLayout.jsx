@@ -13,13 +13,21 @@ export default function AdminLayout({ children }) {
   const navigate = useNavigate()
   const { user, signOut, isAdmin } = useAuth()
 
+  console.log('AdminLayout: user =', user, 'isAdmin =', isAdmin, 'location =', location.pathname)
+
   const handleSignOut = async () => {
     await signOut()
     navigate('/login')
   }
 
+  // If no user, let ProtectedRoute handle it
+  if (!user) {
+    return null
+  }
+
   // Redirect if not admin
-  if (!isAdmin && user) {
+  if (!isAdmin) {
+    console.log('AdminLayout: User is not admin')
     return (
       <div className="admin-layout">
         <div className="not-authorized">

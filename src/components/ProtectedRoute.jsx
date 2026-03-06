@@ -1,8 +1,9 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
+  const location = useLocation()
 
   if (loading) {
     return (
@@ -15,9 +16,11 @@ export default function ProtectedRoute({ children }) {
 
   // If not logged in, redirect to login
   if (!user) {
-    return <Navigate to="/login" replace />
+    console.log('ProtectedRoute: No user found, redirecting to login. Current path:', location.pathname)
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />
   }
 
+  console.log('ProtectedRoute: User authenticated, allowing access to:', location.pathname)
   // User is logged in, allow access to admin
   return children
 }
