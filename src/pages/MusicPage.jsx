@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { useToast } from '../context/ToastContext'
 import { Search, Filter, Grid, List, Download, Play } from 'lucide-react'
 import SongCard from '../components/SongCard'
 import AlbumCard from '../components/AlbumCard'
@@ -14,6 +15,7 @@ export default function MusicPage({ onPlaySong }) {
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
   const [loading, setLoading] = useState(true)
+  const toast = useToast()
 
   useEffect(() => {
     fetchMusic()
@@ -88,9 +90,12 @@ export default function MusicPage({ onPlaySong }) {
 
   const handleDownload = async (song) => {
     if (!song.is_downloadable) {
-      alert('This song is not available for download')
+      toast.error('This song is not available for download')
       return
     }
+
+    // Show confirmation toast
+    toast.info(`⏳ Downloading: ${song.artist} - ${song.title}...`)
 
     try {
       // Track download
@@ -113,9 +118,12 @@ export default function MusicPage({ onPlaySong }) {
       // Cleanup
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
+      
+      // Show success toast
+      toast.success(`✅ Download started: ${song.artist} - ${song.title}`)
     } catch (error) {
       console.error('Download error:', error)
-      alert('Failed to download song')
+      toast.error('Failed to download song')
     }
   }
 

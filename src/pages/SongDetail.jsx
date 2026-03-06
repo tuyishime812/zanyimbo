@@ -62,6 +62,9 @@ export default function SongDetail() {
       return
     }
 
+    // Show confirmation toast
+    toast.info(`⏳ Downloading: ${song.artists?.name} - ${song.title}...`)
+
     try {
       // Track download
       await supabase.from('downloads').insert({
@@ -83,7 +86,9 @@ export default function SongDetail() {
       // Cleanup
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
-      toast.success('Download started!')
+      
+      // Show success toast
+      toast.success(`✅ Download started!`)
     } catch {
       toast.error('Download failed')
     }
