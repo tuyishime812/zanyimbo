@@ -6,6 +6,7 @@ services:
     plan: free
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
+    startCommand: echo "Static site - no start command needed"
     envVars:
       - key: VITE_SUPABASE_URL
         sync: false
