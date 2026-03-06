@@ -30,7 +30,9 @@
 }
 
 .logo-icon {
-  color: var(--accent-orange);
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
 }
 
 .logo-text {

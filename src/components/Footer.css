@@ -34,9 +34,9 @@
 }
 
 .footer-logo .logo-icon {
-  color: var(--accent-orange);
   width: 32px;
   height: 32px;
+  object-fit: contain;
 }
 
 .footer-logo .logo-name {

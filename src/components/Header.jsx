@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Menu, Search, Music2, LayoutDashboard } from 'lucide-react'
+import { Menu, Search, LayoutDashboard } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import logoImage from '../assets/Zanyimbo.png'
 import './Header.css'
 
 export default function Header() {
@@ -19,7 +20,7 @@ export default function Header() {
       <div className="header-container">
         {/* Logo */}
         <Link to="/" className="logo">
-          <Music2 className="logo-icon" />
+          <img src={logoImage} alt="Zanyimbo" className="logo-icon" />
           <div className="logo-text">
             <span className="logo-name">ZANYIMBO</span>
             <span className="logo-tagline">Now Streaming</span>
