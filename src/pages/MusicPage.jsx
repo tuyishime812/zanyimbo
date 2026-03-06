@@ -98,14 +98,21 @@ export default function MusicPage({ onPlaySong }) {
         song_id: song.id
       })
 
-      // Trigger download
+      // Fetch the audio file as blob
+      const response = await fetch(song.audioUrl)
+      const blob = await response.blob()
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
-      link.href = song.audioUrl
-      link.download = `${song.title} - ${song.artist}.mp3`
-      link.target = '_blank'
+      link.href = url
+      link.download = `${song.artist} - ${song.title}.mp3`
       document.body.appendChild(link)
       link.click()
+      
+      // Cleanup
       document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
     } catch (error) {
       console.error('Download error:', error)
       alert('Failed to download song')

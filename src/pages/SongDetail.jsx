@@ -63,14 +63,24 @@ export default function SongDetail() {
     }
 
     try {
+      // Track download
+      await supabase.from('downloads').insert({
+        song_id: song.id
+      })
+
+      // Fetch the audio file as blob
       const response = await fetch(song.audio_url)
       const blob = await response.blob()
+      
+      // Create download link
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `${song.title} - ${song.artists?.name}.mp3`
+      link.download = `${song.artists?.name} - ${song.title}.mp3`
       document.body.appendChild(link)
       link.click()
+      
+      // Cleanup
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
       toast.success('Download started!')
