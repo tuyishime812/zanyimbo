@@ -1,12 +1,11 @@
 services:
   - type: web
     name: zanyimbo
-    env: static
+    env: node
     region: frankfurt
     plan: free
     buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
-    startCommand: echo "Static site - no start command needed"
+    startCommand: npx serve dist -s -l $PORT
     envVars:
       - key: VITE_SUPABASE_URL
         sync: false
