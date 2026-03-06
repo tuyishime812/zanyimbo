@@ -27,9 +27,9 @@ export default function Hero() {
               <Play size={18} />
               Start Streaming Free
             </Link>
-            <Link to="/creator-studio" className="btn btn-secondary">
+            <Link to="/music" className="btn btn-secondary">
               <Headphones size={18} />
-              Join as a Creator
+              Listen to New Music
             </Link>
           </div>
         </div>
