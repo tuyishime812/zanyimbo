@@ -25,14 +25,14 @@ export default function SongCard({ song, onPlay }) {
       <div className="song-card">
         <div className="song-cover">
           <img
-            src={coverUrl || 'https://via.placeholder.com/150x150/2d1f4e/ffffff?text=Song'}
+            src={coverUrl || 'https://via.placeholder.com/150x150/2d1f4e/ffffff?text=Music'}
             alt={title}
             onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/150x150/2d1f4e/ffffff?text=Song'
+              e.target.src = 'https://via.placeholder.com/150x150/2d1f4e/ffffff?text=Music'
             }}
           />
-          <button 
-            className="play-overlay" 
+          <button
+            className="play-overlay"
             onClick={handlePlayClick}
             type="button"
           >

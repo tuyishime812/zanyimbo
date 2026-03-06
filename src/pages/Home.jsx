@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import Hero from '../components/Hero'
 import PlatformFeatures from '../components/PlatformFeatures'
-import Carousel from '../components/Carousel'
 import AlbumCard from '../components/AlbumCard'
-import SongGrid from '../components/SongGrid'
+import SongCard from '../components/SongCard'
 import './Home.css'
 
 export default function Home({ onPlaySong }) {
@@ -14,11 +13,11 @@ export default function Home({ onPlaySong }) {
 
   useEffect(() => {
     fetchMusic()
-    
+
     // Realtime subscription for songs
     const songsChannel = supabase
       .channel('songs-changes')
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: '*', schema: 'public', table: 'songs' },
         () => {
           fetchMusic()
@@ -95,9 +94,9 @@ export default function Home({ onPlaySong }) {
     }
   }
 
-  const handlePlayAlbum = () => {
+  const handlePlayAlbum = (album) => {
     // Find first song from this album
-    const albumSong = topSongs[0]
+    const albumSong = topSongs.find(s => s.albumId === album.id) || topSongs[0]
     if (albumSong) {
       onPlaySong(albumSong)
     }
@@ -112,25 +111,42 @@ export default function Home({ onPlaySong }) {
       <Hero />
       <PlatformFeatures />
 
+      {/* Albums Section - Direct Grid */}
       {albums.length > 0 && (
-        <Carousel title="Curated Albums" badge="EXCLUSIVE">
-          {albums.map((album) => (
-            <AlbumCard
-              key={album.id}
-              album={album}
-              onPlay={handlePlayAlbum}
-            />
-          ))}
-        </Carousel>
+        <section className="home-section">
+          <div className="section-header">
+            <h2 className="section-title">Latest Albums</h2>
+            <span className="badge badge-exclusive">EXCLUSIVE</span>
+          </div>
+          <div className="albums-grid-direct">
+            {albums.map((album) => (
+              <AlbumCard
+                key={album.id}
+                album={album}
+                onPlay={handlePlayAlbum}
+              />
+            ))}
+          </div>
+        </section>
       )}
 
+      {/* Songs Section - Direct Grid */}
       {topSongs.length > 0 && (
-        <SongGrid
-          title="Most Streamed & Downloaded"
-          badge="HOT"
-          songs={topSongs}
-          onPlay={handlePlaySong}
-        />
+        <section className="home-section">
+          <div className="section-header">
+            <h2 className="section-title">Trending Songs</h2>
+            <span className="badge badge-hot">HOT</span>
+          </div>
+          <div className="songs-grid-direct">
+            {topSongs.map((song) => (
+              <SongCard
+                key={song.id}
+                song={song}
+                onPlay={handlePlaySong}
+              />
+            ))}
+          </div>
+        </section>
       )}
 
       {loading && (
