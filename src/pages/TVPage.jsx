@@ -1,17 +1,10 @@
 import { Link } from 'react-router-dom'
-import { Play, Tv, Star, TrendingUp } from 'lucide-react'
+import { Play, Tv } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import './ComingSoonPage.css'
 
 export default function TVPage() {
-  const featuredShows = [
-    { id: 1, title: 'Nollywood Classics', category: 'Drama', rating: 4.8 },
-    { id: 2, title: 'Afro Beats TV', category: 'Music', rating: 4.9 },
-    { id: 3, title: 'Sahara Stories', category: 'Documentary', rating: 4.7 },
-    { id: 4, title: 'Lagos Life', category: 'Series', rating: 4.6 },
-  ]
-
   return (
     <div className="coming-soon-page">
       <Header />
@@ -30,39 +23,15 @@ export default function TVPage() {
                 Stream Music Now
               </Link>
               <Link to="/signup" className="btn btn-secondary">
-                Get Early Access
+                Create Account to Watch
               </Link>
             </div>
           </div>
         </div>
 
-        <div className="preview-section">
-          <h2>Coming Soon</h2>
-          <div className="shows-grid">
-            {featuredShows.map((show) => (
-              <div key={show.id} className="show-card">
-                <div className="show-poster">
-                  <img src={`https://via.placeholder.com/300x450/2d1f4e/ffffff?text=${encodeURIComponent(show.title)}`} alt={show.title} />
-                  <div className="show-overlay">
-                    <Star size={20} fill="#ff6b35" color="#ff6b35" />
-                    <span>{show.rating}</span>
-                  </div>
-                </div>
-                <div className="show-info">
-                  <h3>{show.title}</h3>
-                  <p>{show.category}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="notify-section">
-          <h2>Be the First to Know</h2>
-          <p>Sign up to get notified when PAMODZI TV launches in your region.</p>
-          <Link to="/signup" className="btn btn-primary">
-            Notify Me
-          </Link>
+          <h2>TV & Movies Coming Soon</h2>
+          <p>We're working on bringing you the best African films, series, and shows. Create an account to get notified when we launch!</p>
         </div>
       </main>
       <Footer />
