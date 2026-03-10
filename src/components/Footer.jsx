@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
-import logoImage from '../assets/Zanyimbo.png'
+import logoImage from '../assets/Pamodzi.png'
 import './Footer.css'
 
 export default function Footer() {
@@ -12,9 +12,9 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="footer-brand">
             <Link to="/" className="footer-logo">
-              <img src={logoImage} alt="Zanyimbo" className="logo-icon" />
+              <img src={logoImage} alt="Pamodzi" className="logo-icon" />
               <div className="logo-text">
-                <span className="logo-name">ZANYIMBO</span>
+                <span className="logo-name">PAMODZI</span>
                 <span className="logo-tagline">Africa's Authentic Entertainment</span>
               </div>
             </Link>
@@ -27,7 +27,7 @@ export default function Footer() {
             <div className="footer-contact">
               <div className="contact-item">
                 <Mail size={16} />
-                <span>support@zanyimbo.com</span>
+                <span>support@pamodzi.com</span>
               </div>
               <div className="contact-item">
                 <Phone size={16} />
@@ -94,7 +94,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="footer-bottom">
           <p className="copyright">
-            © 2026 Zanyimbo Multimedia. All rights reserved.
+            © 2026 Pamodzi Multimedia. All rights reserved.
           </p>
           <div className="footer-legal">
             <Link to="/terms">Terms</Link>

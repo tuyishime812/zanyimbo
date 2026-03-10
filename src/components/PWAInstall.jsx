@@ -54,7 +54,7 @@ export default function PWAInstall() {
         <div className="pwa-info">
           <span className="pwa-icon">🎵</span>
           <div>
-            <h4>Install Zanyimbo</h4>
+            <h4>Install Pamodzi</h4>
             <p>Get the app for a better experience</p>
           </div>
         </div>

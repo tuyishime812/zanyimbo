@@ -1,4 +1,4 @@
-# Zanyimbo - Quick Setup Guide
+# Pamodzi - Quick Setup Guide
 
 ## 🚀 Get Started in 5 Minutes
 
@@ -10,7 +10,7 @@
 ### Step 2: Create New Project
 1. Click "New Project"
 2. Choose organization
-3. Enter project name: `zanyimbo`
+3. Enter project name: `pamodzi`
 4. Set database password (save it!)
 5. Choose region (closest to you)
 6. Click "Create new project"
@@ -34,7 +34,7 @@
    - **anon/public key** (long string under "Project API keys")
 
 ### Step 5: Create .env File
-1. In project folder `zanyimbo/`
+1. In project folder `pamodzi/`
 2. Create file named `.env` (no extension)
 3. Add this content:
 ```env
@@ -50,15 +50,15 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 3. Click **Add User** button
 4. Click **Create new user**
 5. Enter:
-   - Email: `admin@zanyimbo.com` (or your email)
+   - Email: `admin@pamodzi.com` (or your email)
    - Password: `admin123` (change later!)
 6. Click **Create user**
 7. Now click **SQL Editor** again
 8. Create new query with this (replace email):
 ```sql
-UPDATE auth.users 
-SET raw_app_meta_data = raw_app_meta_data || '{"role": "admin"}' 
-WHERE email = 'admin@zanyimbo.com';
+UPDATE auth.users
+SET raw_app_meta_data = raw_app_meta_data || '{"role": "admin"}'
+WHERE email = 'admin@pamodzi.com';
 ```
 9. Click **Run**
 
@@ -66,7 +66,7 @@ WHERE email = 'admin@zanyimbo.com';
 1. Open terminal/command prompt
 2. Navigate to project:
    ```bash
-   cd C:\Users\Student.LAPTOP-46MOQA5A\Desktop\projects\zanyimbo\zanyimbo
+   cd C:\Users\Student.LAPTOP-46MOQA5A\Desktop\projects\pamodzi\pamodzi
    ```
 3. Run:
    ```bash
@@ -82,7 +82,7 @@ WHERE email = 'admin@zanyimbo.com';
 
 1. **Login as Admin**
    - Go to: http://localhost:5173/login
-   - Email: `admin@zanyimbo.com`
+   - Email: `admin@pamodzi.com`
    - Password: `admin123`
 
 2. **Add Artist First**

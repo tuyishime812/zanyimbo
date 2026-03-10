@@ -1,11 +1,11 @@
-# 🚀 Deploy Zanyimbo on Render
+# 🚀 Deploy Pamodzi on Render
 
 ## ✅ Quick Deploy Guide
 
 ### ⚠️ IMPORTANT: Choose STATIC SITE Not Web Service!
 
 When creating your service on Render:
-- **DO NOT** choose "Web Service" 
+- **DO NOT** choose "Web Service"
 - **DO** choose "Static Site"
 
 This is the key to making it work!
@@ -14,7 +14,7 @@ This is the key to making it work!
 
 ### Option 1: One-Click Deploy (Recommended)
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tuyishime812/zanyimbo)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tuyishime812/pamodzi)
 
 1. Click the button above
 2. Connect your GitHub account
@@ -31,12 +31,12 @@ This is the key to making it work!
 
 #### Step 2: Create Static Site (NOT Web Service!)
 1. Click **New +** → **Static Site**
-2. Connect your repository: **tuyishime812/zanyimbo**
+2. Connect your repository: **tuyishime812/pamodzi**
 
 #### Step 3: Configure Settings
 
 ```
-Name: zanyimbo
+Name: pamodzi
 Region: Choose closest to your users
 Branch: main
 Root Directory: (leave blank)
@@ -44,7 +44,7 @@ Build Command: npm install && npm run build
 Publish Directory: dist
 ```
 
-⚠️ **Important:** 
+⚠️ **Important:**
 - Choose **Static Site** NOT Web Service
 - No start command needed for Static Site
 - Do NOT use `npm run dev`
@@ -61,7 +61,7 @@ Click **Advanced** → **Add Environment Variable**:
 #### Step 5: Deploy
 - Click **Create Web Service**
 - Wait 5-10 minutes for build
-- Your app will be live at: `https://zanyimbo.onrender.com`
+- Your app will be live at: `https://pamodzi.onrender.com`
 
 ---
 
@@ -108,8 +108,8 @@ The `render.yaml` file is already configured with:
 ## 🔗 Your Deployed App
 
 Once deployed, your app will be available at:
-- **Production URL**: `https://zanyimbo.onrender.com`
-- **Admin Panel**: `https://zanyimbo.onrender.com/login`
+- **Production URL**: `https://pamodzi.onrender.com`
+- **Admin Panel**: `https://pamodzi.onrender.com/login`
 
 ---
 
@@ -119,9 +119,9 @@ Once deployed, your app will be available at:
    - First load after idle may take 30-60 seconds
    - Subsequent loads are fast
 
-2. **Custom Domain**: 
+2. **Custom Domain**:
    - Go to Render Dashboard → Settings → Custom Domain
-   - Add your domain (e.g., zanyimbo.com)
+   - Add your domain (e.g., pamodzi.com)
 
 3. **Auto-Deploy**:
    - Every push to `main` branch auto-deploys

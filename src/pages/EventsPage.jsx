@@ -8,7 +8,7 @@ export default function EventsPage() {
   const upcomingEvents = [
     { id: 1, name: 'Afrobeats Festival 2026', date: 'Jun 15, 2026', location: 'Lagos, Nigeria' },
     { id: 2, name: 'Amapiano Night', date: 'Apr 20, 2026', location: 'Johannesburg, SA' },
-    { id: 3, name: 'Zanyimbo Live Concert', date: 'Aug 8, 2026', location: 'Lilongwe, Malawi' },
+    { id: 3, name: 'Pamodzi Live Concert', date: 'Aug 8, 2026', location: 'Lilongwe, Malawi' },
     { id: 4, name: 'Virtual Jazz Session', date: 'Mar 30, 2026', location: 'Online' },
   ]
 
@@ -22,7 +22,7 @@ export default function EventsPage() {
               <Calendar size={16} />
               Coming Soon
             </div>
-            <h1>ZANYIMBO EVENTS</h1>
+            <h1>PAMODZI EVENTS</h1>
             <p>Live concerts, festivals, and virtual events from across Africa.</p>
             <div className="cta-buttons">
               <Link to="/music" className="btn btn-primary">

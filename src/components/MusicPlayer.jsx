@@ -225,7 +225,7 @@ export default function MusicPlayer() {
 
     const shareData = {
       title: currentSong.title,
-      text: `Check out "${currentSong.title}" by ${currentSong.artist} on Zanyimbo!`,
+      text: `Check out "${currentSong.title}" by ${currentSong.artist} on Pamodzi!`,
       url: window.location.href
     }
 

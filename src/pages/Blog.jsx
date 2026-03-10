@@ -24,7 +24,7 @@ export default function Blog() {
     },
     {
       id: 3,
-      title: 'Behind the Scenes: How We Build Zanyimbo',
+      title: 'Behind the Scenes: How We Build Pamodzi',
       excerpt: 'A look into our technology stack and development process.',
       author: 'Tech Team',
       date: 'February 25, 2026',

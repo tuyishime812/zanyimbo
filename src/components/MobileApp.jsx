@@ -12,7 +12,7 @@ export default function MobileApp() {
           
           <h2 className="app-title">DOWNLOAD OUR APPS</h2>
           <p className="app-subtitle">
-            Experience Zanyimbo on mobile. Download our apps for iOS and Android 
+            Experience Pamodzi on mobile. Download our apps for iOS and Android
             and take your music everywhere you go.
           </p>
           
@@ -47,7 +47,7 @@ export default function MobileApp() {
           <div className="phone-mockup">
             <div className="phone-screen">
               <div className="app-preview">
-                <div className="preview-header">ZANYIMBO</div>
+                <div className="preview-header">PAMODZI</div>
                 <div className="preview-content">
                   <div className="preview-song">
                     <div className="preview-cover"></div>

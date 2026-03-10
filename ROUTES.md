@@ -1,8 +1,8 @@
-# 🎵 Zanyimbo - Complete Routes & Pages Documentation
+# 🎵 Pamodzi - Complete Routes & Pages Documentation
 
 ## ✅ All Routes Working
 
-Your Zanyimbo platform has **27+ pages** with full routing configured and working.
+Your Pamodzi platform has **27+ pages** with full routing configured and working.
 
 ---
 
@@ -55,7 +55,7 @@ Your Zanyimbo platform has **27+ pages** with full routing configured and workin
 1. **Navigate to `/admin`**
 2. **If not logged in:** You'll be redirected to `/login`
 3. **Login with admin credentials:**
-   - Default admin emails: `admin@zanyimbo.com`, `mikemasanga@gmail.com`
+   - Default admin emails: `admin@pamodzi.com`, `mikemasanga@gmail.com`
 4. **After login:** You'll be redirected back to `/admin`
 
 ### Admin Verification

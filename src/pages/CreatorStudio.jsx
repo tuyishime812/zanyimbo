@@ -93,7 +93,7 @@ export default function CreatorStudio() {
 
         <div className="cta-section">
           <h2>Ready to Share Your Talent?</h2>
-          <p>Join thousands of creators already on Zanyimbo.</p>
+          <p>Join thousands of creators already on Pamodzi.</p>
           <Link to="/signup" className="btn btn-primary btn-lg">
             Create Your Account
           </Link>

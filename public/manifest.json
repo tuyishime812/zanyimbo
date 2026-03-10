@@ -1,6 +1,6 @@
 {
-  "name": "Zanyimbo - African Music Streaming",
-  "short_name": "Zanyimbo",
+  "name": "Pamodzi - African Music Streaming",
+  "short_name": "Pamodzi",
   "description": "Stream hottest tracks - Afrobeats, Hip Hop, R&B, Amapiano and more",
   "start_url": "/",
   "display": "standalone",
@@ -9,19 +9,19 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/Zanyimbo.png",
+      "src": "/Pamodzi.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Zanyimbo.png",
+      "src": "/Pamodzi.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Zanyimbo.png",
+      "src": "/Pamodzi.png",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"

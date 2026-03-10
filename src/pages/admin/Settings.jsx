@@ -5,7 +5,7 @@ import './Settings.css'
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
-    siteName: 'Zanyimbo',
+    siteName: 'Pamodzi',
     siteDescription: "Africa's Authentic Entertainment",
     enableDownloads: true,
     enableRegistration: true,

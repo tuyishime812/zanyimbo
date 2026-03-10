@@ -4,7 +4,7 @@ import './PlatformFeatures.css'
 const features = [
   {
     id: 'music',
-    title: 'ZANYIMBO MUSIC',
+    title: 'PAMODZI MUSIC',
     description: "Stream hottest tracks",
     icon: Music,
     status: 'live',
@@ -12,7 +12,7 @@ const features = [
   },
   {
     id: 'tv',
-    title: 'ZANYIMBO TV',
+    title: 'PAMODZI TV',
     description: 'Premium African stories, films, series',
     icon: Tv,
     status: 'coming_soon',
@@ -28,7 +28,7 @@ const features = [
   },
   {
     id: 'events',
-    title: 'ZANYIMBO EVENTS',
+    title: 'PAMODZI EVENTS',
     description: 'Live concerts, festivals, virtual events',
     icon: Calendar,
     status: 'coming_soon',

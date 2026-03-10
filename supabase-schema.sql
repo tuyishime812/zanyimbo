@@ -1,4 +1,4 @@
--- Zanyimbo Music Platform - Production Database Schema for Supabase
+-- Pamodzi Music Platform - Production Database Schema for Supabase
 -- Run this in your Supabase SQL Editor
 
 -- Enable UUID extension

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: zanyimbo
+    name: pamodzi
     env: node
     region: frankfurt
     plan: free

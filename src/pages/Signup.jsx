@@ -53,12 +53,12 @@ export default function Signup() {
       <div className="auth-container">
         <Link to="/" className="auth-logo">
           <Music2 size={48} />
-          <span>ZANYIMBO</span>
+          <span>PAMODZI</span>
         </Link>
 
         <div className="auth-card">
           <h1>Create Account</h1>
-          <p className="auth-subtitle">Join Zanyimbo as a creator</p>
+          <p className="auth-subtitle">Join Pamodzi as a creator</p>
 
           {error && (
             <div className="error-message">

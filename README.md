@@ -1,4 +1,4 @@
-# Zanyimbo - Professional Music Streaming Platform
+# Pamodzi - Professional Music Streaming Platform
 
 A production-ready music streaming platform with admin panel, built with React and Supabase.
 
@@ -27,7 +27,7 @@ A production-ready music streaming platform with admin panel, built with React a
 
 ### 1. Install Dependencies
 ```bash
-cd zanyimbo
+cd pamodzi
 npm install
 ```
 
@@ -122,7 +122,7 @@ Open http://localhost:5173
 ## Project Structure
 
 ```
-zanyimbo/
+pamodzi/
 ├── src/
 │   ├── components/
 │   │   ├── admin/

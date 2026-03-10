@@ -1,4 +1,4 @@
--- Zanyimbo Storage Buckets Setup
+-- Pamodzi Storage Buckets Setup
 -- Run this in Supabase SQL Editor to create storage buckets
 
 -- ============================================

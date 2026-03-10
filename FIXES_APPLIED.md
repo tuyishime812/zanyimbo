@@ -1,4 +1,4 @@
-# ✅ Zanyimbo Routing - All Fixes Applied
+# ✅ Pamodzi Routing - All Fixes Applied
 
 ## 🎯 Problem Fixed: `/admin` showing "Not Found"
 
@@ -42,7 +42,7 @@ navigate(from, { replace: true })
 **Changes:**
 ```javascript
 // Now checks admin_roles table first, then falls back to email list
-const adminEmails = ['admin@zanyimbo.com', 'mikemasanga@gmail.com']
+const adminEmails = ['admin@pamodzi.com', 'mikemasanga@gmail.com']
 ```
 
 ### 4. **AdminLayout** (`src/components/admin/AdminLayout.jsx`)
@@ -164,7 +164,7 @@ Open browser console (F12) to see debug logs:
 
 ### Quick Method (Email-based)
 Use one of these emails:
-- `admin@zanyimbo.com`
+- `admin@pamodzi.com`
 - `mikemasanga@gmail.com`
 
 ### Production Method (Database-based)

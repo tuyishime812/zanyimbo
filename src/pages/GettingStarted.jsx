@@ -40,7 +40,7 @@ export default function GettingStarted() {
           <div className="hero-content">
             <Book size={48} color="#ff6b35" />
             <h1>Getting Started</h1>
-            <p>Everything you need to know to start your Zanyimbo journey.</p>
+            <p>Everything you need to know to start your Pamodzi journey.</p>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 -- =====================================================
--- COMPLETE ADMIN SETUP FOR ZANYIMBO
+-- COMPLETE ADMIN SETUP FOR PAMODZI
 -- Run this ENTIRE script in Supabase SQL Editor
 -- =====================================================
 
@@ -70,20 +70,20 @@ GRANT SELECT ON admin_roles TO authenticated;
 
 -- 5. Add current admin users
 -- =====================================================
--- Add admin@zanyimbo.com if exists
+-- Add admin@pamodzi.com if exists
 DO $$
 DECLARE
   user_record RECORD;
 BEGIN
   SELECT id, email INTO user_record
   FROM auth.users
-  WHERE email = 'admin@zanyimbo.com';
-  
+  WHERE email = 'admin@pamodzi.com';
+
   IF user_record.id IS NOT NULL THEN
     INSERT INTO admin_roles (user_id, email)
     VALUES (user_record.id, user_record.email)
     ON CONFLICT (user_id) DO NOTHING;
-    RAISE NOTICE 'Added admin@zanyimbo.com as admin';
+    RAISE NOTICE 'Added admin@pamodzi.com as admin';
   END IF;
 END $$;
 

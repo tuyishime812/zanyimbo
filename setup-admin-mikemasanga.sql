@@ -1,5 +1,5 @@
 -- ============================================
--- ZANYIMBO - Complete Setup for mikemasanga@gmail.com
+-- PAMODZI - Complete Setup for mikemasanga@gmail.com
 -- Run this ENTIRE script in Supabase SQL Editor
 -- ============================================
 

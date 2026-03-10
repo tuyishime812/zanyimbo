@@ -12,7 +12,7 @@ export default function Team() {
         <div className="company-hero">
           <div className="hero-content">
             <h1>Our Team</h1>
-            <p>Meet the founder behind Zanyimbo.</p>
+            <p>Meet the founder behind Pamodzi.</p>
           </div>
         </div>
 

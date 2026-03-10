@@ -1,4 +1,4 @@
-# Zanyimbo - Complete Pages & Features Documentation
+# Pamodzi - Complete Pages & Features Documentation
 
 ## ✅ All Pages Created and Working
 
@@ -285,4 +285,4 @@ npm run preview
 ---
 
 **Built with ❤️ for African Music**
-© 2026 Zanyimbo Multimedia
+© 2026 Pamodzi Multimedia

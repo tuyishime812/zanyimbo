@@ -160,7 +160,7 @@ export default function BeatsPage() {
 
         <div className="producer-cta">
           <h2>Are You a Producer?</h2>
-          <p>Join Zanyimbo to sell your beats and earn revenue from your productions.</p>
+          <p>Join Pamodzi to sell your beats and earn revenue from your productions.</p>
           <Link to="/contact" className="btn btn-primary btn-lg">
             Register as Producer
           </Link>

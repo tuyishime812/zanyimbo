@@ -22,7 +22,7 @@ export default function TVPage() {
               <Tv size={16} />
               Coming Soon
             </div>
-            <h1>ZANYIMBO TV</h1>
+            <h1>PAMODZI TV</h1>
             <p>Premium African stories, films, and series from across the continent.</p>
             <div className="cta-buttons">
               <Link to="/music" className="btn btn-primary">
@@ -59,7 +59,7 @@ export default function TVPage() {
 
         <div className="notify-section">
           <h2>Be the First to Know</h2>
-          <p>Sign up to get notified when ZANYIMBO TV launches in your region.</p>
+          <p>Sign up to get notified when PAMODZI TV launches in your region.</p>
           <Link to="/signup" className="btn btn-primary">
             Notify Me
           </Link>
