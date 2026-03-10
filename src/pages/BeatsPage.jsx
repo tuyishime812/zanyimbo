@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useMusic } from '../context/MusicContext'
-import { Headphones, Play, ShoppingBag, Download } from 'lucide-react'
+import { Headphones, Play, ShoppingBag, Download, MessageCircle } from 'lucide-react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import './ComingSoonPage.css'
@@ -11,6 +11,9 @@ export default function BeatsPage() {
   const [beats, setBeats] = useState([])
   const [loading, setLoading] = useState(true)
   const { playSong } = useMusic()
+
+  // Your phone number for WhatsApp (with country code, no + sign)
+  const phoneNumber = '265990342825' // Malawi country code +265
 
   useEffect(() => {
     fetchBeats()
@@ -53,24 +56,22 @@ export default function BeatsPage() {
       return
     }
 
+    // Send WhatsApp message to purchase
+    const message = `Hello! I'm interested in purchasing this beat:\n\n🎵 *${beat.title}*\n🎤 Producer: ${beat.artists?.name || 'Unknown'}\n💰 Price: $${beat.price || 'N/A'}\n\nPlease send me the purchase details. Thank you!`
+    
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
+    
+    // Track interest
     try {
-      // Track download/purchase intent
       await supabase.from('beat_downloads').insert({
         beat_id: beat.id
       })
-
-      // Trigger download
-      const link = document.createElement('a')
-      link.href = beat.audio_url
-      link.download = `${beat.title} - ${beat.artists?.name}.mp3`
-      link.target = '_blank'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
     } catch (error) {
-      console.error('Download error:', error)
-      alert('Failed to download beat')
+      console.error('Error tracking beat interest:', error)
     }
+    
+    // Open WhatsApp
+    window.open(whatsappUrl, '_blank')
   }
 
   return (
@@ -142,7 +143,7 @@ export default function BeatsPage() {
                           className="btn btn-sm btn-secondary"
                           onClick={() => handleDownload(beat)}
                         >
-                          <Download size={16} /> Purchase
+                          <MessageCircle size={16} /> Buy on WhatsApp
                         </button>
                       )}
                     </div>
@@ -161,9 +162,16 @@ export default function BeatsPage() {
         <div className="producer-cta">
           <h2>Are You a Producer?</h2>
           <p>Join Pamodzi to sell your beats and earn revenue from your productions.</p>
-          <Link to="/contact" className="btn btn-primary btn-lg">
-            Register as Producer
-          </Link>
+          <button 
+            className="btn btn-primary btn-lg"
+            onClick={() => {
+              const message = 'Hello! I want to register as a producer on Pamodzi to sell my beats. Please send me the registration details.'
+              const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
+              window.open(whatsappUrl, '_blank')
+            }}
+          >
+            <MessageCircle size={24} /> Register as Producer
+          </button>
         </div>
       </main>
       <Footer />
