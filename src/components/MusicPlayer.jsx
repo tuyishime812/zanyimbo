@@ -5,6 +5,7 @@ import {
   Shuffle, Repeat, Heart, Share2, Download, Music2
 } from 'lucide-react'
 import { useToast } from '../context/ToastContext'
+import { downloadSongWithMetadata, simpleDownload } from '../lib/downloadUtils'
 import './MusicPlayer.css'
 
 export default function MusicPlayer() {
@@ -256,29 +257,35 @@ export default function MusicPlayer() {
       toast.error('Download not available for this song')
       return
     }
-    
+
     try {
-      // Fetch the file as blob
-      const response = await fetch(audioUrl)
-      const blob = await response.blob()
+      toast.info(`⏳ Preparing download: ${currentSong.artist} - ${currentSong.title}...`)
       
-      // Create download link
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `${currentSong.title} - ${currentSong.artist}.mp3`
-      document.body.appendChild(link)
-      link.click()
+      // Try to download with metadata first
+      await downloadSongWithMetadata(currentSong)
       
-      // Cleanup
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
-      toast.success('Download started!')
+      toast.success(`✅ Download started: ${currentSong.artist} - ${currentSong.title}`)
+      
+      // Track download
+      try {
+        const { supabase } = await import('../lib/supabase')
+        await supabase.from('downloads').insert({ song_id: currentSong.id })
+      } catch (e) {
+        console.warn('Failed to track download:', e)
+      }
     } catch (error) {
       console.error('Download error:', error)
-      toast.error('Download failed. Opening in new tab...')
-      // Fallback: open in new tab
-      window.open(audioUrl, '_blank')
+      toast.error('Download failed. Trying alternative method...')
+      
+      // Fallback: simple download
+      try {
+        const filename = `${currentSong.artist} - ${currentSong.title}.mp3`
+        await simpleDownload(audioUrl, filename)
+        toast.success('Download started (without metadata)')
+      } catch (e) {
+        toast.error('Download failed. Opening in new tab...')
+        window.open(audioUrl, '_blank')
+      }
     }
   }
 

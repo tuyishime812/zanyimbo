@@ -4,6 +4,7 @@ import { useToast } from '../context/ToastContext'
 import { Search, Filter, Grid, List, Download, Play } from 'lucide-react'
 import SongCard from '../components/SongCard'
 import AlbumCard from '../components/AlbumCard'
+import { downloadSongWithMetadata, simpleDownload } from '../lib/downloadUtils'
 import './MusicPage.css'
 
 const genres = ['All', 'Afrobeats', 'Hip Hop', 'R&B', 'Gospel', 'Traditional', 'Jazz', 'Amapiano', 'Afro-pop']
@@ -95,35 +96,29 @@ export default function MusicPage({ onPlaySong }) {
     }
 
     // Show confirmation toast
-    toast.info(`⏳ Downloading: ${song.artist} - ${song.title}...`)
+    toast.info(`⏳ Preparing download: ${song.artist} - ${song.title}...`)
 
     try {
+      // Download with metadata
+      await downloadSongWithMetadata(song)
+      
       // Track download
       await supabase.from('downloads').insert({
         song_id: song.id
       })
 
-      // Fetch the audio file as blob
-      const response = await fetch(song.audioUrl)
-      const blob = await response.blob()
-      
-      // Create download link
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `${song.artist} - ${song.title}.mp3`
-      document.body.appendChild(link)
-      link.click()
-      
-      // Cleanup
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
-      
-      // Show success toast
       toast.success(`✅ Download started: ${song.artist} - ${song.title}`)
     } catch (error) {
       console.error('Download error:', error)
-      toast.error('Failed to download song')
+      
+      // Fallback: simple download
+      try {
+        const filename = `${song.artist} - ${song.title}.mp3`
+        await simpleDownload(song.audioUrl, filename)
+        toast.success('Download started (without metadata)')
+      } catch (e) {
+        toast.error('Failed to download song')
+      }
     }
   }
 

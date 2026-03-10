@@ -6,6 +6,7 @@ import { Play, Download, Heart, Share2, ArrowLeft, Clock, TrendingUp } from 'luc
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useToast } from '../context/ToastContext'
+import { downloadSongWithMetadata, simpleDownload } from '../lib/downloadUtils'
 import './SongDetail.css'
 
 export default function SongDetail() {
@@ -63,34 +64,34 @@ export default function SongDetail() {
     }
 
     // Show confirmation toast
-    toast.info(`⏳ Downloading: ${song.artists?.name} - ${song.title}...`)
+    toast.info(`⏳ Preparing download: ${song.artists?.name} - ${song.title}...`)
 
     try {
+      // Download with metadata
+      await downloadSongWithMetadata({
+        title: song.title,
+        artist: song.artists?.name || 'Unknown',
+        audio_url: song.audio_url,
+        cover_url: song.cover_url,
+        album: song.albums?.title,
+        year: song.created_at ? new Date(song.created_at).getFullYear() : null
+      })
+      
       // Track download
       await supabase.from('downloads').insert({
         song_id: song.id
       })
 
-      // Fetch the audio file as blob
-      const response = await fetch(song.audio_url)
-      const blob = await response.blob()
-      
-      // Create download link
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `${song.artists?.name} - ${song.title}.mp3`
-      document.body.appendChild(link)
-      link.click()
-      
-      // Cleanup
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
-      
-      // Show success toast
       toast.success(`✅ Download started!`)
     } catch {
-      toast.error('Download failed')
+      // Fallback: simple download
+      try {
+        const filename = `${song.artists?.name} - ${song.title}.mp3`
+        await simpleDownload(song.audio_url, filename)
+        toast.success('Download started (without metadata)')
+      } catch (e) {
+        toast.error('Download failed')
+      }
     }
   }
 
