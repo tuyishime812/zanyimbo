@@ -1,4 +1,4 @@
-import { Music, Tv, Headphones, Calendar, Mic } from 'lucide-react'
+import { Music, Tv, Headphones, Mic } from 'lucide-react'
 import './PlatformFeatures.css'
 
 const features = [
@@ -25,14 +25,6 @@ const features = [
     icon: Headphones,
     status: 'coming_soon',
     link: '/beats'
-  },
-  {
-    id: 'events',
-    title: 'PAMODZI EVENTS',
-    description: 'Live concerts, festivals, virtual events',
-    icon: Calendar,
-    status: 'coming_soon',
-    link: '/events'
   },
   {
     id: 'podcasts',

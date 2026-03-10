@@ -17,7 +17,6 @@ import Signup from './pages/Signup'
 import SongDetail from './pages/SongDetail'
 import TVPage from './pages/TVPage'
 import BeatsPage from './pages/BeatsPage'
-import EventsPage from './pages/EventsPage'
 import PodcastsPage from './pages/PodcastsPage'
 import FAQ from './pages/FAQ'
 import Team from './pages/Team'
@@ -38,7 +37,7 @@ import './App.css'
 
 // Pages with player
 const pagesWithPlayer = [
-  '/', '/music', '/top-10', '/tv', '/beats', '/events', '/podcasts',
+  '/', '/music', '/top-10', '/tv', '/beats', '/podcasts',
   '/faq', '/team', '/contact', '/song',
   '/terms', '/privacy', '/legal', '/search',
   '/pricing', '/getting-started', '/early-access'
@@ -118,16 +117,6 @@ function AppContent() {
             <>
               <Header />
               <BeatsPage />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/events"
-          element={
-            <>
-              <Header />
-              <EventsPage />
               <Footer />
             </>
           }

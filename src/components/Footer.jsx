@@ -63,7 +63,6 @@ export default function Footer() {
               <Link to="/top-10">Top 10</Link>
               <Link to="/tv">TV & Movies</Link>
               <Link to="/beats">Beats</Link>
-              <Link to="/events">Events</Link>
               <Link to="/podcasts">Podcasts</Link>
             </div>
 
