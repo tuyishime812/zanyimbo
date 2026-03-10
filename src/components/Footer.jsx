@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
-import logoImage from '../assets/Pamodzi.png'
 import './Footer.css'
 
 export default function Footer() {
@@ -12,7 +11,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="footer-brand">
             <Link to="/" className="footer-logo">
-              <img src={logoImage} alt="Pamodzi" className="logo-icon" />
+              <img src="/Pamodzi.png" alt="Pamodzi" className="logo-icon" />
               <div className="logo-text">
                 <span className="logo-name">PAMODZI</span>
                 <span className="logo-tagline">Africa's Authentic Entertainment</span>
