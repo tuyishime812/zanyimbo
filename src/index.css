@@ -1,30 +1,30 @@
 :root {
-  /* Primary Colors - Deep Purple/Violet Theme */
-  --primary-dark: #1a0f2e;
-  --primary-purple: #2d1f4e;
-  --primary-violet: #4a3b6e;
-  --accent-orange: #ff6b35;
-  --accent-coral: #ff8c61;
-  
+  /* Primary Colors - Red & Gold Theme */
+  --primary-dark: #1a0a0a;
+  --primary-purple: #2d1010;
+  --primary-violet: #4a1a1a;
+  --accent-orange: #d4af37;
+  --accent-coral: #f4c430;
+
   /* Background Colors */
-  --bg-dark: #0d0616;
-  --bg-card: #1a0f2e;
-  --bg-card-hover: #2d1f4e;
-  
+  --bg-dark: #0f0505;
+  --bg-card: #1a0a0a;
+  --bg-card-hover: #2d1010;
+
   /* Text Colors */
   --text-primary: #ffffff;
-  --text-secondary: #b8a8c8;
-  --text-muted: #7a6a8a;
-  
+  --text-secondary: #d4b8a8;
+  --text-muted: #8a6a6a;
+
   /* Status Colors */
   --status-live: #22c55e;
   --status-coming-soon: #6b7280;
   --status-exclusive: #ef4444;
-  
+
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #4a3b6e 0%, #2d1f4e 100%);
-  --gradient-hero: linear-gradient(180deg, rgba(13,6,22,0.8) 0%, rgba(26,15,46,1) 100%);
-  --gradient-accent: linear-gradient(135deg, #ff6b35 0%, #ff8c61 100%);
+  --gradient-primary: linear-gradient(135deg, #4a1a1a 0%, #2d1010 100%);
+  --gradient-hero: linear-gradient(180deg, rgba(15,5,5,0.8) 0%, rgba(26,10,10,1) 100%);
+  --gradient-accent: linear-gradient(135deg, #d4af37 0%, #f4c430 100%);
   
   /* Spacing */
   --header-height: 70px;
