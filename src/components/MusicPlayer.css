@@ -108,6 +108,16 @@
   padding: 8px;
   border-radius: 50%;
   transition: all var(--transition-fast);
+  /* Mobile touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
 }
 
 .control-btn:hover {
@@ -124,12 +134,19 @@
   color: white;
   width: 44px;
   height: 44px;
+  /* Mobile optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .play-btn:hover {
   background: var(--accent-coral);
   color: white;
   transform: scale(1.05);
+}
+
+.play-btn:active {
+  transform: scale(0.95);
 }
 
 /* Progress Bar */

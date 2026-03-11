@@ -6,7 +6,7 @@ import { Play, Download, Heart, Share2, ArrowLeft, Clock, TrendingUp } from 'luc
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useToast } from '../context/ToastContext'
-import { downloadSongWithMetadata, simpleDownload } from '../lib/downloadUtils'
+import { downloadSongWithMetadata, simpleDownload, mobileDownload } from '../lib/downloadUtils'
 import './SongDetail.css'
 
 export default function SongDetail() {
@@ -63,6 +63,24 @@ export default function SongDetail() {
       return
     }
 
+    // Check if mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    
+    if (isMobile) {
+      // Use mobile-friendly download
+      toast.info(`⏳ Opening: ${song.artists?.name} - ${song.title}...`)
+      mobileDownload(song.audio_url, `${song.artists?.name} - ${song.title}.mp3`)
+      toast.success(`✅ Download opened in new tab!`)
+      
+      // Track download
+      try {
+        await supabase.from('downloads').insert({ song_id: song.id })
+      } catch (e) {
+        console.warn('Failed to track download:', e)
+      }
+      return
+    }
+
     // Show confirmation toast
     toast.info(`⏳ Preparing download: ${song.artists?.name} - ${song.title}...`)
 
@@ -76,7 +94,7 @@ export default function SongDetail() {
         album: song.albums?.title,
         year: song.created_at ? new Date(song.created_at).getFullYear() : null
       })
-      
+
       // Track download
       await supabase.from('downloads').insert({
         song_id: song.id

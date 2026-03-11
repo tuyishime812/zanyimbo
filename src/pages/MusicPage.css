@@ -239,6 +239,13 @@
   align-items: center;
   justify-content: center;
   transition: all var(--transition-fast);
+  /* Mobile touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-icon:active {
+  transform: scale(0.95);
 }
 
 .btn-icon:hover {

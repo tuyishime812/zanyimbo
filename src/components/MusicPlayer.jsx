@@ -82,27 +82,54 @@ export default function MusicPlayer() {
 
   useEffect(() => {
     if (audioRef.current && currentSong) {
+      // Set up audio element with mobile-friendly attributes
       audioRef.current.src = currentSong.audio_url || currentSong.audioUrl || ''
+      audioRef.current.preload = 'metadata'
+      audioRef.current.playsInline = true
+      audioRef.current.setAttribute('playsinline', 'true')
+      
       if (isPlaying) {
-        audioRef.current.play()
-          .then(() => {
-            startVisualizer()
-          })
-          .catch((err) => console.error('Playback error:', err))
+        // Mobile browsers require user interaction for autoplay
+        const playPromise = audioRef.current.play()
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              startVisualizer()
+            })
+            .catch((err) => {
+              console.error('Playback error:', err)
+              // Auto-play was prevented, show message to user
+              if (err.name === 'NotAllowedError') {
+                toast.info('Tap play button to start music')
+              }
+            })
+        }
       }
     }
-  }, [currentSong, isPlaying, startVisualizer])
+  }, [currentSong, isPlaying, startVisualizer, toast])
 
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.play().catch(() => {})
+        const playPromise = audioRef.current.play()
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              startVisualizer()
+            })
+            .catch((err) => {
+              console.error('Playback error:', err)
+              if (err.name === 'NotAllowedError') {
+                toast.info('Tap play button to start music')
+              }
+            })
+        }
       } else {
         audioRef.current.pause()
         stopVisualizer()
       }
     }
-  }, [isPlaying, startVisualizer, stopVisualizer])
+  }, [isPlaying, startVisualizer, stopVisualizer, toast])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -260,12 +287,12 @@ export default function MusicPlayer() {
 
     try {
       toast.info(`⏳ Preparing download: ${currentSong.artist} - ${currentSong.title}...`)
-      
+
       // Try to download with metadata first
       await downloadSongWithMetadata(currentSong)
-      
+
       toast.success(`✅ Download started: ${currentSong.artist} - ${currentSong.title}`)
-      
+
       // Track download
       try {
         const { supabase } = await import('../lib/supabase')
@@ -276,7 +303,7 @@ export default function MusicPlayer() {
     } catch (error) {
       console.error('Download error:', error)
       toast.error('Download failed. Trying alternative method...')
-      
+
       // Fallback: simple download
       try {
         const filename = `${currentSong.artist} - ${currentSong.title}.mp3`
@@ -288,6 +315,14 @@ export default function MusicPlayer() {
       }
     }
   }
+
+  // Handle touch events for better mobile support
+  const handleTouchStart = useCallback((e) => {
+    // Prevent default to avoid double-tap zoom issues
+    if (e.target.tagName !== 'A') {
+      e.preventDefault()
+    }
+  }, [])
 
   const formatTime = (time) => {
     if (!time || isNaN(time)) return '0:00'

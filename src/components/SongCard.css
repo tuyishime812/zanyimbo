@@ -53,6 +53,9 @@
   border: none;
   cursor: pointer;
   color: white;
+  /* Mobile touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .song-card:hover .play-overlay {
@@ -61,6 +64,11 @@
 
 .play-overlay:hover {
   background: var(--accent-orange);
+}
+
+.play-overlay:active {
+  background: var(--accent-coral);
+  transform: scale(0.95);
 }
 
 .song-info {

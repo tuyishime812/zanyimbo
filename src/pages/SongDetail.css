@@ -127,11 +127,20 @@
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
+  /* Mobile touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .btn-play-large:hover {
   background: #ff8c61;
   transform: scale(1.05);
+}
+
+.btn-play-large:active {
+  transform: scale(0.95);
 }
 
 .btn-download-large {
@@ -147,11 +156,20 @@
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
+  /* Mobile touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .btn-download-large:hover {
   background: var(--primary-purple);
   transform: scale(1.05);
+}
+
+.btn-download-large:active {
+  transform: scale(0.95);
 }
 
 .btn-like-large {

@@ -4,7 +4,7 @@ import { useToast } from '../context/ToastContext'
 import { Search, Filter, Grid, List, Download, Play } from 'lucide-react'
 import SongCard from '../components/SongCard'
 import AlbumCard from '../components/AlbumCard'
-import { downloadSongWithMetadata, simpleDownload } from '../lib/downloadUtils'
+import { downloadSongWithMetadata, simpleDownload, mobileDownload } from '../lib/downloadUtils'
 import './MusicPage.css'
 
 const genres = ['All', 'Afrobeats', 'Hip Hop', 'R&B', 'Gospel', 'Traditional', 'Jazz', 'Amapiano', 'Afro-pop']
@@ -95,13 +95,31 @@ export default function MusicPage({ onPlaySong }) {
       return
     }
 
+    // Check if mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    
+    if (isMobile) {
+      // Use mobile-friendly download
+      toast.info(`⏳ Opening: ${song.artist} - ${song.title}...`)
+      mobileDownload(song.audioUrl, `${song.artist} - ${song.title}.mp3`)
+      toast.success(`✅ Download opened in new tab!`)
+      
+      // Track download
+      try {
+        await supabase.from('downloads').insert({ song_id: song.id })
+      } catch (e) {
+        console.warn('Failed to track download:', e)
+      }
+      return
+    }
+
     // Show confirmation toast
     toast.info(`⏳ Preparing download: ${song.artist} - ${song.title}...`)
 
     try {
       // Download with metadata
       await downloadSongWithMetadata(song)
-      
+
       // Track download
       await supabase.from('downloads').insert({
         song_id: song.id
@@ -110,7 +128,7 @@ export default function MusicPage({ onPlaySong }) {
       toast.success(`✅ Download started: ${song.artist} - ${song.title}`)
     } catch (error) {
       console.error('Download error:', error)
-      
+
       // Fallback: simple download
       try {
         const filename = `${song.artist} - ${song.title}.mp3`
