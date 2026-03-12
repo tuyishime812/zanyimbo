@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import './Ad.css';
 
 const Ad = ({ 
-  slot, 
+  slot = '7940328751', 
   format = 'auto', 
   fullWidthResponsive = true,
   className = '' 
