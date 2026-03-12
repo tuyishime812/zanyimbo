@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
+import Ad from './Ad'
 import './Footer.css'
 
 export default function Footer() {
@@ -87,6 +88,11 @@ export default function Footer() {
               <Link to="/legal">Legal Notice</Link>
             </div>
           </div>
+        </div>
+
+        {/* Ad Before Bottom Bar */}
+        <div className="footer-ad">
+          <Ad />
         </div>
 
         {/* Bottom Bar */}

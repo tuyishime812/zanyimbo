@@ -4,6 +4,7 @@ import { useToast } from '../context/ToastContext'
 import { Search, Filter, Grid, List, Download, Play } from 'lucide-react'
 import SongCard from '../components/SongCard'
 import AlbumCard from '../components/AlbumCard'
+import Ad from '../components/Ad'
 import { downloadSongWithMetadata, simpleDownload, mobileDownload } from '../lib/downloadUtils'
 import './MusicPage.css'
 
@@ -209,6 +210,9 @@ export default function MusicPage({ onPlaySong }) {
           ))}
         </div>
       </div>
+
+      {/* Ad After Genre Filter */}
+      <Ad />
 
       <div className="music-content">
         {loading ? (

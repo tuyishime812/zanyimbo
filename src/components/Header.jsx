@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Menu, Search, LayoutDashboard } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import Ad from './Ad'
 import './Header.css'
 
 export default function Header() {
@@ -113,6 +114,11 @@ export default function Header() {
             <Menu size={24} />
           </button>
         </div>
+      </div>
+
+      {/* Ad Banner */}
+      <div className="header-ad">
+        <Ad />
       </div>
 
       {/* Mobile Menu */}

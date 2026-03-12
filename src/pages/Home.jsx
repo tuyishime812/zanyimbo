@@ -4,6 +4,7 @@ import Hero from '../components/Hero'
 import PlatformFeatures from '../components/PlatformFeatures'
 import AlbumCard from '../components/AlbumCard'
 import SongCard from '../components/SongCard'
+import Ad from '../components/Ad'
 import './Home.css'
 
 export default function Home({ onPlaySong }) {
@@ -110,6 +111,9 @@ export default function Home({ onPlaySong }) {
     <div className="home">
       <Hero />
       <PlatformFeatures />
+
+      {/* Ad After Features */}
+      <Ad />
 
       {/* Albums Section - Direct Grid */}
       {albums.length > 0 && (
