@@ -251,12 +251,14 @@ export default function MusicPlayer() {
   const handleShare = async () => {
     if (!currentSong) return
 
+    const shareUrl = `${window.location.origin}/song/${currentSong.id}`
     const shareData = {
       title: currentSong.title,
       text: `Check out "${currentSong.title}" by ${currentSong.artist} on DGT Sounds!`,
-      url: window.location.href
+      url: shareUrl
     }
 
+    // Check if Web Share API is supported
     if (navigator.share) {
       try {
         await navigator.share(shareData)
@@ -267,12 +269,19 @@ export default function MusicPlayer() {
         }
       }
     } else {
-      // Fallback: copy to clipboard
-      try {
-        await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`)
-        toast.success('Link copied to clipboard!')
-      } catch {
-        toast.error('Failed to share')
+      // Fallback: Show share options
+      const shareOptions = confirm(
+        `Share "${currentSong.title}" by ${currentSong.artist}?\n\nClick OK for WhatsApp\nClick Cancel for Facebook`
+      )
+      
+      if (shareOptions) {
+        // WhatsApp
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`
+        window.open(whatsappUrl, '_blank')
+      } else {
+        // Facebook
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareData.url)}`
+        window.open(facebookUrl, '_blank')
       }
     }
   }
@@ -288,8 +297,15 @@ export default function MusicPlayer() {
     try {
       toast.info(`⏳ Preparing download: ${currentSong.artist} - ${currentSong.title}...`)
 
-      // Try to download with metadata first
-      await downloadSongWithMetadata(currentSong)
+      // Create download link and trigger click (same page download)
+      const link = document.createElement('a')
+      link.href = audioUrl
+      link.download = `${currentSong.artist} - ${currentSong.title}.mp3`
+      link.target = '_blank'
+      link.setAttribute('download', `${currentSong.artist} - ${currentSong.title}.mp3`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
 
       toast.success(`✅ Download started: ${currentSong.artist} - ${currentSong.title}`)
 

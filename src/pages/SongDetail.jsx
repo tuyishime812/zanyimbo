@@ -6,7 +6,7 @@ import { Play, Download, Heart, Share2, ArrowLeft, Clock, TrendingUp } from 'luc
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useToast } from '../context/ToastContext'
-import { downloadSongWithMetadata, simpleDownload, mobileDownload } from '../lib/downloadUtils'
+import { downloadSongWithMetadata, simpleDownload } from '../lib/downloadUtils'
 import './SongDetail.css'
 
 export default function SongDetail() {
@@ -57,59 +57,72 @@ export default function SongDetail() {
     toast.success(`Playing: ${song.title}`)
   }
 
+  const handleShare = async () => {
+    if (!song) return
+
+    const shareUrl = `${window.location.origin}/song/${song.id}`
+    const shareData = {
+      title: song.title,
+      text: `Check out "${song.title}" by ${song.artists?.name} on DGT Sounds!`,
+      url: shareUrl
+    }
+
+    // Check if Web Share API is supported
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+        toast.success('Shared successfully!')
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error('Share error:', err)
+        }
+      }
+    } else {
+      // Fallback: Show share options
+      const shareOptions = confirm(
+        `Share "${song.title}" by ${song.artists?.name}?\n\nClick OK for WhatsApp\nClick Cancel for Facebook`
+      )
+      
+      if (shareOptions) {
+        // WhatsApp
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`
+        window.open(whatsappUrl, '_blank')
+      } else {
+        // Facebook
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareData.url)}`
+        window.open(facebookUrl, '_blank')
+      }
+    }
+  }
+
   const handleDownload = async () => {
     if (!song || !song.is_downloadable) {
       toast.error('Download not available')
       return
     }
 
-    // Check if mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    
-    if (isMobile) {
-      // Use mobile-friendly download
-      toast.info(`⏳ Opening: ${song.artists?.name} - ${song.title}...`)
-      mobileDownload(song.audio_url, `${song.artists?.name} - ${song.title}.mp3`)
-      toast.success(`✅ Download opened in new tab!`)
-      
-      // Track download
-      try {
-        await supabase.from('downloads').insert({ song_id: song.id })
-      } catch (e) {
-        console.warn('Failed to track download:', e)
-      }
-      return
-    }
-
-    // Show confirmation toast
     toast.info(`⏳ Preparing download: ${song.artists?.name} - ${song.title}...`)
 
     try {
-      // Download with metadata
-      await downloadSongWithMetadata({
-        title: song.title,
-        artist: song.artists?.name || 'Unknown',
-        audio_url: song.audio_url,
-        cover_url: song.cover_url,
-        album: song.albums?.title,
-        year: song.created_at ? new Date(song.created_at).getFullYear() : null
-      })
+      // Create download link and trigger click (same page download)
+      const link = document.createElement('a')
+      link.href = song.audio_url
+      link.download = `${song.artists?.name} - ${song.title}.mp3`
+      link.target = '_blank'
+      link.setAttribute('download', `${song.artists?.name} - ${song.title}.mp3`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      toast.success(`✅ Download started!`)
 
       // Track download
       await supabase.from('downloads').insert({
         song_id: song.id
       })
-
-      toast.success(`✅ Download started!`)
-    } catch {
-      // Fallback: simple download
-      try {
-        const filename = `${song.artists?.name} - ${song.title}.mp3`
-        await simpleDownload(song.audio_url, filename)
-        toast.success('Download started (without metadata)')
-      } catch (e) {
-        toast.error('Download failed')
-      }
+    } catch (e) {
+      console.error('Download error:', e)
+      toast.error('Download failed')
     }
   }
 
@@ -208,16 +221,20 @@ export default function SongDetail() {
                 <Play size={24} fill="white" />
                 Play Now
               </button>
-              
+
               {song.is_downloadable && (
                 <button className="btn-download-large" onClick={handleDownload}>
                   <Download size={24} />
                   Download
                 </button>
               )}
-              
+
               <button className="btn-like-large" onClick={handleLike}>
                 <Heart size={24} fill={isLiked(song.id) ? '#ff6b35' : 'none'} />
+              </button>
+
+              <button className="btn-like-large" onClick={handleShare}>
+                <Share2 size={24} />
               </button>
             </div>
           </div>
