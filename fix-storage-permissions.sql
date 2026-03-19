@@ -22,15 +22,24 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================
 -- 3. DROP EXISTING POLICIES (to avoid conflicts)
 -- ============================================
-DROP POLICY IF EXISTS "Allow public read access" ON storage.objects FOR SELECT;
-DROP POLICY IF EXISTS "Allow authenticated uploads" ON storage.objects FOR INSERT;
-DROP POLICY IF EXISTS "Allow authenticated update" ON storage.objects FOR UPDATE;
-DROP POLICY IF EXISTS "Allow authenticated delete" ON storage.objects FOR DELETE;
+DO $$ 
+BEGIN
+  -- Drop general policies
+  DROP POLICY IF EXISTS "Allow public read access" ON storage.objects;
+  DROP POLICY IF EXISTS "Allow authenticated uploads" ON storage.objects;
+  DROP POLICY IF EXISTS "Allow authenticated update" ON storage.objects;
+  DROP POLICY IF EXISTS "Allow authenticated delete" ON storage.objects;
 
-DROP POLICY IF EXISTS "Music public read" ON storage.objects;
-DROP POLICY IF EXISTS "Music authenticated upload" ON storage.objects;
-DROP POLICY IF EXISTS "Covers public read" ON storage.objects;
-DROP POLICY IF EXISTS "Covers authenticated upload" ON storage.objects;
+  -- Drop bucket-specific policies
+  DROP POLICY IF EXISTS "Music public read" ON storage.objects;
+  DROP POLICY IF EXISTS "Music authenticated upload" ON storage.objects;
+  DROP POLICY IF EXISTS "Music authenticated update" ON storage.objects;
+  DROP POLICY IF EXISTS "Music authenticated delete" ON storage.objects;
+  DROP POLICY IF EXISTS "Covers public read" ON storage.objects;
+  DROP POLICY IF EXISTS "Covers authenticated upload" ON storage.objects;
+  DROP POLICY IF EXISTS "Covers authenticated update" ON storage.objects;
+  DROP POLICY IF EXISTS "Covers authenticated delete" ON storage.objects;
+END $$;
 
 -- ============================================
 -- 4. CREATE PUBLIC READ POLICY FOR ALL BUCKETS
