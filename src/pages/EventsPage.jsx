@@ -15,7 +15,7 @@ export default function EventsPage() {
               <Calendar size={16} />
               Coming Soon
             </div>
-            <h1>PAMODZI EVENTS</h1>
+            <h1>DGT SOUNDS EVENTS</h1>
             <p>Live concerts, festivals, and virtual events from across Africa.</p>
             <div className="cta-buttons">
               <Link to="/music" className="btn btn-primary">

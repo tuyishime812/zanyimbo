@@ -12,9 +12,9 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="footer-brand">
             <Link to="/" className="footer-logo">
-              <img src="/Pamodzi.png" alt="Pamodzi" className="logo-icon" />
+              <img src="/dowa_logo.png" alt="DGT Sounds" className="logo-icon" />
               <div className="logo-text">
-                <span className="logo-name">PAMODZI</span>
+                <span className="logo-name">DGT SOUNDS</span>
                 <span className="logo-tagline">Africa's Authentic Entertainment</span>
               </div>
             </Link>
@@ -27,7 +27,7 @@ export default function Footer() {
             <div className="footer-contact">
               <div className="contact-item">
                 <Mail size={16} />
-                <span>support@pamodzi.com</span>
+                <span>support@dgt-sounds.com</span>
               </div>
               <div className="contact-item">
                 <Phone size={16} />
@@ -98,7 +98,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="footer-bottom">
           <p className="copyright">
-            © 2026 Pamodzi Multimedia. All rights reserved.
+            © 2026 DGT Sounds Multimedia. All rights reserved.
           </p>
           <div className="footer-legal">
             <Link to="/terms">Terms</Link>

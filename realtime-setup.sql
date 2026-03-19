@@ -1,4 +1,4 @@
--- Pamodzi Realtime Setup for Supabase
+-- DGT Sounds Realtime Setup for Supabase
 -- Run this in Supabase SQL Editor to enable realtime features
 
 -- ============================================
@@ -46,6 +46,6 @@ ORDER BY tablename;
 -- ============================================
 -- NOTES
 -- ============================================
--- Realtime is now enabled for all Pamodzi tables
+-- Realtime is now enabled for all DGT Sounds tables
 -- Changes to these tables will broadcast to connected clients
 -- Useful for: live play counts, new song notifications, admin updates

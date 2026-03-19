@@ -63,7 +63,7 @@
 }
 
 .play-overlay:hover {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
 }
 
 .play-overlay:active {

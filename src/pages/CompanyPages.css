@@ -86,7 +86,7 @@
 }
 
 .team-card p {
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
   font-size: 14px;
   padding: 0 16px 16px;
 }
@@ -158,14 +158,14 @@
 }
 
 .pricing-card.popular {
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
 }
 
 .popular-badge {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
@@ -186,7 +186,7 @@
 .price .amount {
   font-size: 48px;
   font-weight: 800;
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
 }
 
 .price .period {
@@ -239,7 +239,7 @@
 
 .faq-box {
   padding: 24px;
-  border-left: 4px solid var(--accent-orange);
+  border-left: 4px solid var(--accent-yellow);
 }
 
 .faq-box h3 {
@@ -337,7 +337,7 @@
 }
 
 .read-more {
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
   font-weight: 600;
   text-decoration: none;
   font-size: 14px;
@@ -376,7 +376,7 @@
   flex: 1;
   padding: 14px 20px;
   border-radius: var(--radius-md);
-  border: 2px solid var(--primary-violet);
+  border: 2px solid var(--primary-gray);
   background: var(--bg-dark);
   color: var(--text-primary);
   font-size: 14px;
@@ -384,7 +384,7 @@
 
 .newsletter-form input:focus {
   outline: none;
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
 }
 
 /* Contact Section */
@@ -456,7 +456,7 @@
   width: 100%;
   padding: 12px 16px;
   border-radius: var(--radius-md);
-  border: 2px solid var(--primary-violet);
+  border: 2px solid var(--primary-gray);
   background: var(--bg-dark);
   color: var(--text-primary);
   font-size: 14px;
@@ -466,7 +466,7 @@
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
 }
 
 .success-message {

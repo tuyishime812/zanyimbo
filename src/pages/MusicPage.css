@@ -91,7 +91,7 @@
 }
 
 .toggle-btn.active {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   color: white;
 }
 
@@ -129,13 +129,13 @@
 }
 
 .genre-btn:hover {
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
   color: var(--text-primary);
 }
 
 .genre-btn.active {
-  background: var(--accent-orange);
-  border-color: var(--accent-orange);
+  background: var(--accent-yellow);
+  border-color: var(--accent-yellow);
   color: white;
 }
 
@@ -249,13 +249,13 @@
 }
 
 .btn-icon:hover {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   color: white;
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
 }
 
 .btn-play:hover {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
 }
 
 .btn-download:hover {

@@ -1,6 +1,6 @@
 .top10-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a0f2e 0%, #2d1f4e 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-gray) 100%);
 }
 
 .loading-container {
@@ -15,7 +15,7 @@
 
 /* Hero Section */
 .top10-hero {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c61 100%);
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-gold) 100%);
   padding: 3rem 2rem;
   text-align: center;
   margin-bottom: 2rem;
@@ -77,12 +77,12 @@
 .top10-card:hover {
   background: rgba(255,255,255,0.1);
   transform: translateX(8px);
-  border-color: rgba(255, 107, 53, 0.3);
+  border-color: rgba(253, 185, 19, 0.3);
 }
 
 .top10-card.playing {
-  border-color: #ff6b35;
-  background: rgba(255, 107, 53, 0.1);
+  border-color: var(--accent-yellow);
+  background: rgba(253, 185, 19, 0.1);
 }
 
 /* Rank Styles */
@@ -159,7 +159,7 @@
 }
 
 .play-overlay:hover {
-  background: rgba(255, 107, 53, 0.8);
+  background: rgba(253, 185, 19, 0.8);
 }
 
 /* Song Info */
@@ -195,7 +195,7 @@
 }
 
 .stat.popularity {
-  color: #ff6b35;
+  color: var(--accent-yellow);
   font-weight: 600;
 }
 
@@ -206,8 +206,8 @@
 }
 
 .btn-play {
-  background: linear-gradient(135deg, #ff6b35, #ff8c61);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-gold));
+  color: var(--primary-black);
   border: none;
   padding: 0.75rem 2rem;
   border-radius: 25px;
@@ -219,7 +219,7 @@
 
 .btn-play:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 4px 12px rgba(253, 185, 19, 0.4);
 }
 
 /* Info Sidebar */
@@ -267,10 +267,10 @@
 .update-note {
   margin-top: 1rem;
   padding: 0.75rem;
-  background: rgba(255, 107, 53, 0.2);
+  background: rgba(253, 185, 19, 0.2);
   border-radius: 8px;
   font-weight: 600;
-  color: #ff6b35;
+  color: var(--accent-yellow);
 }
 
 .shortcuts-list {
@@ -295,17 +295,17 @@ kbd {
 
 /* Special Rank Styles */
 .rank-1 {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.1));
-  border: 2px solid rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, rgba(253, 185, 19, 0.1), rgba(255, 201, 60, 0.1));
+  border: 2px solid rgba(253, 185, 19, 0.3);
 }
 
 .rank-2 {
-  background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(255, 107, 53, 0.1));
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(253, 185, 19, 0.1));
   border: 2px solid rgba(192, 192, 192, 0.3);
 }
 
 .rank-3 {
-  background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(255, 107, 53, 0.1));
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(253, 185, 19, 0.1));
   border: 2px solid rgba(205, 127, 50, 0.3);
 }
 

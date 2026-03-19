@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: pamodzi
+    name: dgt-sounds
     env: node
     region: frankfurt
     plan: free

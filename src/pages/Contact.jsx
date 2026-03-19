@@ -46,7 +46,7 @@ export default function Contact() {
                 <Mail size={20} color="#ff6b35" />
                 <div>
                   <h3>Email</h3>
-                  <p>support@pamodzi.com</p>
+                  <p>support@dgt-sounds.com</p>
                 </div>
               </div>
               

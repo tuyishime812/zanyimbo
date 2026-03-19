@@ -1,4 +1,4 @@
-# Pamodzi - Professional Music Streaming Platform
+# DGT Sounds - Professional Music Streaming Platform
 
 A production-ready music streaming platform with admin panel, built with React and Supabase.
 
@@ -27,7 +27,7 @@ A production-ready music streaming platform with admin panel, built with React a
 
 ### 1. Install Dependencies
 ```bash
-cd pamodzi
+cd dgt-sounds
 npm install
 ```
 
@@ -122,7 +122,7 @@ Open http://localhost:5173
 ## Project Structure
 
 ```
-pamodzi/
+dgt-sounds/
 ├── src/
 │   ├── components/
 │   │   ├── admin/

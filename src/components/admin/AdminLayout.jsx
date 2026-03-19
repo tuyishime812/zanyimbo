@@ -55,7 +55,7 @@ export default function AdminLayout({ children }) {
         <div className="sidebar-header">
           <Link to="/" className="sidebar-logo">
             <Music size={28} />
-            {sidebarOpen && <span>PAMODZI</span>}
+            {sidebarOpen && <span>DGT SOUNDS</span>}
           </Link>
           <button 
             className="sidebar-toggle"

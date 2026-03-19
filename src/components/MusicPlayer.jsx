@@ -253,7 +253,7 @@ export default function MusicPlayer() {
 
     const shareData = {
       title: currentSong.title,
-      text: `Check out "${currentSong.title}" by ${currentSong.artist} on Pamodzi!`,
+      text: `Check out "${currentSong.title}" by ${currentSong.artist} on DGT Sounds!`,
       url: window.location.href
     }
 

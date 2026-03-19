@@ -93,7 +93,7 @@
 }
 
 .toast-close:hover {
-  background: var(--primary-violet);
+  background: var(--primary-gray);
   color: var(--text-primary);
 }
 

@@ -97,7 +97,7 @@
   right: 16px;
   font-size: 48px;
   font-weight: 800;
-  color: var(--primary-violet);
+  color: var(--primary-gray);
   opacity: 0.5;
 }
 
@@ -175,7 +175,7 @@
 .region-tag {
   display: inline-block;
   padding: 4px 12px;
-  background: var(--primary-violet);
+  background: var(--primary-gray);
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
@@ -248,7 +248,7 @@
   font-size: 28px;
   margin-bottom: 24px;
   padding-bottom: 12px;
-  border-bottom: 2px solid var(--primary-violet);
+  border-bottom: 2px solid var(--primary-gray);
 }
 
 .faq-list {
@@ -271,7 +271,7 @@
 .faq-item h3 {
   font-size: 18px;
   margin-bottom: 12px;
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
 }
 
 .faq-item p {
@@ -297,11 +297,11 @@
   padding: 24px;
   margin-bottom: 16px;
   border-radius: var(--radius-md);
-  border-left: 4px solid var(--accent-orange);
+  border-left: 4px solid var(--accent-yellow);
 }
 
 .benefits-list li strong {
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
   margin-right: 8px;
 }
 

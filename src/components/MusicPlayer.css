@@ -37,7 +37,7 @@
 }
 
 .music-icon {
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
   margin-bottom: 0.5rem;
 }
 
@@ -126,11 +126,11 @@
 }
 
 .control-btn.active {
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
 }
 
 .play-btn {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   color: white;
   width: 44px;
   height: 44px;
@@ -180,7 +180,7 @@
 
 .progress-fill {
   height: 100%;
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   border-radius: 2px;
   position: relative;
 }
@@ -230,7 +230,7 @@
 }
 
 .volume-slider::-webkit-slider-thumb:hover {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
 }
 
 /* Responsive */

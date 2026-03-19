@@ -161,11 +161,11 @@ export default function BeatsPage() {
 
         <div className="producer-cta">
           <h2>Are You a Producer?</h2>
-          <p>Join Pamodzi to sell your beats and earn revenue from your productions.</p>
+          <p>Join DGT Sounds to sell your beats and earn revenue from your productions.</p>
           <button 
             className="btn btn-primary btn-lg"
             onClick={() => {
-              const message = 'Hello! I want to register as a producer on Pamodzi to sell my beats. Please send me the registration details.'
+              const message = 'Hello! I want to register as a producer on DGT Sounds to sell my beats. Please send me the registration details.'
               const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
               window.open(whatsappUrl, '_blank')
             }}

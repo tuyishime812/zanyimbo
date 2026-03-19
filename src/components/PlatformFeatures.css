@@ -67,12 +67,12 @@
   margin: 0 auto 20px;
   background: rgba(255, 107, 53, 0.1);
   border-radius: 50%;
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
   transition: all var(--transition-normal);
 }
 
 .feature-card:hover .feature-icon {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   color: var(--text-primary);
   transform: scale(1.1);
 }

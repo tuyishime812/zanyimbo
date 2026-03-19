@@ -47,8 +47,8 @@
 }
 
 .carousel-nav:hover {
-  background: var(--accent-orange);
-  border-color: var(--accent-orange);
+  background: var(--accent-yellow);
+  border-color: var(--accent-yellow);
 }
 
 .carousel-wrapper:hover .carousel-nav {

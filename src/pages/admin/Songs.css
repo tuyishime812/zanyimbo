@@ -62,7 +62,7 @@
 }
 
 .featured-badge {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   color: white;
   font-size: 10px;
   padding: 2px 8px;
@@ -99,9 +99,9 @@
 }
 
 .btn-icon:hover {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   color: white;
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
 }
 
 .btn-icon.btn-danger:hover {
@@ -183,7 +183,7 @@
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
 }
 
 .form-row {
@@ -216,8 +216,8 @@
 }
 
 .file-label:hover {
-  border-color: var(--accent-orange);
-  color: var(--accent-orange);
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
 }
 
 .file-name {

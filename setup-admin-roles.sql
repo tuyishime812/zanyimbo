@@ -32,7 +32,7 @@ CREATE POLICY "Super admins can manage admin roles"
     EXISTS (
       SELECT 1 FROM admin_roles ar
       WHERE ar.user_id = auth.uid()
-      AND ar.email = 'admin@pamodzi.com'
+      AND ar.email = 'admin@dgt-sounds.com'
     )
   );
 

@@ -15,7 +15,7 @@ export default function TVPage() {
               <Tv size={16} />
               Coming Soon
             </div>
-            <h1>PAMODZI TV</h1>
+            <h1>DGT SOUNDS TV</h1>
             <p>Premium African stories, films, and series from across the continent.</p>
             <div className="cta-buttons">
               <Link to="/music" className="btn btn-primary">

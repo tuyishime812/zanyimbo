@@ -15,7 +15,7 @@ export default function PodcastsPage() {
               <Mic size={16} />
               Coming Soon
             </div>
-            <h1>PAMODZI PODCASTS</h1>
+            <h1>DGT SOUNDS PODCASTS</h1>
             <p>Voices from across the continent. Stories that matter.</p>
             <div className="cta-buttons">
               <Link to="/music" className="btn btn-primary">

@@ -1,4 +1,4 @@
-# 🎵 Pamodzi - Admin Setup Guide
+# 🎵 DGT Sounds - Admin Setup Guide
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ Navigate to **http://localhost:5173/admin**
 
 ### Option 1: Using Admin Emails (Automatic)
 The following emails automatically get admin access:
-- `admin@pamodzi.com`
+- `admin@dgt-sounds.com`
 - `mikemasanga@gmail.com`
 
 ### Option 2: Database Setup (Recommended for Production)

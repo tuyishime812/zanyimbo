@@ -97,7 +97,7 @@
 }
 
 .modal-form textarea:focus {
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
 }
 
 @media (max-width: 768px) {

@@ -20,27 +20,27 @@ export default function Legal() {
         <div className="legal-content">
           <div className="legal-section">
             <h2>Copyright Notice</h2>
-            <p>© 2026 Pamodzi Multimedia. All rights reserved. The content, design, graphics, and compilation of all content on this site are the exclusive property of Pamodzi Multimedia and are protected by copyright laws.</p>
+            <p>© 2026 DGT Sounds Multimedia. All rights reserved. The content, design, graphics, and compilation of all content on this site are the exclusive property of DGT Sounds Multimedia and are protected by copyright laws.</p>
           </div>
 
           <div className="legal-section">
             <h2>Trademark Notice</h2>
-            <p>Pamodzi, the Pamodzi logo, and all related names, logos, product and service names, designs, and slogans are trademarks of Pamodzi Multimedia. You must not use such marks without the prior written permission of Pamodzi.</p>
+            <p>DGT Sounds, the DGT Sounds logo, and all related names, logos, product and service names, designs, and slogans are trademarks of DGT Sounds Multimedia. You must not use such marks without the prior written permission of DGT Sounds.</p>
           </div>
 
           <div className="legal-section">
             <h2>Music Licensing</h2>
-            <p>All music available on Pamodzi is licensed from respective copyright holders. Unauthorized reproduction, distribution, or public performance of copyrighted music is prohibited.</p>
+            <p>All music available on DGT Sounds is licensed from respective copyright holders. Unauthorized reproduction, distribution, or public performance of copyrighted music is prohibited.</p>
           </div>
 
           <div className="legal-section">
             <h2>DMCA Compliance</h2>
-            <p>Pamodzi respects intellectual property rights. If you believe your work has been copied in a way that constitutes copyright infringement, please submit a DMCA notice to dmca@pamodzi.com.</p>
+            <p>DGT Sounds respects intellectual property rights. If you believe your work has been copied in a way that constitutes copyright infringement, please submit a DMCA notice to dmca@dgt-sounds.com.</p>
           </div>
 
           <div className="legal-section">
             <h2>Content Guidelines</h2>
-            <p>Artists and creators must own or have appropriate licenses for all content uploaded to Pamodzi. We reserve the right to remove any content that violates our guidelines.</p>
+            <p>Artists and creators must own or have appropriate licenses for all content uploaded to DGT Sounds. We reserve the right to remove any content that violates our guidelines.</p>
           </div>
 
           <div className="legal-section">
@@ -55,9 +55,9 @@ export default function Legal() {
 
           <div className="legal-section">
             <h2>Contact Legal Department</h2>
-            <p>For legal inquiries, please contact us at legal@pamodzi.com or write to us at:</p>
+            <p>For legal inquiries, please contact us at legal@dgt-sounds.com or write to us at:</p>
             <address>
-              Pamodzi Multimedia<br />
+              DGT Sounds Multimedia<br />
               Legal Department<br />
               Lilongwe, Malawi
             </address>

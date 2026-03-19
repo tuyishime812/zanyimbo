@@ -1,4 +1,4 @@
-# 🚀 Deploy Pamodzi on Render
+# 🚀 Deploy DGT Sounds on Render
 
 ## ✅ Quick Deploy Guide
 
@@ -14,7 +14,7 @@ This is the key to making it work!
 
 ### Option 1: One-Click Deploy (Recommended)
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tuyishime812/pamodzi)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tuyishime812/dgt-sounds)
 
 1. Click the button above
 2. Connect your GitHub account
@@ -31,12 +31,12 @@ This is the key to making it work!
 
 #### Step 2: Create Static Site (NOT Web Service!)
 1. Click **New +** → **Static Site**
-2. Connect your repository: **tuyishime812/pamodzi**
+2. Connect your repository: **tuyishime812/dgt-sounds**
 
 #### Step 3: Configure Settings
 
 ```
-Name: pamodzi
+Name: dgt-sounds
 Region: Choose closest to your users
 Branch: main
 Root Directory: (leave blank)
@@ -61,7 +61,7 @@ Click **Advanced** → **Add Environment Variable**:
 #### Step 5: Deploy
 - Click **Create Web Service**
 - Wait 5-10 minutes for build
-- Your app will be live at: `https://pamodzi.onrender.com`
+- Your app will be live at: `https://dgt-sounds.onrender.com`
 
 ---
 
@@ -108,8 +108,8 @@ The `render.yaml` file is already configured with:
 ## 🔗 Your Deployed App
 
 Once deployed, your app will be available at:
-- **Production URL**: `https://pamodzi.onrender.com`
-- **Admin Panel**: `https://pamodzi.onrender.com/login`
+- **Production URL**: `https://dgt-sounds.onrender.com`
+- **Admin Panel**: `https://dgt-sounds.onrender.com/login`
 
 ---
 
@@ -121,7 +121,7 @@ Once deployed, your app will be available at:
 
 2. **Custom Domain**:
    - Go to Render Dashboard → Settings → Custom Domain
-   - Add your domain (e.g., pamodzi.com)
+   - Add your domain (e.g., dgt-sounds.com)
 
 3. **Auto-Deploy**:
    - Every push to `main` branch auto-deploys

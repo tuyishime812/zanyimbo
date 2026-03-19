@@ -24,7 +24,7 @@ export default function Blog() {
     },
     {
       id: 3,
-      title: 'Behind the Scenes: How We Build Pamodzi',
+      title: 'Behind the Scenes: How We Build DGT Sounds',
       excerpt: 'A look into our technology stack and development process.',
       author: 'Tech Team',
       date: 'February 25, 2026',

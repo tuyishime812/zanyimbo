@@ -34,7 +34,7 @@
 }
 
 .badge-exclusive {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   color: white;
 }
 
@@ -58,12 +58,12 @@
 }
 
 .song-grid::-webkit-scrollbar-thumb {
-  background: var(--primary-violet);
+  background: var(--primary-gray);
   border-radius: 4px;
 }
 
 .song-grid::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
 }
 
 /* Song Card */

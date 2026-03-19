@@ -4,7 +4,7 @@ import './PlatformFeatures.css'
 const features = [
   {
     id: 'music',
-    title: 'PAMODZI MUSIC',
+    title: 'DGT SOUNDS MUSIC',
     description: "Stream hottest tracks",
     icon: Music,
     status: 'live',
@@ -12,7 +12,7 @@ const features = [
   },
   {
     id: 'tv',
-    title: 'PAMODZI TV',
+    title: 'DGT SOUNDS TV',
     description: 'Premium African stories, films, series',
     icon: Tv,
     status: 'coming_soon',

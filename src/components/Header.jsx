@@ -20,9 +20,9 @@ export default function Header() {
       <div className="header-container">
         {/* Logo */}
         <Link to="/" className="logo">
-          <img src="/Pamodzi.png" alt="Pamodzi" className="logo-icon" />
+          <img src="/dowa_logo.png" alt="DGT Sounds" className="logo-icon" />
           <div className="logo-text">
-            <span className="logo-name">PAMODZI</span>
+            <span className="logo-name">DGT SOUNDS</span>
             <span className="logo-tagline">Now Streaming</span>
           </div>
         </Link>

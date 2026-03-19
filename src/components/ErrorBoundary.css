@@ -39,7 +39,7 @@
 
 .error-details summary {
   cursor: pointer;
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
   font-weight: 600;
   margin-bottom: 12px;
 }

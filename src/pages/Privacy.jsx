@@ -65,7 +65,7 @@ export default function Privacy() {
 
           <div className="legal-section">
             <h2>10. Contact Us</h2>
-            <p>For questions about this Privacy Policy, please contact us at privacy@pamodzi.com.</p>
+            <p>For questions about this Privacy Policy, please contact us at privacy@dgt-sounds.com.</p>
           </div>
         </div>
       </main>

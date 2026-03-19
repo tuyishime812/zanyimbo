@@ -1,4 +1,4 @@
--- Pamodzi Storage Buckets Setup
+-- DGT Sounds Storage Buckets Setup
 -- Run this in Supabase SQL Editor to create storage buckets
 
 -- ============================================

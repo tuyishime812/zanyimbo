@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pamodzi-v1'
+const CACHE_NAME = 'dgt-sounds-v1'
 const OFFLINE_URL = '/offline.html'
 
 // Files to cache immediately

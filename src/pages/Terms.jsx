@@ -20,12 +20,12 @@ export default function Terms() {
         <div className="legal-content">
           <div className="legal-section">
             <h2>1. Acceptance of Terms</h2>
-            <p>By accessing and using Pamodzi, you accept and agree to be bound by the terms and provision of this agreement.</p>
+            <p>By accessing and using DGT Sounds, you accept and agree to be bound by the terms and provision of this agreement.</p>
           </div>
 
           <div className="legal-section">
             <h2>2. Use License</h2>
-            <p>Permission is granted to temporarily access the materials on Pamodzi for personal, non-commercial transitory viewing only.</p>
+            <p>Permission is granted to temporarily access the materials on DGT Sounds for personal, non-commercial transitory viewing only.</p>
           </div>
 
           <div className="legal-section">
@@ -35,7 +35,7 @@ export default function Terms() {
 
           <div className="legal-section">
             <h2>4. Intellectual Property</h2>
-            <p>All content on Pamodzi, including music, text, graphics, and logos, is the property of Pamodzi or its content suppliers and is protected by copyright laws.</p>
+            <p>All content on DGT Sounds, including music, text, graphics, and logos, is the property of DGT Sounds or its content suppliers and is protected by copyright laws.</p>
           </div>
 
           <div className="legal-section">
@@ -45,12 +45,12 @@ export default function Terms() {
 
           <div className="legal-section">
             <h2>6. Disclaimer</h2>
-            <p>The materials on Pamodzi are provided on an 'as is' basis. Pamodzi makes no warranties, expressed or implied.</p>
+            <p>The materials on DGT Sounds are provided on an 'as is' basis. DGT Sounds makes no warranties, expressed or implied.</p>
           </div>
 
           <div className="legal-section">
             <h2>7. Limitations</h2>
-            <p>In no event shall Pamodzi be liable for any damages arising out of the use or inability to use the materials on our platform.</p>
+            <p>In no event shall DGT Sounds be liable for any damages arising out of the use or inability to use the materials on our platform.</p>
           </div>
 
           <div className="legal-section">
@@ -60,7 +60,7 @@ export default function Terms() {
 
           <div className="legal-section">
             <h2>9. Contact Information</h2>
-            <p>For questions about these Terms of Service, please contact us at legal@pamodzi.com.</p>
+            <p>For questions about these Terms of Service, please contact us at legal@dgt-sounds.com.</p>
           </div>
         </div>
       </main>

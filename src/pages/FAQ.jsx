@@ -9,9 +9,9 @@ export default function FAQ() {
     {
       category: 'General',
       questions: [
-        { q: 'What is Pamodzi?', a: 'Pamodzi is Africa\'s premier music streaming platform, featuring exclusive tracks, albums, and content from artists across the continent.' },
-        { q: 'Is Pamodzi free to use?', a: 'Yes! You can create a free account and stream music. Some features like downloads may require purchase.' },
-        { q: 'Which countries can use Pamodzi?', a: 'Pamodzi is available worldwide, with a focus on African content and artists.' }
+        { q: 'What is DGT Sounds?', a: 'DGT Sounds is Africa\'s premier music streaming platform, featuring exclusive tracks, albums, and content from artists across the continent.' },
+        { q: 'Is DGT Sounds free to use?', a: 'Yes! You can create a free account and stream music. Some features like downloads may require purchase.' },
+        { q: 'Which countries can use DGT Sounds?', a: 'DGT Sounds is available worldwide, with a focus on African content and artists.' }
       ]
     },
     {
@@ -35,7 +35,7 @@ export default function FAQ() {
       questions: [
         { q: 'How do I reset my password?', a: 'Click "Forgot Password" on the login page and follow the instructions.' },
         { q: 'Can I change my email address?', a: 'Yes, go to your account settings and update your email address.' },
-        { q: 'How do I contact support?', a: 'Email us at support@pamodzi.com or use the contact form on our contact page.' }
+        { q: 'How do I contact support?', a: 'Email us at support@dgt-sounds.com or use the contact form on our contact page.' }
       ]
     }
   ]
@@ -48,7 +48,7 @@ export default function FAQ() {
           <div className="hero-content">
             <HelpCircle size={48} color="#ff6b35" />
             <h1>Frequently Asked Questions</h1>
-            <p>Find answers to common questions about Pamodzi.</p>
+            <p>Find answers to common questions about DGT Sounds.</p>
           </div>
         </div>
 

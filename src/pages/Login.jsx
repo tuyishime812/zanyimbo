@@ -43,7 +43,7 @@ export default function Login() {
       <div className="auth-container">
         <Link to="/" className="auth-logo">
           <Music2 size={48} />
-          <span>PAMODZI</span>
+          <span>DGT SOUNDS</span>
         </Link>
 
         <div className="auth-card">
@@ -68,7 +68,7 @@ export default function Login() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@pamodzi.com"
+                placeholder="admin@dgt-sounds.com"
                 required
                 disabled={loading}
                 autoComplete="email"

@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--primary-purple) 100%);
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--primary-gray) 100%);
   padding: 20px;
 }
 
@@ -23,7 +23,7 @@
 }
 
 .auth-logo svg {
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
 }
 
 .auth-logo span {
@@ -101,7 +101,7 @@
 }
 
 .form-group label svg {
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
 }
 
 .form-group input {
@@ -116,7 +116,7 @@
 }
 
 .form-group input:focus {
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
 }
 
 .form-group input:disabled {
@@ -139,7 +139,7 @@
 }
 
 .auth-footer a {
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
   text-decoration: none;
   font-weight: 600;
 }

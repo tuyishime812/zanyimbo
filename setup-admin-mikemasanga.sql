@@ -1,5 +1,5 @@
 -- ============================================
--- PAMODZI - Complete Setup for mikemasanga@gmail.com
+-- DGT SOUNDS - Complete Setup for mikemasanga@gmail.com
 -- Run this ENTIRE script in Supabase SQL Editor
 -- ============================================
 

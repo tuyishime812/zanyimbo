@@ -1,6 +1,6 @@
 .mobile-app {
   padding: 80px 0;
-  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--primary-purple) 100%);
+  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--primary-gray) 100%);
 }
 
 .mobile-app-container {
@@ -85,7 +85,7 @@
 
 .store-btn:hover {
   background: var(--bg-card-hover);
-  border-color: var(--accent-orange);
+  border-color: var(--accent-yellow);
   transform: translateY(-2px);
 }
 
@@ -155,7 +155,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--accent-orange);
+  color: var(--accent-yellow);
   text-align: center;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -177,7 +177,7 @@
 .preview-cover {
   width: 48px;
   height: 48px;
-  background: var(--accent-orange);
+  background: var(--accent-yellow);
   border-radius: var(--radius-sm);
 }
 

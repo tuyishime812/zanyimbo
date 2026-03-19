@@ -1,4 +1,4 @@
-# Pamodzi - Complete Pages & Features Documentation
+# DGT Sounds - Complete Pages & Features Documentation
 
 ## ✅ All Pages Created and Working
 
@@ -285,4 +285,4 @@ npm run preview
 ---
 
 **Built with ❤️ for African Music**
-© 2026 Pamodzi Multimedia
+© 2026 DGT Sounds Multimedia

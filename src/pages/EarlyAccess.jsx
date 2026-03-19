@@ -45,7 +45,7 @@ export default function EarlyAccess() {
             <h2>Coming Soon to Early Access</h2>
             <div className="features-grid">
               <div className="feature-card">
-                <h3>Pamodzi TV</h3>
+                <h3>DGT Sounds TV</h3>
                 <p>Stream premium African films, series, and shows.</p>
                 <span className="status-tag">Q2 2026</span>
               </div>

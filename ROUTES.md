@@ -1,8 +1,8 @@
-# 🎵 Pamodzi - Complete Routes & Pages Documentation
+# 🎵 DGT Sounds - Complete Routes & Pages Documentation
 
 ## ✅ All Routes Working
 
-Your Pamodzi platform has **27+ pages** with full routing configured and working.
+Your DGT Sounds platform has **27+ pages** with full routing configured and working.
 
 ---
 
@@ -55,7 +55,7 @@ Your Pamodzi platform has **27+ pages** with full routing configured and working
 1. **Navigate to `/admin`**
 2. **If not logged in:** You'll be redirected to `/login`
 3. **Login with admin credentials:**
-   - Default admin emails: `admin@pamodzi.com`, `mikemasanga@gmail.com`
+   - Default admin emails: `admin@dgt-sounds.com`, `mikemasanga@gmail.com`
 4. **After login:** You'll be redirected back to `/admin`
 
 ### Admin Verification
