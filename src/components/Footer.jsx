@@ -62,22 +62,10 @@ export default function Footer() {
               <h4>PLATFORM</h4>
               <Link to="/music">Music</Link>
               <Link to="/top-10">Top 10</Link>
-              <Link to="/tv">TV & Movies</Link>
-              <Link to="/beats">Beats</Link>
-              <Link to="/podcasts">Podcasts</Link>
-            </div>
-
-            <div className="footer-column">
-              <h4>RESOURCES</h4>
-              <Link to="/faq">FAQ</Link>
-              <Link to="/getting-started">Getting Started</Link>
-              <Link to="/early-access">Early Access</Link>
-              <Link to="/contact">Contact Support</Link>
             </div>
 
             <div className="footer-column">
               <h4>COMPANY</h4>
-              <Link to="/team">Our Team</Link>
               <Link to="/contact">Contact Us</Link>
             </div>
 

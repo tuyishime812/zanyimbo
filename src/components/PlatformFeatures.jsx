@@ -1,4 +1,4 @@
-import { Music, Tv, Headphones, Mic } from 'lucide-react'
+import { Music } from 'lucide-react'
 import './PlatformFeatures.css'
 
 const features = [
@@ -9,30 +9,6 @@ const features = [
     icon: Music,
     status: 'live',
     link: '/music'
-  },
-  {
-    id: 'tv',
-    title: 'DGT SOUNDS TV',
-    description: 'Premium African stories, films, series',
-    icon: Tv,
-    status: 'coming_soon',
-    link: '/tv'
-  },
-  {
-    id: 'beats',
-    title: 'BEATS MARKETPLACE',
-    description: 'Buy/sell production-ready beats',
-    icon: Headphones,
-    status: 'coming_soon',
-    link: '/beats'
-  },
-  {
-    id: 'podcasts',
-    title: 'PODCASTS',
-    description: 'Voices from across the continent',
-    icon: Mic,
-    status: 'coming_soon',
-    link: '/podcasts'
   }
 ]
 

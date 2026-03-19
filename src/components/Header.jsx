@@ -42,30 +42,6 @@ export default function Header() {
                 <span className="status-dot live"></span>
                 🔥 Top 10
               </Link>
-              <Link to="/tv" className="dropdown-item">
-                <span className="status-dot coming-soon"></span>
-                TV & Movies
-              </Link>
-              <Link to="/beats" className="dropdown-item">
-                <span className="status-dot coming-soon"></span>
-                Beats
-              </Link>
-              <Link to="/podcasts" className="dropdown-item">
-                <span className="status-dot coming-soon"></span>
-                Podcasts
-              </Link>
-            </div>
-          </div>
-
-          <div className="nav-item dropdown">
-            <button className="nav-link">
-              RESOURCES
-            </button>
-            <div className="dropdown-menu">
-              <Link to="/faq" className="dropdown-item">FAQ</Link>
-              <Link to="/getting-started" className="dropdown-item">Getting Started</Link>
-              <Link to="/early-access" className="dropdown-item">Early Access</Link>
-              <Link to="/contact" className="dropdown-item">Contact Support</Link>
             </div>
           </div>
 
@@ -74,7 +50,6 @@ export default function Header() {
               COMPANY
             </button>
             <div className="dropdown-menu">
-              <Link to="/team" className="dropdown-item">Our Team</Link>
               <Link to="/contact" className="dropdown-item">Contact Us</Link>
             </div>
           </div>
@@ -129,20 +104,9 @@ export default function Header() {
               <h4>PLATFORM</h4>
               <Link to="/music" onClick={() => setMobileMenuOpen(false)}>Music</Link>
               <Link to="/top-10" onClick={() => setMobileMenuOpen(false)}>🔥 Top 10</Link>
-              <Link to="/tv" onClick={() => setMobileMenuOpen(false)}>TV & Movies</Link>
-              <Link to="/beats" onClick={() => setMobileMenuOpen(false)}>Beats</Link>
-              <Link to="/podcasts" onClick={() => setMobileMenuOpen(false)}>Podcasts</Link>
-            </div>
-            <div className="mobile-nav-section">
-              <h4>RESOURCES</h4>
-              <Link to="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</Link>
-              <Link to="/getting-started" onClick={() => setMobileMenuOpen(false)}>Getting Started</Link>
-              <Link to="/early-access" onClick={() => setMobileMenuOpen(false)}>Early Access</Link>
-              <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Support</Link>
             </div>
             <div className="mobile-nav-section">
               <h4>COMPANY</h4>
-              <Link to="/team" onClick={() => setMobileMenuOpen(false)}>Our Team</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</Link>
             </div>
             <div className="mobile-nav-section mobile-auth">

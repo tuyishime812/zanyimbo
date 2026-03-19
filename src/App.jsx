@@ -15,18 +15,10 @@ import SearchPage from './pages/SearchPage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import SongDetail from './pages/SongDetail'
-import TVPage from './pages/TVPage'
-import BeatsPage from './pages/BeatsPage'
-import PodcastsPage from './pages/PodcastsPage'
-import FAQ from './pages/FAQ'
-import Team from './pages/Team'
 import Contact from './pages/Contact'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
 import Legal from './pages/Legal'
-import Pricing from './pages/Pricing'
-import GettingStarted from './pages/GettingStarted'
-import EarlyAccess from './pages/EarlyAccess'
 import Dashboard from './pages/admin/Dashboard'
 import AdminSongs from './pages/admin/Songs'
 import AdminAlbums from './pages/admin/Albums'
@@ -37,10 +29,8 @@ import './App.css'
 
 // Pages with player
 const pagesWithPlayer = [
-  '/', '/music', '/top-10', '/tv', '/beats', '/podcasts',
-  '/faq', '/team', '/contact', '/song',
-  '/terms', '/privacy', '/legal', '/search',
-  '/pricing', '/getting-started', '/early-access'
+  '/', '/music', '/top-10', '/contact',
+  '/terms', '/privacy', '/legal', '/search'
 ]
 
 function AppContent() {
@@ -101,96 +91,14 @@ function AppContent() {
         />
 
         {/* Platform Routes */}
-        <Route
-          path="/tv"
-          element={
-            <>
-              <Header />
-              <TVPage />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/beats"
-          element={
-            <>
-              <Header />
-              <BeatsPage />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/podcasts"
-          element={
-            <>
-              <Header />
-              <PodcastsPage />
-              <Footer />
-            </>
-          }
-        />
-
-        {/* Resource Routes */}
-        <Route
-          path="/faq"
-          element={
-            <>
-              <Header />
-              <FAQ />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/getting-started"
-          element={
-            <>
-              <Header />
-              <GettingStarted />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/early-access"
-          element={
-            <>
-              <Header />
-              <EarlyAccess />
-              <Footer />
-            </>
-          }
-        />
 
         {/* Company Routes */}
-        <Route
-          path="/team"
-          element={
-            <>
-              <Header />
-              <Team />
-              <Footer />
-            </>
-          }
-        />
         <Route
           path="/contact"
           element={
             <>
               <Header />
               <Contact />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/pricing"
-          element={
-            <>
-              <Header />
-              <Pricing />
               <Footer />
             </>
           }
