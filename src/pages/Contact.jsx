@@ -46,15 +46,23 @@ export default function Contact() {
                 <Mail size={20} color="#ff6b35" />
                 <div>
                   <h3>Email</h3>
-                  <p>support@dgt-sounds.com</p>
+                  <p>jeterothako276@gmail.com</p>
                 </div>
               </div>
-              
+
               <div className="contact-item">
                 <Phone size={20} color="#ff6b35" />
                 <div>
                   <h3>Phone</h3>
-                  <p>+265 990 342 825</p>
+                  <p>+265 991 368 564</p>
+                </div>
+              </div>
+
+              <div className="contact-item">
+                <Phone size={20} color="#ff6b35" />
+                <div>
+                  <h3>Phone</h3>
+                  <p>+972 51 256 3221</p>
                 </div>
               </div>
               

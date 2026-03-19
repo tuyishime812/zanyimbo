@@ -27,11 +27,15 @@ export default function Footer() {
             <div className="footer-contact">
               <div className="contact-item">
                 <Mail size={16} />
-                <span>support@dgt-sounds.com</span>
+                <span>jeterothako276@gmail.com</span>
               </div>
               <div className="contact-item">
                 <Phone size={16} />
-                <span>+265 990 342 825</span>
+                <span>+265 991 368 564</span>
+              </div>
+              <div className="contact-item">
+                <Phone size={16} />
+                <span>+972 51 256 3221</span>
               </div>
               <div className="contact-item">
                 <MapPin size={16} />
