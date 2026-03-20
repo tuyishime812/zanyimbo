@@ -23,6 +23,7 @@ export default function AdminSongs() {
     featured: false
   })
   const [uploading, setUploading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const toast = useToast()
 
@@ -157,16 +158,18 @@ export default function AdminSongs() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setSubmitting(true)
 
     if (!formData.title || !formData.artist_name || !formData.audio_url) {
       setError('Please fill in all required fields')
+      setSubmitting(false)
       return
     }
 
     try {
       // Find or create artist
       let artistId = null
-      
+
       // Check if artist exists
       const { data: existingArtist, error: fetchArtistError } = await supabase
         .from('artists')
@@ -187,7 +190,7 @@ export default function AdminSongs() {
           .insert([{ name: formData.artist_name }])
           .select('id')
           .single()
-        
+
         if (artistError) {
           console.error('Artist creation error:', artistError)
           throw new Error('Failed to create artist: ' + artistError.message)
@@ -257,11 +260,13 @@ export default function AdminSongs() {
       handleCloseModal()
       fetchSongs()
       toast.success(editingSong ? 'Song updated successfully!' : 'Song added successfully!')
+      setSubmitting(false)
     } catch (error) {
       console.error('Song save error:', error)
       const errorMsg = 'Failed to save song: ' + error.message
       toast.error(errorMsg)
       setError(errorMsg)
+      setSubmitting(false)
     }
   }
 
@@ -509,11 +514,11 @@ export default function AdminSongs() {
                 </div>
 
                 <div className="modal-actions">
-                  <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
+                  <button type="button" className="btn btn-secondary" onClick={handleCloseModal} disabled={submitting}>
                     Cancel
                   </button>
-                  <button type="submit" className="btn btn-primary" disabled={uploading}>
-                    {editingSong ? 'Update Song' : 'Add Song'}
+                  <button type="submit" className="btn btn-primary" disabled={uploading || submitting}>
+                    {submitting ? 'Saving...' : (editingSong ? 'Update Song' : 'Add Song')}
                   </button>
                 </div>
               </form>
