@@ -10,7 +10,6 @@ SELECT
   s.id,
   s.title,
   s.artist_id,
-  s.artist_name,
   a.id as artist_id_check,
   a.name as artist_name_check
 FROM songs s
@@ -18,34 +17,19 @@ LEFT JOIN artists a ON s.artist_id = a.id
 LIMIT 10;
 
 -- ============================================
--- STEP 2: Fix Songs That Have Wrong Artist Data
--- ============================================
-
--- If songs have artist_id but it's showing UUID, 
--- this will ensure the relationship is correct
-UPDATE songs
-SET artist_id = (
-  SELECT id FROM artists 
-  WHERE artists.name = songs.artist_name
-  LIMIT 1
-)
-WHERE artist_id IS NULL AND artist_name IS NOT NULL;
-
--- ============================================
--- STEP 3: Verify Artist Relationship
+-- STEP 2: Verify Artist Relationship
 -- ============================================
 SELECT 
   s.id,
   s.title,
-  s.artist_name,
-  a.name as linked_artist_name
+  a.name as artist_name
 FROM songs s
 LEFT JOIN artists a ON s.artist_id = a.id
 ORDER BY s.created_at DESC
 LIMIT 20;
 
 -- ============================================
--- STEP 4: Create View for Easy Song Fetching
+-- STEP 3: Create View for Easy Song Fetching
 -- ============================================
 CREATE OR REPLACE VIEW songs_with_artist AS
 SELECT 
@@ -55,9 +39,29 @@ FROM songs s
 LEFT JOIN artists a ON s.artist_id = a.id;
 
 -- Test the view
-SELECT * FROM songs_with_artist ORDER BY created_at DESC LIMIT 10;
+SELECT 
+  id,
+  title,
+  artist_name_display
+FROM songs_with_artist 
+ORDER BY created_at DESC 
+LIMIT 10;
+
+-- ============================================
+-- STEP 4: Find Songs Without Artist Link
+-- ============================================
+SELECT 
+  s.id,
+  s.title,
+  s.artist_id
+FROM songs s
+WHERE s.artist_id IS NULL
+   OR NOT EXISTS (SELECT 1 FROM artists a WHERE a.id = s.artist_id);
 
 -- ============================================
 -- DONE! ✅
 -- Songs should now show artist name correctly
+-- If any songs have NULL artist_id, you need to:
+-- 1. Create the artist first
+-- 2. Update the song with the correct artist_id
 -- ============================================
