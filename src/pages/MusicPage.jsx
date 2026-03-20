@@ -52,26 +52,47 @@ export default function MusicPage({ onPlaySong }) {
 
   const fetchMusic = async () => {
     try {
-      const { data: songsData } = await supabase
+      // Fetch songs with artist relationship
+      const { data: songsData, error: songsError } = await supabase
         .from('songs')
-        .select(`*, artists(name)`)
+        .select(`
+          *,
+          artists (
+            id,
+            name
+          )
+        `)
         .order('created_at', { ascending: false })
+
+      if (songsError) {
+        console.error('Error fetching songs:', songsError)
+        setLoading(false)
+        return
+      }
 
       if (songsData) {
         setSongs(songsData.map(s => ({
           id: s.id,
           title: s.title,
-          artist: s.artists?.name || 'Unknown',
+          artist: s.artists?.name || s.artist_name || 'Unknown',
           coverUrl: s.cover_url,
           duration: s.duration,
           audioUrl: s.audio_url,
-          is_downloadable: s.is_downloadable
+          is_downloadable: s.is_downloadable,
+          albumId: s.album_id
         })))
       }
 
-      const { data: albumsData } = await supabase
+      // Fetch albums with artist relationship
+      const { data: albumsData, error: albumsError } = await supabase
         .from('albums')
-        .select(`*, artists(name)`)
+        .select(`
+          *,
+          artists (
+            id,
+            name
+          )
+        `)
         .order('created_at', { ascending: false })
 
       if (albumsData) {
