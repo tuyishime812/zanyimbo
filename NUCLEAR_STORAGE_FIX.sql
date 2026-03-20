@@ -32,10 +32,12 @@ BEGIN
 END $$;
 
 -- ============================================
--- PART 2: DELETE EXISTING BUCKETS (if any)
+-- PART 2: SKIP BUCKET DELETION
+-- Supabase doesn't allow direct deletion
+-- We'll just recreate policies on existing buckets
 -- ============================================
--- This ensures clean slate
-DELETE FROM storage.buckets WHERE id IN ('music', 'covers');
+-- Note: If buckets already exist, that's fine
+-- We just need to fix the policies
 
 -- ============================================
 -- PART 3: CREATE FRESH BUCKETS
