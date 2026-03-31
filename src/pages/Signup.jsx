@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Music2, Mail, Lock, User, AlertCircle, CheckCircle } from 'lucide-react'
+import SocialLogin from '../components/SocialLogin'
 import './Auth.css'
 
 export default function Signup() {
@@ -23,18 +23,8 @@ export default function Signup() {
     setLoading(true)
 
     try {
-      const { data, error } = await signUp(email, password)
-
-      if (error) throw error
-
-      // Create user profile
-      if (data.user) {
-        await supabase.from('user_profiles').insert({
-          id: data.user.id,
-          email: email,
-          username: username
-        })
-      }
+      // signUp in AuthContext now handles creating the user profile
+      await signUp(email, password, username)
 
       setSuccess(true)
       toast.success('Account created! Redirecting to login...')
@@ -131,6 +121,8 @@ export default function Signup() {
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
+
+          <SocialLogin onLoginSuccess={() => navigate('/admin')} />
 
           <p className="auth-footer">
             Already have an account? <Link to="/login">Sign in</Link>

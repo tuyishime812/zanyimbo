@@ -295,19 +295,38 @@ export default function MusicPlayer() {
     }
 
     try {
-      toast.info(`⏳ Preparing download: ${currentSong.artist} - ${currentSong.title}...`)
+      toast.info(`⏳ Preparing download: ${currentSong.artistName || currentSong.artist} - ${currentSong.title}...`)
 
-      // Create download link and trigger click (same page download)
-      const link = document.createElement('a')
-      link.href = audioUrl
-      link.download = `${currentSong.artist} - ${currentSong.title}.mp3`
-      link.target = '_blank'
-      link.setAttribute('download', `${currentSong.artist} - ${currentSong.title}.mp3`)
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      // Use the download utility for proper filename handling
+      const filename = `${currentSong.artistName || currentSong.artist} - ${currentSong.title}.mp3`
+        .replace(/[^a-z0-9\s\-\.]/gi, '_')
+        .replace(/\s+/g, ' ')
+        .trim()
 
-      toast.success(`✅ Download started: ${currentSong.artist} - ${currentSong.title}`)
+      // Try blob download first (works in most browsers)
+      try {
+        const response = await fetch(audioUrl)
+        if (!response.ok) throw new Error('Download failed')
+        const blob = await response.blob()
+        
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = filename
+        link.style.display = 'none'
+        
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        setTimeout(() => window.URL.revokeObjectURL(url), 100)
+        
+      } catch (fetchError) {
+        // Fallback: direct download (same tab)
+        window.location.href = audioUrl
+      }
+
+      toast.success(`✅ Download started: ${currentSong.artistName || currentSong.artist} - ${currentSong.title}`)
 
       // Track download
       try {

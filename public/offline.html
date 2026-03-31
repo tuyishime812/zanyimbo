@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#FDB913">
   <title>Offline - DGT Sounds</title>
   <style>
     * {
@@ -10,169 +11,138 @@
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, #1a0f2e 0%, #2d1f4e 100%);
-      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #1a0f2e 0%, #2d1f4e 50%, #4a3b6e 100%);
+      color: #ffffff;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 2rem;
-      text-align: center;
     }
-    
+
     .offline-container {
+      text-align: center;
       max-width: 500px;
     }
-    
+
     .offline-icon {
       font-size: 4rem;
       margin-bottom: 1rem;
     }
-    
+
     h1 {
       font-size: 2rem;
       margin-bottom: 1rem;
       color: #ff6b35;
     }
-    
+
     p {
-      font-size: 1.1rem;
+      font-size: 1.125rem;
       line-height: 1.6;
-      color: rgba(255, 255, 255, 0.8);
+      color: #a0a0a0;
       margin-bottom: 2rem;
     }
-    
-    .offline-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    
-    .btn {
+
+    .retry-btn {
+      display: inline-block;
       padding: 1rem 2rem;
-      border-radius: 50px;
+      background: #ff6b35;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
       font-size: 1rem;
       font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
       cursor: pointer;
-      border: none;
+      transition: all 0.2s ease;
+      text-decoration: none;
     }
-    
-    .btn-primary {
-      background: linear-gradient(135deg, #ff6b35, #ff8c61);
-      color: white;
-    }
-    
-    .btn-primary:hover {
+
+    .retry-btn:hover {
+      background: #ff8c61;
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
     }
-    
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-    
-    .status-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      margin-top: 2rem;
-      font-size: 0.9rem;
-    }
-    
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #ff6b35;
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    
-    .cached-info {
+
+    .tips {
       margin-top: 2rem;
       padding: 1.5rem;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: left;
     }
-    
-    .cached-info h3 {
+
+    .tips h3 {
       font-size: 1rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
       color: #ff6b35;
     }
-    
-    .cached-info ul {
+
+    .tips ul {
       list-style: none;
-      text-align: left;
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.7);
+      padding-left: 0;
     }
-    
-    .cached-info li {
-      padding: 0.25rem 0;
+
+    .tips li {
+      padding: 0.5rem 0;
+      color: #a0a0a0;
+      font-size: 0.875rem;
+    }
+
+    .tips li:before {
+      content: '✓ ';
+      color: #ff6b35;
+      font-weight: bold;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+
+      .offline-icon {
+        font-size: 3rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="offline-container">
-    <div class="offline-icon">📡</div>
+    <div class="offline-icon">📶</div>
     <h1>You're Offline</h1>
     <p>
-      No internet connection detected. Don't worry! 
-      You can still access your cached music and browse the app.
+      It looks like you've lost your internet connection. 
+      Some features may not be available until you're back online.
     </p>
     
-    <div class="offline-actions">
-      <button class="btn btn-primary" onclick="window.location.reload()">
-        🔄 Try Again
-      </button>
-      <a href="/" class="btn btn-secondary">
-        🏠 Go Home
-      </a>
-    </div>
-    
-    <div class="status-indicator">
-      <span class="status-dot"></span>
-      <span>Attempting to reconnect...</span>
-    </div>
-    
-    <div class="cached-info">
-      <h3>💾 Available Offline</h3>
+    <button class="retry-btn" onclick="window.location.reload()">
+      Try Again
+    </button>
+
+    <div class="tips">
+      <h3>What you can still do:</h3>
       <ul>
-        <li>✅ Previously loaded songs</li>
-        <li>✅ App interface</li>
-        <li>✅ Your liked songs</li>
-        <li>✅ Cached album art</li>
+        <li>Play previously cached songs</li>
+        <li>Browse cached album art</li>
+        <li>View your saved playlists</li>
+        <li>Access downloaded content</li>
       </ul>
     </div>
   </div>
-  
+
   <script>
-    // Check connection status
+    // Auto-retry when connection is restored
     window.addEventListener('online', () => {
       window.location.reload()
     })
-    
-    // Update status periodically
+
+    // Check connection status periodically
     setInterval(() => {
       if (navigator.onLine) {
         window.location.reload()

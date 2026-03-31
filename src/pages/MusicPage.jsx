@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { songsService, albumsService, downloadsService } from '../lib/supabaseDatabase'
 import { useToast } from '../context/ToastContext'
 import { Search, Filter, Grid, List, Download, Play } from 'lucide-react'
 import SongCard from '../components/SongCard'
@@ -21,87 +21,52 @@ export default function MusicPage({ onPlaySong }) {
 
   useEffect(() => {
     fetchMusic()
-    
-    // Realtime subscription for songs
-    const songsChannel = supabase
-      .channel('music-songs-changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'songs' },
-        () => {
-          fetchMusic()
-        }
-      )
-      .subscribe()
 
-    // Realtime subscription for albums
-    const albumsChannel = supabase
-      .channel('music-albums-changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'albums' },
-        () => {
-          fetchMusic()
-        }
-      )
-      .subscribe()
+    // Realtime subscriptions using Supabase
+    const unsubscribeSongs = songsService.subscribe((updatedSongs) => {
+      setSongs(updatedSongs)
+    })
+
+    const unsubscribeAlbums = albumsService.subscribe((updatedAlbums) => {
+      setAlbums(updatedAlbums)
+    })
 
     return () => {
-      supabase.removeChannel(songsChannel)
-      supabase.removeChannel(albumsChannel)
+      unsubscribeSongs()
+      unsubscribeAlbums()
     }
   }, [])
 
   const fetchMusic = async () => {
     try {
-      // Fetch songs with artist relationship
-      const { data: songsData, error: songsError } = await supabase
-        .from('songs')
-        .select(`
-          *,
-          artists (
-            id,
-            name
-          )
-        `)
-        .order('created_at', { ascending: false })
-
-      if (songsError) {
-        console.error('Error fetching songs:', songsError)
-        setLoading(false)
-        return
-      }
+      // Fetch songs
+      const songsData = await songsService.getAll()
 
       if (songsData) {
         setSongs(songsData.map(s => ({
           id: s.id,
           title: s.title,
-          artist: s.artists?.name || s.artist_name || 'Unknown',
-          coverUrl: s.cover_url,
+          artist: s.artistName || 'Unknown',
+          coverUrl: s.coverUrl,
           duration: s.duration,
-          audioUrl: s.audio_url,
-          is_downloadable: s.is_downloadable,
-          albumId: s.album_id
+          audioUrl: s.audioUrl,
+          is_downloadable: s.isDownloadable,
+          albumId: s.albumId,
+          artistId: s.artistId
         })))
       }
 
-      // Fetch albums with artist relationship
-      const { data: albumsData, error: albumsError } = await supabase
-        .from('albums')
-        .select(`
-          *,
-          artists (
-            id,
-            name
-          )
-        `)
-        .order('created_at', { ascending: false })
+      // Fetch albums
+      const albumsData = await albumsService.getAll()
 
       if (albumsData) {
         setAlbums(albumsData.map(a => ({
           id: a.id,
           title: a.title,
-          artist: a.artists?.name || 'Unknown',
-          coverUrl: a.cover_url,
-          trackCount: a.track_count
+          artist: a.artistName || 'Unknown',
+          coverUrl: a.coverUrl,
+          trackCount: a.trackCount,
+          artistId: a.artistId
         })))
       }
     } catch (error) {
@@ -117,45 +82,32 @@ export default function MusicPage({ onPlaySong }) {
       return
     }
 
-    // Check if mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    
-    if (isMobile) {
-      // Use mobile-friendly download
-      toast.info(`⏳ Opening: ${song.artist} - ${song.title}...`)
-      mobileDownload(song.audioUrl, `${song.artist} - ${song.title}.mp3`)
-      toast.success(`✅ Download opened in new tab!`)
-      
-      // Track download
-      try {
-        await supabase.from('downloads').insert({ song_id: song.id })
-      } catch (e) {
-        console.warn('Failed to track download:', e)
-      }
-      return
-    }
-
-    // Show confirmation toast
-    toast.info(`⏳ Preparing download: ${song.artist} - ${song.title}...`)
+    // Show preparing message
+    toast.info(`⏳ Preparing download: ${song.artistName || song.artist} - ${song.title}...`)
 
     try {
-      // Download with metadata
+      // Download with metadata (uses proper filename)
       await downloadSongWithMetadata(song)
 
       // Track download
-      await supabase.from('downloads').insert({
-        song_id: song.id
-      })
+      try {
+        await downloadsService.track(song.id, null)
+      } catch (e) {
+        console.warn('Failed to track download:', e)
+      }
 
-      toast.success(`✅ Download started: ${song.artist} - ${song.title}`)
+      toast.success(`✅ Download started: ${song.artistName || song.artist} - ${song.title}`)
     } catch (error) {
       console.error('Download error:', error)
 
-      // Fallback: simple download
+      // Fallback: simple download with proper filename
       try {
-        const filename = `${song.artist} - ${song.title}.mp3`
+        const filename = `${song.artistName || song.artist} - ${song.title}.mp3`
+          .replace(/[^a-z0-9\s\-\.]/gi, '_')
+          .replace(/\s+/g, ' ')
+          .trim()
         await simpleDownload(song.audioUrl, filename)
-        toast.success('Download started (without metadata)')
+        toast.success(`✅ Download started: ${song.artistName || song.artist} - ${song.title}`)
       } catch (e) {
         toast.error('Failed to download song')
       }
@@ -194,20 +146,20 @@ export default function MusicPage({ onPlaySong }) {
 
         <div className="toolbar-actions">
           <div className="view-toggle">
-            <button 
+            <button
               className={`toggle-btn ${view === 'all' ? 'active' : ''}`}
               onClick={() => setView('all')}
             >
               <Grid size={18} />
               All
             </button>
-            <button 
+            <button
               className={`toggle-btn ${view === 'songs' ? 'active' : ''}`}
               onClick={() => setView('songs')}
             >
               Songs
             </button>
-            <button 
+            <button
               className={`toggle-btn ${view === 'albums' ? 'active' : ''}`}
               onClick={() => setView('albums')}
             >
@@ -253,8 +205,8 @@ export default function MusicPage({ onPlaySong }) {
                 <div className="songs-list">
                   {filteredSongs.map((song) => (
                     <div key={song.id} className="song-list-item">
-                      <img 
-                        src={song.coverUrl || 'https://via.placeholder.com/50'} 
+                      <img
+                        src={song.coverUrl || 'https://via.placeholder.com/50'}
                         alt={song.title}
                         className="song-list-cover"
                       />
@@ -266,7 +218,7 @@ export default function MusicPage({ onPlaySong }) {
                         {song.duration ? `${Math.floor(song.duration / 60)}:${(song.duration % 60).toString().padStart(2, '0')}` : '--:--'}
                       </span>
                       <div className="song-list-actions">
-                        <button 
+                        <button
                           className="btn-icon btn-play"
                           onClick={() => onPlaySong(song)}
                           title="Play"
@@ -274,7 +226,7 @@ export default function MusicPage({ onPlaySong }) {
                           <Play size={18} fill="white" />
                         </button>
                         {song.is_downloadable && (
-                          <button 
+                          <button
                             className="btn-icon btn-download"
                             onClick={() => handleDownload(song)}
                             title="Download"
@@ -297,8 +249,8 @@ export default function MusicPage({ onPlaySong }) {
                 </div>
                 <div className="albums-grid">
                   {filteredAlbums.map((album) => (
-                    <AlbumCard 
-                      key={album.id} 
+                    <AlbumCard
+                      key={album.id}
                       album={album}
                       onPlay={() => {}}
                     />

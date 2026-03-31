@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { songsService, albumsService, artistsService, genresService } from '../lib/supabaseDatabase'
 import { useMusic } from '../context/MusicContext'
 import { Search, Filter, Music, Disc, Mic2, X, SlidersHorizontal } from 'lucide-react'
 import Header from '../components/Header'
@@ -13,13 +13,13 @@ export default function SearchPage() {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
-  
+
   // Filters
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filterType, setFilterType] = useState('all') // all, songs, albums, artists
   const [selectedGenre, setSelectedGenre] = useState('all')
   const [sortBy, setSortBy] = useState('relevance') // relevance, popular, recent, alphabetical
-  
+
   // Genres
   const [genres, setGenres] = useState([])
 
@@ -29,14 +29,8 @@ export default function SearchPage() {
 
   const fetchGenres = async () => {
     try {
-      const { data, error } = await supabase
-        .from('genres')
-        .select('*')
-        .order('name')
-      
-      if (!error && data) {
-        setGenres(data)
-      }
+      const genresData = await genresService.getAll()
+      setGenres(genresData || [])
     } catch (error) {
       console.error('Error fetching genres:', error)
     }
@@ -44,87 +38,58 @@ export default function SearchPage() {
 
   const performSearch = async () => {
     if (!searchQuery.trim()) return
-    
+
     setLoading(true)
     setHasSearched(true)
-    
+
     try {
-      let query = supabase
-        .from('songs')
-        .select(`
-          *,
-          artists (name),
-          albums (title),
-          song_genres (genre_id),
-          genres (name)
-        `)
-      
-      // Search filter
-      query = query.or(`title.ilike.%${searchQuery}%,artists.name.ilike.%${searchQuery}%`)
-      
-      // Type filter
-      if (filterType === 'songs') {
-        query = query.not('id', 'is', null)
+      let processed = []
+      const queryLower = searchQuery.toLowerCase()
+
+      // Search songs
+      if (filterType === 'all' || filterType === 'songs') {
+        const songsData = await songsService.getAll()
+        const songResults = songsData.filter(song => 
+          song.title.toLowerCase().includes(queryLower) ||
+          (song.artistName && song.artistName.toLowerCase().includes(queryLower))
+        )
+        processed = [...processed, ...songResults.map(song => ({
+          ...song,
+          artist: song.artistName || 'Unknown',
+          album: song.albumName,
+          type: 'song'
+        }))]
       }
-      
-      // Genre filter
-      if (selectedGenre !== 'all') {
-        query = query.eq('song_genres.genre_id', selectedGenre)
-      }
-      
-      // Execute query
-      const { data, error } = await query
-      
-      if (error) throw error
-      
-      // Process results
-      let processed = data.map(song => ({
-        ...song,
-        artist: song.artists?.name || 'Unknown',
-        album: song.albums?.title,
-        genre: song.genres?.[0]?.name,
-        type: 'song'
-      }))
-      
+
       // Search albums
       if (filterType === 'all' || filterType === 'albums') {
-        const { data: albumsData } = await supabase
-          .from('albums')
-          .select(`
-            *,
-            artists (name)
-          `)
-          .or(`title.ilike.%${searchQuery}%,artists.name.ilike.%${searchQuery}%`)
-        
-        if (albumsData) {
-          const albumResults = albumsData.map(album => ({
-            ...album,
-            artist: album.artists?.name,
-            type: 'album'
-          }))
-          processed = [...processed, ...albumResults]
-        }
+        const albumsData = await albumsService.getAll()
+        const albumResults = albumsData.filter(album =>
+          album.title.toLowerCase().includes(queryLower) ||
+          (album.artistName && album.artistName.toLowerCase().includes(queryLower))
+        )
+        processed = [...processed, ...albumResults.map(album => ({
+          ...album,
+          artist: album.artistName,
+          type: 'album'
+        }))]
       }
-      
+
       // Search artists
       if (filterType === 'all' || filterType === 'artists') {
-        const { data: artistsData } = await supabase
-          .from('artists')
-          .select('*')
-          .ilike('name', `%${searchQuery}%`)
-        
-        if (artistsData) {
-          const artistResults = artistsData.map(artist => ({
-            ...artist,
-            type: 'artist'
-          }))
-          processed = [...processed, ...artistResults]
-        }
+        const artistsData = await artistsService.getAll()
+        const artistResults = artistsData.filter(artist =>
+          artist.name.toLowerCase().includes(queryLower)
+        )
+        processed = [...processed, ...artistResults.map(artist => ({
+          ...artist,
+          type: 'artist'
+        }))]
       }
-      
+
       // Sort results
       processed = sortResults(processed)
-      
+
       setResults(processed)
     } catch (error) {
       console.error('Search error:', error)
@@ -136,22 +101,22 @@ export default function SearchPage() {
 
   const sortResults = (results) => {
     const sorted = [...results]
-    
+
     switch (sortBy) {
       case 'popular':
-        sorted.sort((a, b) => (b.play_count || 0) - (a.play_count || 0))
+        sorted.sort((a, b) => (b.playCount || 0) - (a.playCount || 0))
         break
       case 'recent':
-        sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        sorted.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
         break
       case 'alphabetical':
-        sorted.sort((a, b) => a.title?.localeCompare(b.title) || a.name?.localeCompare(b.name))
+        sorted.sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''))
         break
       default:
         // Relevance - keep as is
         break
     }
-    
+
     return sorted
   }
 
@@ -171,9 +136,9 @@ export default function SearchPage() {
       id: song.id,
       title: song.title,
       artist: song.artist,
-      audio_url: song.audio_url || song.audioUrl,
-      cover_url: song.cover_url || song.coverUrl,
-      is_downloadable: song.is_downloadable
+      audioUrl: song.audioUrl || song.audio_url,
+      coverUrl: song.coverUrl || song.cover_url,
+      isDownloadable: song.isDownloadable
     })
   }
 
@@ -188,7 +153,7 @@ export default function SearchPage() {
   return (
     <div className="search-page">
       <Header />
-      
+
       <div className="search-hero">
         <div className="search-container">
           <div className="search-header">
@@ -196,7 +161,7 @@ export default function SearchPage() {
             <h1>Search Music</h1>
             <p>Find your favorite songs, albums, and artists</p>
           </div>
-          
+
           <form onSubmit={handleSearch} className="search-form">
             <div className="search-input-wrapper">
               <Search size={20} />
@@ -218,11 +183,11 @@ export default function SearchPage() {
                 </button>
               )}
             </div>
-            
+
             <button type="submit" className="btn-search" disabled={!searchQuery.trim()}>
               Search
             </button>
-            
+
             <button
               type="button"
               className={`btn-filters ${filtersOpen ? 'active' : ''}`}
@@ -235,7 +200,7 @@ export default function SearchPage() {
               )}
             </button>
           </form>
-          
+
           {/* Filters Panel */}
           {filtersOpen && (
             <div className="filters-panel">
@@ -248,7 +213,7 @@ export default function SearchPage() {
                   Clear All
                 </button>
               </div>
-              
+
               <div className="filter-grid">
                 <div className="filter-group">
                   <label>Type</label>
@@ -259,7 +224,7 @@ export default function SearchPage() {
                     <option value="artists">Artists</option>
                   </select>
                 </div>
-                
+
                 <div className="filter-group">
                   <label>Genre</label>
                   <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)}>
@@ -269,7 +234,7 @@ export default function SearchPage() {
                     ))}
                   </select>
                 </div>
-                
+
                 <div className="filter-group">
                   <label>Sort By</label>
                   <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
@@ -284,7 +249,7 @@ export default function SearchPage() {
           )}
         </div>
       </div>
-      
+
       <div className="search-results-container">
         {loading && (
           <div className="loading-results">
@@ -292,7 +257,7 @@ export default function SearchPage() {
             <p>Searching...</p>
           </div>
         )}
-        
+
         {!loading && hasSearched && results.length === 0 && (
           <div className="no-results">
             <Music size={64} className="no-results-icon" />
@@ -303,7 +268,7 @@ export default function SearchPage() {
             </button>
           </div>
         )}
-        
+
         {!loading && results.length > 0 && (
           <div className="results-content">
             <div className="results-header">
@@ -312,7 +277,7 @@ export default function SearchPage() {
                 {searchQuery && ` for "${searchQuery}"`}
               </h2>
             </div>
-            
+
             <div className="results-grid">
               {results.map((item) => (
                 item.type === 'song' ? (
@@ -329,7 +294,7 @@ export default function SearchPage() {
                 ) : (
                   <div key={item.id} className="artist-result">
                     <img
-                      src={item.image_url || 'https://via.placeholder.com/200x200/2d1f4e/ffffff?text=Artist'}
+                      src={item.imageUrl || item.image_url || 'https://via.placeholder.com/200x200/2d1f4e/ffffff?text=Artist'}
                       alt={item.name}
                       className="artist-image"
                     />
@@ -341,7 +306,7 @@ export default function SearchPage() {
             </div>
           </div>
         )}
-        
+
         {!hasSearched && (
           <div className="search-suggestions">
             <h3>Popular Searches</h3>

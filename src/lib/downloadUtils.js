@@ -15,6 +15,16 @@ function isMobile() {
 }
 
 /**
+ * Sanitize filename - remove special characters
+ */
+function sanitizeFilename(filename) {
+  return filename
+    .replace(/[^a-z0-9\s\-\.]/gi, '_') // Replace special chars with underscore
+    .replace(/\s+/g, ' ') // Normalize spaces
+    .trim()
+}
+
+/**
  * Download a song with embedded metadata (ID3 tags)
  * @param {Object} song - Song object with title, artist, cover art, etc.
  * @param {string} filename - Desired filename for the download
@@ -27,14 +37,12 @@ export async function downloadSongWithMetadata(song, filename = null) {
   }
 
   const isIOSDevice = isIOS()
-  const isMobileDevice = isMobile()
 
   try {
-    // For iOS devices, use direct download approach
+    // For iOS devices, use direct download (iOS doesn't support blob downloads well)
     if (isIOSDevice) {
-      // iOS has strict restrictions on downloads
-      // Open in new tab or use window.location for download
-      window.open(audioUrl, '_blank')
+      // iOS: download directly (will open but user can save)
+      window.location.href = audioUrl
       return true
     }
 
@@ -63,8 +71,8 @@ export async function downloadSongWithMetadata(song, filename = null) {
 
     // Set metadata
     writer.setFrame('TIT2', song.title) // Title
-    writer.setFrame('TPE1', song.artist) // Artist
-    writer.setFrame('TALB', song.album || 'Unknown Album') // Album
+    writer.setFrame('TPE1', song.artistName || song.artist) // Artist
+    writer.setFrame('TALB', song.albumName || song.album || 'Unknown Album') // Album
 
     // Add cover art if available
     if (coverArt) {
@@ -73,16 +81,6 @@ export async function downloadSongWithMetadata(song, filename = null) {
         data: coverArt,
         description: 'Cover art'
       })
-    }
-
-    // Add year if available
-    if (song.year) {
-      writer.setFrame('TYER', song.year.toString())
-    }
-
-    // Add genre if available
-    if (song.genre) {
-      writer.setFrame('TCON', song.genre)
     }
 
     // Save the modified file
@@ -94,12 +92,12 @@ export async function downloadSongWithMetadata(song, filename = null) {
     const link = document.createElement('a')
     link.href = url
 
-    // Use provided filename or generate one
-    const defaultFilename = `${song.artist} - ${song.title}.mp3`
-      .replace(/[^a-z0-9\s\-\.]/gi, '_') // Replace special chars
-      .replace(/\s+/g, ' ') // Normalize spaces
+    // Use provided filename or generate one from song data
+    const defaultFilename = sanitizeFilename(`${song.artistName || song.artist} - ${song.title}.mp3`)
     link.download = filename || defaultFilename
 
+    // Force download (prevent opening in new tab)
+    link.style.display = 'none'
     document.body.appendChild(link)
     link.click()
 
@@ -113,55 +111,62 @@ export async function downloadSongWithMetadata(song, filename = null) {
   } catch (error) {
     console.error('Error adding metadata to song:', error)
     // Fallback: download without metadata
-    throw error
+    await simpleDownload(audioUrl, filename || sanitizeFilename(`${song.artistName || song.artist} - ${song.title}.mp3`))
+    return true
   }
 }
 
 /**
  * Simple download without metadata (fallback)
+ * Downloads in SAME tab - no new tab opening
  */
 export async function simpleDownload(audioUrl, filename) {
   const isIOSDevice = isIOS()
-  
-  // For iOS, open directly in new tab
-  if (isIOSDevice) {
-    window.open(audioUrl, '_blank')
-    return
-  }
 
   try {
+    // Try to fetch as blob first (works for most browsers)
     const response = await fetch(audioUrl)
+    if (!response.ok) throw new Error('Download failed')
+    
     const blob = await response.blob()
-
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     link.download = filename
+    link.style.display = 'none'
+    
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
+    
+    // Cleanup
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url)
+    }, 100)
+    
   } catch (error) {
-    // Final fallback: open in new tab
-    window.open(audioUrl, '_blank')
+    console.warn('Blob download failed, trying direct download:', error)
+    // Final fallback: direct download (same tab)
+    window.location.href = audioUrl
   }
 }
 
 /**
- * Mobile-friendly download that works on iOS
+ * Mobile-friendly download - works on all devices
+ * Downloads in SAME tab - no new tab opening
  */
 export function mobileDownload(audioUrl, filename) {
   const isIOSDevice = isIOS()
-  
+
   if (isIOSDevice) {
-    // iOS: open in new tab
-    window.open(audioUrl, '_blank')
+    // iOS: download directly in same tab
+    window.location.href = audioUrl
   } else {
-    // Android and other mobile: try blob download
+    // Android and other: use blob download
     const link = document.createElement('a')
     link.href = audioUrl
     link.download = filename
-    link.target = '_blank'
+    link.style.display = 'none'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

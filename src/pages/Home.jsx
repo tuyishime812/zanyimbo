@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { albumsService, songsService } from '../lib/supabaseDatabase'
 import Hero from '../components/Hero'
 import PlatformFeatures from '../components/PlatformFeatures'
 import AlbumCard from '../components/AlbumCard'
@@ -15,77 +15,55 @@ export default function Home({ onPlaySong }) {
   useEffect(() => {
     fetchMusic()
 
-    // Realtime subscription for songs
-    const songsChannel = supabase
-      .channel('songs-changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'songs' },
-        () => {
-          fetchMusic()
-        }
-      )
-      .subscribe()
+    // Realtime subscriptions using Supabase
+    const unsubscribeAlbums = albumsService.subscribe((updatedAlbums) => {
+      setAlbums(updatedAlbums)
+    })
 
-    // Realtime subscription for albums
-    const albumsChannel = supabase
-      .channel('albums-changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'albums' },
-        () => {
-          fetchMusic()
-        }
-      )
-      .subscribe()
+    const unsubscribeSongs = songsService.subscribe((updatedSongs) => {
+      setTopSongs(updatedSongs)
+    })
 
     return () => {
-      supabase.removeChannel(songsChannel)
-      supabase.removeChannel(albumsChannel)
+      unsubscribeAlbums()
+      unsubscribeSongs()
     }
   }, [])
 
   const fetchMusic = async () => {
     try {
       // Fetch featured albums
-      const { data: albumsData } = await supabase
-        .from('albums')
-        .select(`
-          *,
-          artists (name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(8)
-
+      const albumsData = await albumsService.getAll()
+      
       if (albumsData) {
-        setAlbums(albumsData.map(album => ({
+        setAlbums(albumsData.slice(0, 8).map(album => ({
           id: album.id,
           title: album.title,
-          artist: album.artists?.name || 'Unknown Artist',
-          coverUrl: album.cover_url,
-          trackCount: album.track_count,
-          featured: album.featured ? 1 : null
+          artist: album.artistName || 'Unknown Artist',
+          coverUrl: album.coverUrl,
+          trackCount: album.trackCount,
+          featured: album.featured ? 1 : null,
+          artistId: album.artistId
         })))
       }
 
       // Fetch most streamed and downloaded songs
-      const { data: songsData } = await supabase
-        .from('songs')
-        .select(`
-          *,
-          artists (name)
-        `)
-        .order('play_count', { ascending: false })
-        .limit(20)
-
+      const songsData = await songsService.getAll()
+      
       if (songsData) {
-        setTopSongs(songsData.map(song => ({
+        // Sort by play count for trending
+        const sortedSongs = songsData.sort((a, b) => (b.playCount || 0) - (a.playCount || 0))
+        setTopSongs(sortedSongs.slice(0, 20).map(song => ({
           id: song.id,
           title: song.title,
-          artist: song.artists?.name || 'Unknown Artist',
-          coverUrl: song.cover_url,
+          artist: song.artistName || 'Unknown Artist',
+          coverUrl: song.coverUrl,
           duration: song.duration,
-          audioUrl: song.audio_url,
-          playCount: song.play_count || 0,
-          downloadCount: song.download_count || 0
+          audioUrl: song.audioUrl,
+          playCount: song.playCount || 0,
+          downloadCount: song.downloadCount || 0,
+          artistId: song.artistId,
+          albumId: song.albumId
         })))
       }
     } catch (error) {

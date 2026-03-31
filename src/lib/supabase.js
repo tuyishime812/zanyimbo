@@ -9,5 +9,27 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
+  supabaseAnonKey || 'placeholder-key',
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
+    }
+  }
 )
+
+// Storage buckets
+export const storage = supabase.storage
+
+// Database helpers
+export const db = {
+  collection: (tableName) => ({
+    select: () => supabase.from(tableName).select(),
+    insert: (data) => supabase.from(tableName).insert(data),
+    update: (data) => supabase.from(tableName).update(data),
+    delete: () => supabase.from(tableName).delete(),
+    match: (conditions) => supabase.from(tableName).select().match(conditions),
+    eq: (column, value) => supabase.from(tableName).select().eq(column, value)
+  })
+}

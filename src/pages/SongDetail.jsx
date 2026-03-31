@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { songsService, downloadsService } from '../lib/supabaseDatabase'
 import { useMusic } from '../context/MusicContext'
 import { Play, Download, Heart, Share2, ArrowLeft, Clock, TrendingUp } from 'lucide-react'
 import Header from '../components/Header'
@@ -17,25 +17,20 @@ export default function SongDetail() {
   const toast = useToast()
 
   useEffect(() => {
-    fetchSong()
+    if (id) {
+      fetchSong()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const fetchSong = async () => {
     try {
-      const { data, error } = await supabase
-        .from('songs')
-        .select(`
-          *,
-          artists (name),
-          albums (title),
-          genres (name)
-        `)
-        .eq('id', id)
-        .single()
-
-      if (error) throw error
-      setSong(data)
+      const songData = await songsService.getById(id)
+      if (songData) {
+        setSong(songData)
+      } else {
+        toast.error('Song not found')
+      }
     } catch (err) {
       console.error('Error fetching song:', err)
       toast.error('Song not found')
@@ -49,10 +44,10 @@ export default function SongDetail() {
     playSong({
       id: song.id,
       title: song.title,
-      artist: song.artists?.name || 'Unknown',
-      audio_url: song.audio_url,
-      cover_url: song.cover_url,
-      is_downloadable: song.is_downloadable
+      artist: song.artistName || 'Unknown',
+      audioUrl: song.audioUrl,
+      coverUrl: song.coverUrl,
+      isDownloadable: song.isDownloadable
     })
     toast.success(`Playing: ${song.title}`)
   }
@@ -63,7 +58,7 @@ export default function SongDetail() {
     const shareUrl = `${window.location.origin}/song/${song.id}`
     const shareData = {
       title: song.title,
-      text: `Check out "${song.title}" by ${song.artists?.name} on DGT Sounds!`,
+      text: `Check out "${song.title}" by ${song.artistName} on DGT Sounds!`,
       url: shareUrl
     }
 
@@ -80,9 +75,9 @@ export default function SongDetail() {
     } else {
       // Fallback: Show share options
       const shareOptions = confirm(
-        `Share "${song.title}" by ${song.artists?.name}?\n\nClick OK for WhatsApp\nClick Cancel for Facebook`
+        `Share "${song.title}" by ${song.artistName}?\n\nClick OK for WhatsApp\nClick Cancel for Facebook`
       )
-      
+
       if (shareOptions) {
         // WhatsApp
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`
@@ -96,30 +91,47 @@ export default function SongDetail() {
   }
 
   const handleDownload = async () => {
-    if (!song || !song.is_downloadable) {
+    if (!song || !song.isDownloadable) {
       toast.error('Download not available')
       return
     }
 
-    toast.info(`⏳ Preparing download: ${song.artists?.name} - ${song.title}...`)
+    toast.info(`⏳ Preparing download: ${song.artistName} - ${song.title}...`)
 
     try {
-      // Create download link and trigger click (same page download)
-      const link = document.createElement('a')
-      link.href = song.audio_url
-      link.download = `${song.artists?.name} - ${song.title}.mp3`
-      link.target = '_blank'
-      link.setAttribute('download', `${song.artists?.name} - ${song.title}.mp3`)
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      // Create download link with proper filename (same tab download)
+      const filename = `${song.artistName} - ${song.title}.mp3`
+        .replace(/[^a-z0-9\s\-\.]/gi, '_')
+        .replace(/\s+/g, ' ')
+        .trim()
+
+      // Try blob download first
+      try {
+        const response = await fetch(song.audioUrl)
+        if (!response.ok) throw new Error('Download failed')
+        const blob = await response.blob()
+        
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = filename
+        link.style.display = 'none'
+        
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        setTimeout(() => window.URL.revokeObjectURL(url), 100)
+        
+      } catch (fetchError) {
+        // Fallback: direct download (same tab)
+        window.location.href = song.audioUrl
+      }
 
       toast.success(`✅ Download started!`)
 
       // Track download
-      await supabase.from('downloads').insert({
-        song_id: song.id
-      })
+      await downloadsService.track(song.id, null)
     } catch (e) {
       console.error('Download error:', e)
       toast.error('Download failed')
@@ -175,7 +187,7 @@ export default function SongDetail() {
         <div className="song-detail-content">
           <div className="song-cover-large">
             <img
-              src={song.cover_url || 'https://via.placeholder.com/400x400/2d1f4e/ffffff?text=Music'}
+              src={song.coverUrl || 'https://via.placeholder.com/400x400/2d1f4e/ffffff?text=Music'}
               alt={song.title}
               onError={(e) => {
                 e.target.src = 'https://via.placeholder.com/400x400/2d1f4e/ffffff?text=Music'
@@ -185,28 +197,20 @@ export default function SongDetail() {
 
           <div className="song-info-large">
             <h1 className="song-title-large">{song.title}</h1>
-            <p className="artist-name">{song.artists?.name || 'Unknown Artist'}</p>
-            
-            {song.albums && (
-              <p className="album-name">Album: {song.albums.title}</p>
-            )}
+            <p className="artist-name">{song.artistName || 'Unknown Artist'}</p>
 
-            {song.genres && song.genres.length > 0 && (
-              <div className="genre-tags">
-                {song.genres.map(genre => (
-                  <span key={genre.id} className="genre-tag">{genre.name}</span>
-                ))}
-              </div>
+            {song.albumName && (
+              <p className="album-name">Album: {song.albumName}</p>
             )}
 
             <div className="song-stats">
               <div className="stat">
                 <Play size={18} />
-                <span>{song.play_count || 0} plays</span>
+                <span>{song.playCount || 0} plays</span>
               </div>
               <div className="stat">
                 <Download size={18} />
-                <span>{song.download_count || 0} downloads</span>
+                <span>{song.downloadCount || 0} downloads</span>
               </div>
               {song.duration && (
                 <div className="stat">
@@ -222,7 +226,7 @@ export default function SongDetail() {
                 Play Now
               </button>
 
-              {song.is_downloadable && (
+              {song.isDownloadable && (
                 <button className="btn-download-large" onClick={handleDownload}>
                   <Download size={24} />
                   Download

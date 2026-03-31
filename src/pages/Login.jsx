@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Music2, Mail, Lock, AlertCircle } from 'lucide-react'
+import SocialLogin from '../components/SocialLogin'
 import './Auth.css'
 
 export default function Login() {
@@ -96,6 +97,8 @@ export default function Login() {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+
+          <SocialLogin onLoginSuccess={() => navigate(from, { replace: true })} />
 
           <p className="auth-footer">
             Admin access only. Contact the administrator to create an account.

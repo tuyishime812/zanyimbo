@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../../lib/supabase'
+import { songsService, artistsService, albumsService, genresService, songGenresService } from '../../lib/supabaseDatabase'
+import { storageService } from '../../lib/storage'
 import { useToast } from '../../context/ToastContext'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { Plus, Edit, Trash2, Upload, Music, X, Check } from 'lucide-react'
@@ -34,17 +35,7 @@ export default function AdminSongs() {
 
   const fetchSongs = async () => {
     try {
-      const { data: songsData } = await supabase
-        .from('songs')
-        .select(`
-          *,
-          artists (name),
-          albums (title),
-          song_genres (genre_id),
-          genres (name)
-        `)
-        .order('created_at', { ascending: false })
-
+      const songsData = await songsService.getAll()
       setSongs(songsData || [])
     } catch (error) {
       console.error('Error fetching songs:', error)
@@ -55,8 +46,8 @@ export default function AdminSongs() {
 
   const fetchGenres = async () => {
     try {
-      const { data } = await supabase.from('genres').select('*').order('name')
-      setGenres(data || [])
+      const genresData = await genresService.getAll()
+      setGenres(genresData || [])
     } catch (error) {
       console.error('Error fetching genres:', error)
     }
@@ -65,16 +56,15 @@ export default function AdminSongs() {
   const handleOpenModal = (song = null) => {
     if (song) {
       setEditingSong(song)
-      const genreId = song.song_genres?.[0]?.genre_id || song.genres?.[0]?.id || ''
       setFormData({
         title: song.title,
-        artist_name: song.artists?.name || '',
-        album_name: song.albums?.title || '',
-        audio_url: song.audio_url,
-        cover_url: song.cover_url || '',
+        artist_name: song.artistName || '',
+        album_name: song.albumName || '',
+        audio_url: song.audioUrl,
+        cover_url: song.coverUrl || '',
         duration: song.duration || '',
-        genre_id: genreId,
-        is_downloadable: song.is_downloadable,
+        genre_id: '',
+        is_downloadable: song.isDownloadable,
         featured: song.featured
       })
     } else {
@@ -107,22 +97,13 @@ export default function AdminSongs() {
 
     setUploading(true)
     try {
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('music')
-        .upload(fileName, file)
-
-      if (uploadError) throw uploadError
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('music')
-        .getPublicUrl(fileName)
-
+      const publicUrl = await storageService.uploadFile(file, storageService.MUSIC_BUCKET)
       setFormData({ ...formData, audio_url: publicUrl })
+      toast.success('Audio uploaded successfully!')
     } catch (error) {
+      console.error('Upload error:', error)
       setError('Failed to upload audio: ' + error.message)
+      toast.error('Failed to upload audio')
     } finally {
       setUploading(false)
     }
@@ -134,22 +115,13 @@ export default function AdminSongs() {
 
     setUploading(true)
     try {
-      const fileExt = file.name.split('.').pop()
-      const fileName = `cover-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('covers')
-        .upload(fileName, file)
-
-      if (uploadError) throw uploadError
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('covers')
-        .getPublicUrl(fileName)
-
+      const publicUrl = await storageService.uploadFile(file, storageService.COVERS_BUCKET)
       setFormData({ ...formData, cover_url: publicUrl })
+      toast.success('Cover uploaded successfully!')
     } catch (error) {
+      console.error('Upload error:', error)
       setError('Failed to upload cover: ' + error.message)
+      toast.error('Failed to upload cover')
     } finally {
       setUploading(false)
     }
@@ -169,91 +141,69 @@ export default function AdminSongs() {
     try {
       // Find or create artist
       let artistId = null
-
-      // Check if artist exists
-      const { data: existingArtist, error: fetchArtistError } = await supabase
-        .from('artists')
-        .select('id')
-        .eq('name', formData.artist_name)
-        .maybeSingle()
-
-      if (fetchArtistError && !fetchArtistError.message.includes('No rows')) {
-        throw new Error('Error finding artist: ' + fetchArtistError.message)
-      }
+      const allArtists = await artistsService.getAll()
+      const existingArtist = allArtists.find(a => a.name === formData.artist_name)
 
       if (existingArtist) {
         artistId = existingArtist.id
       } else {
         // Create new artist
-        const { data: newArtist, error: artistError } = await supabase
-          .from('artists')
-          .insert([{ name: formData.artist_name }])
-          .select('id')
-          .single()
-
-        if (artistError) {
-          console.error('Artist creation error:', artistError)
-          throw new Error('Failed to create artist: ' + artistError.message)
-        }
-        artistId = newArtist.id
+        artistId = await artistsService.create({
+          name: formData.artist_name,
+          bio: '',
+          imageUrl: null,
+          verified: false
+        })
       }
 
       // Find or create album (if album name provided)
       let albumId = null
       if (formData.album_name) {
-        const { data: existingAlbum } = await supabase
-          .from('albums')
-          .select('id')
-          .eq('title', formData.album_name)
-          .eq('artist_id', artistId)
-          .maybeSingle()
+        const allAlbums = await albumsService.getAll()
+        const existingAlbum = allAlbums.find(a => a.title === formData.album_name && a.artistId === artistId)
 
         if (existingAlbum) {
           albumId = existingAlbum.id
         } else {
-          const { data: newAlbum, error: albumError } = await supabase
-            .from('albums')
-            .insert([{ title: formData.album_name, artist_id: artistId }])
-            .select('id')
-            .single()
-          
-          if (albumError) {
-            console.error('Album creation error:', albumError)
-            throw new Error('Failed to create album: ' + albumError.message)
-          }
-          albumId = newAlbum.id
+          albumId = await albumsService.create({
+            title: formData.album_name,
+            artistId: artistId,
+            coverUrl: null,
+            trackCount: 0,
+            featured: false,
+            releaseDate: new Date().toISOString()
+          })
         }
       }
 
       const songData = {
         title: formData.title,
-        artist_id: artistId,
-        album_id: albumId || null,
-        audio_url: formData.audio_url,
-        cover_url: formData.cover_url || null,
+        artistId: artistId,
+        artistName: formData.artist_name,
+        albumId: albumId || null,
+        audioUrl: formData.audio_url,
+        coverUrl: formData.coverUrl || null,
         duration: parseInt(formData.duration) || null,
-        is_downloadable: formData.is_downloadable,
-        featured: formData.featured
+        isDownloadable: formData.is_downloadable,
+        featured: formData.featured,
+        playCount: editingSong ? editingSong.playCount || 0 : 0,
+        downloadCount: editingSong ? editingSong.downloadCount || 0 : 0
       }
 
       if (editingSong) {
-        const { error } = await supabase.from('songs').update(songData).eq('id', editingSong.id)
-        if (error) throw error
-        
+        await songsService.update(editingSong.id, songData)
+
         // Update genre relationship
         if (formData.genre_id) {
-          // Delete existing genre relationships
-          await supabase.from('song_genres').delete().eq('song_id', editingSong.id)
-          // Add new genre relationship
-          await supabase.from('song_genres').insert([{ song_id: editingSong.id, genre_id: formData.genre_id }])
+          await songGenresService.remove(editingSong.id, formData.genre_id)
+          await songGenresService.add(editingSong.id, formData.genre_id)
         }
       } else {
-        const { data: inserted, error } = await supabase.from('songs').insert([songData]).select('id').single()
-        if (error) throw error
-        
+        const newSongId = await songsService.create(songData)
+
         // Add genre relationship if selected
-        if (formData.genre_id && inserted?.id) {
-          await supabase.from('song_genres').insert([{ song_id: inserted.id, genre_id: formData.genre_id }])
+        if (formData.genre_id) {
+          await songGenresService.add(newSongId, formData.genre_id)
         }
       }
 
@@ -274,11 +224,7 @@ export default function AdminSongs() {
     if (!confirm('Are you sure you want to delete this song?')) return
 
     try {
-      const { error } = await supabase.from('songs').delete().eq('id', id)
-      if (error) {
-        console.error('Delete error:', error)
-        throw error
-      }
+      await songsService.delete(id)
       fetchSongs()
       toast.success('Song deleted successfully!')
     } catch (error) {
@@ -332,9 +278,9 @@ export default function AdminSongs() {
                   songs.map((song) => (
                     <tr key={song.id}>
                       <td>
-                        <img 
-                          src={song.cover_url || 'https://via.placeholder.com/50'} 
-                          alt="" 
+                        <img
+                          src={song.coverUrl || 'https://via.placeholder.com/50'}
+                          alt=""
                           className="song-cover"
                         />
                       </td>
@@ -344,33 +290,33 @@ export default function AdminSongs() {
                           {song.featured && <span className="featured-badge">Featured</span>}
                         </div>
                       </td>
-                      <td>{song.artists?.name || 'Unknown'}</td>
-                      <td>{song.albums?.title || '-'}</td>
+                      <td>{song.artistName || 'Unknown'}</td>
+                      <td>{song.albumName || '-'}</td>
                       <td>{formatDuration(song.duration)}</td>
-                      <td>{song.play_count || 0}</td>
-                      <td>{song.download_count || 0}</td>
+                      <td>{song.playCount || 0}</td>
+                      <td>{song.downloadCount || 0}</td>
                       <td>
-                        {song.is_downloadable ? (
+                        {song.isDownloadable ? (
                           <Check size={18} className="text-green" />
                         ) : (
                           <X size={18} className="text-red" />
                         )}
                       </td>
                       <td>
-                        <div className="actions">
-                          <button 
-                            className="btn-icon" 
+                        <div className="action-buttons">
+                          <button
+                            className="btn-icon btn-edit"
                             onClick={() => handleOpenModal(song)}
                             title="Edit"
                           >
-                            <Edit size={18} />
+                            <Edit size={16} />
                           </button>
-                          <button 
-                            className="btn-icon btn-danger" 
+                          <button
+                            className="btn-icon btn-delete"
                             onClick={() => handleDelete(song.id)}
                             title="Delete"
                           >
-                            <Trash2 size={18} />
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </td>
@@ -382,22 +328,23 @@ export default function AdminSongs() {
           </div>
         )}
 
-        {/* Modal */}
         {showModal && (
           <div className="modal-overlay" onClick={handleCloseModal}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h3>{editingSong ? 'Edit Song' : 'Add New Song'}</h3>
-                <button className="btn-icon" onClick={handleCloseModal}>
-                  <X size={20} />
+                <h2>{editingSong ? 'Edit Song' : 'Add New Song'}</h2>
+                <button className="btn-close" onClick={handleCloseModal}>
+                  <X size={24} />
                 </button>
               </div>
 
-              {error && <div className="error-message">{error}</div>}
+              <form onSubmit={handleSubmit}>
+                {error && (
+                  <div className="error-banner">{error}</div>
+                )}
 
-              <form onSubmit={handleSubmit} className="modal-form">
                 <div className="form-group">
-                  <label>Song Title *</label>
+                  <label>Title *</label>
                   <input
                     type="text"
                     value={formData.title}
@@ -406,40 +353,25 @@ export default function AdminSongs() {
                   />
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Artist Name *</label>
-                    <input
-                      type="text"
-                      value={formData.artist_name}
-                      onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
-                      required
-                      placeholder="Enter artist name (will be created if new)"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Album Name (Optional)</label>
-                    <input
-                      type="text"
-                      value={formData.album_name}
-                      onChange={(e) => setFormData({ ...formData, album_name: e.target.value })}
-                      placeholder="Enter album name (will be created if new)"
-                    />
-                  </div>
+                <div className="form-group">
+                  <label>Artist Name *</label>
+                  <input
+                    type="text"
+                    value={formData.artist_name}
+                    onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
+                    placeholder="Will create if doesn't exist"
+                    required
+                  />
                 </div>
 
                 <div className="form-group">
-                  <label>Genre</label>
-                  <select
-                    value={formData.genre_id}
-                    onChange={(e) => setFormData({ ...formData, genre_id: e.target.value })}
-                  >
-                    <option value="">Select Genre (Optional)</option>
-                    {genres.map(genre => (
-                      <option key={genre.id} value={genre.id}>{genre.name}</option>
-                    ))}
-                  </select>
+                  <label>Album Name</label>
+                  <input
+                    type="text"
+                    value={formData.album_name}
+                    onChange={(e) => setFormData({ ...formData, album_name: e.target.value })}
+                    placeholder="Optional"
+                  />
                 </div>
 
                 <div className="form-group">
@@ -450,15 +382,9 @@ export default function AdminSongs() {
                       accept="audio/*"
                       onChange={handleUploadAudio}
                       disabled={uploading}
-                      id="audio-upload"
                     />
-                    <label htmlFor="audio-upload" className="file-label">
-                      <Upload size={20} />
-                      {uploading ? 'Uploading...' : formData.audio_url ? 'Change Audio' : 'Upload Audio'}
-                    </label>
-                    {formData.audio_url && (
-                      <span className="file-name">Audio uploaded ✓</span>
-                    )}
+                    {uploading && <span>Uploading...</span>}
+                    {formData.audio_url && <span>✓ Audio uploaded</span>}
                   </div>
                 </div>
 
@@ -470,55 +396,67 @@ export default function AdminSongs() {
                       accept="image/*"
                       onChange={handleUploadCover}
                       disabled={uploading}
-                      id="cover-upload"
                     />
-                    <label htmlFor="cover-upload" className="file-label">
-                      <Upload size={20} />
-                      {uploading ? 'Uploading...' : formData.cover_url ? 'Change Cover' : 'Upload Cover'}
-                    </label>
+                    {uploading && <span>Uploading...</span>}
                     {formData.cover_url && (
-                      <img src={formData.cover_url} alt="Preview" className="cover-preview" />
+                      <img src={formData.cover_url} alt="Cover" className="cover-preview" />
                     )}
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Duration (seconds)</label>
-                    <input
-                      type="number"
-                      value={formData.duration}
-                      onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                      placeholder="180"
-                    />
-                  </div>
+                <div className="form-group">
+                  <label>Duration (seconds)</label>
+                  <input
+                    type="number"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                    placeholder="e.g., 180"
+                  />
                 </div>
 
-                <div className="form-checkboxes">
-                  <label className="checkbox-label">
+                <div className="form-group">
+                  <label>Genre</label>
+                  <select
+                    value={formData.genre_id}
+                    onChange={(e) => setFormData({ ...formData, genre_id: e.target.value })}
+                  >
+                    <option value="">Select a genre</option>
+                    {genres.map((genre) => (
+                      <option key={genre.id} value={genre.id}>
+                        {genre.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group checkbox-group">
+                  <label>
                     <input
                       type="checkbox"
                       checked={formData.is_downloadable}
                       onChange={(e) => setFormData({ ...formData, is_downloadable: e.target.checked })}
                     />
-                    Allow Downloads
+                    Allow Download
                   </label>
-                  <label className="checkbox-label">
+                </div>
+
+                <div className="form-group checkbox-group">
+                  <label>
                     <input
                       type="checkbox"
                       checked={formData.featured}
                       onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
                     />
-                    Featured Song
+                    Featured
                   </label>
                 </div>
 
                 <div className="modal-actions">
-                  <button type="button" className="btn btn-secondary" onClick={handleCloseModal} disabled={submitting}>
+                  <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
                     Cancel
                   </button>
-                  <button type="submit" className="btn btn-primary" disabled={uploading || submitting}>
-                    {submitting ? 'Saving...' : (editingSong ? 'Update Song' : 'Add Song')}
+                  <button type="submit" className="btn btn-primary" disabled={submitting || uploading}>
+                    {submitting ? 'Saving...' : editingSong ? 'Update' : 'Create'}
                   </button>
                 </div>
               </form>

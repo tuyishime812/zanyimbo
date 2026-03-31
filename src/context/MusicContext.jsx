@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { likesService, songPlaysService, downloadsService } from '../lib/supabaseDatabase'
 
 const MusicContext = createContext({})
 
@@ -13,39 +14,39 @@ export function MusicProvider({ children }) {
 
   const fetchLikedSongs = async (userId) => {
     try {
-      const { data } = await supabase
-        .from('likes')
-        .select('song_id')
-        .eq('user_id', userId)
-
-      setLikedSongs(data?.map(l => l.song_id) || [])
+      const likes = await likesService.getByUser(userId)
+      setLikedSongs(likes.map(l => l.song_id))
     } catch (error) {
       console.error('Error fetching liked songs:', error)
     }
   }
 
   useEffect(() => {
-    // Get current user
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-      if (user) {
-        fetchLikedSongs(user.id)
+    // Get initial session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const supabaseUser = session?.user
+      setUser(supabaseUser)
+      if (supabaseUser) {
+        await fetchLikedSongs(supabaseUser.id)
+      } else {
+        setLikedSongs([])
       }
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        const currentUser = session?.user
-        setUser(currentUser)
-        if (currentUser) {
-          fetchLikedSongs(currentUser.id)
-        } else {
-          setLikedSongs([])
-        }
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const supabaseUser = session?.user
+      setUser(supabaseUser)
+      if (supabaseUser) {
+        await fetchLikedSongs(supabaseUser.id)
+      } else {
+        setLikedSongs([])
       }
-    )
+    })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   const playSong = (song, newQueue = null) => {
@@ -57,10 +58,10 @@ export function MusicProvider({ children }) {
       setQueue([song])
       setQueueIndex(0)
     }
-    
+
     setCurrentSong(song)
     setIsPlaying(true)
-    
+
     // Track play
     trackPlay(song.id)
   }
@@ -71,7 +72,7 @@ export function MusicProvider({ children }) {
 
   const playNext = () => {
     if (queue.length === 0) return
-    
+
     const nextIndex = queueIndex + 1
     if (nextIndex < queue.length) {
       setQueueIndex(nextIndex)
@@ -83,7 +84,7 @@ export function MusicProvider({ children }) {
 
   const playPrevious = () => {
     if (queue.length === 0) return
-    
+
     const prevIndex = queueIndex - 1
     if (prevIndex >= 0) {
       setQueueIndex(prevIndex)
@@ -106,10 +107,7 @@ export function MusicProvider({ children }) {
 
   const trackPlay = async (songId) => {
     try {
-      await supabase.from('song_plays').insert({
-        song_id: songId,
-        played_at: new Date().toISOString()
-      })
+      await songPlaysService.track(songId, user?.id || null)
     } catch (error) {
       console.error('Error tracking play:', error)
     }
@@ -122,24 +120,13 @@ export function MusicProvider({ children }) {
     }
 
     const isLiked = likedSongs.includes(songId)
-    
+
     try {
       if (isLiked) {
-        await supabase
-          .from('likes')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('song_id', songId)
-        
+        await likesService.remove(user.id, songId)
         setLikedSongs(likedSongs.filter(id => id !== songId))
       } else {
-        await supabase
-          .from('likes')
-          .insert({
-            user_id: user.id,
-            song_id: songId
-          })
-        
+        await likesService.add(user.id, songId)
         setLikedSongs([...likedSongs, songId])
       }
     } catch (error) {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../../lib/supabase'
+import { adminUsersService } from '../../lib/supabaseDatabase'
 import { useToast } from '../../context/ToastContext'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { Users, Search, Trash2, Check } from 'lucide-react'
@@ -17,8 +17,9 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await supabase.auth.admin.listUsers()
-      setUsers(data.users || [])
+      // Fetch admin users from Supabase
+      const adminData = await adminUsersService.getAll()
+      setUsers(adminData || [])
     } catch (error) {
       console.error('Error fetching users:', error)
     } finally {
@@ -31,16 +32,12 @@ export default function AdminUsers() {
   )
 
   const handleDeleteUser = async (userId) => {
-    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return
+    if (!confirm('Are you sure you want to delete this admin user? This action cannot be undone.')) return
 
     try {
-      const { error } = await supabase.auth.admin.deleteUser(userId)
-      if (error) {
-        console.error('Delete user error:', error)
-        throw error
-      }
+      await adminUsersService.delete(userId)
       fetchUsers()
-      toast.success('User deleted successfully!')
+      toast.success('Admin user removed successfully!')
     } catch (error) {
       console.error('Failed to delete user:', error)
       toast.error('Failed to delete user: ' + error.message)
@@ -51,13 +48,13 @@ export default function AdminUsers() {
     <AdminLayout>
       <div className="users-page">
         <div className="page-header">
-          <h2>Users</h2>
+          <h2>Admin Users</h2>
           <div className="header-actions">
             <div className="search-box">
               <Search size={20} />
               <input
                 type="text"
-                placeholder="Search users..."
+                placeholder="Search admin users..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -74,7 +71,6 @@ export default function AdminUsers() {
                 <tr>
                   <th>Email</th>
                   <th>Role</th>
-                  <th>Last Sign In</th>
                   <th>Created</th>
                   <th>Actions</th>
                 </tr>
@@ -82,7 +78,7 @@ export default function AdminUsers() {
               <tbody>
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={5}>No users found</td>
+                    <td colSpan={4}>No admin users found</td>
                   </tr>
                 ) : (
                   filteredUsers.map((user) => (
@@ -96,24 +92,21 @@ export default function AdminUsers() {
                         </div>
                       </td>
                       <td>
-                        {user.app_metadata?.role === 'admin' ? (
+                        {user.is_super_admin ? (
                           <span className="badge badge-admin">
-                            <Check size={14} /> Admin
+                            <Check size={14} /> Super Admin
                           </span>
                         ) : (
-                          <span className="badge badge-user">User</span>
+                          <span className="badge badge-user">Admin</span>
                         )}
                       </td>
-                      <td>
-                        {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Never'}
-                      </td>
-                      <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                      <td>{user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</td>
                       <td>
                         <div className="actions">
                           <button
                             className="btn-icon btn-danger"
                             onClick={() => handleDeleteUser(user.id)}
-                            title="Delete User"
+                            title="Remove Admin"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -132,13 +125,17 @@ export default function AdminUsers() {
             <Users size={24} color="#ff6b35" />
             <div>
               <span className="stat-value">{users.length}</span>
-              <span className="stat-label">Total Users</span>
+              <span className="stat-label">Admin Users</span>
             </div>
           </div>
           <div className="stat-box">
-            <div className="stat-value">{users.filter(u => u.app_metadata?.role === 'admin').length}</div>
-            <span className="stat-label">Admins</span>
+            <div className="stat-value">{users.filter(u => u.is_super_admin).length}</div>
+            <span className="stat-label">Super Admins</span>
           </div>
+        </div>
+
+        <div className="add-admin-notice">
+          <p>To add a new admin user, create their account in Supabase Auth and add a record to the admin_users table.</p>
         </div>
       </div>
     </AdminLayout>

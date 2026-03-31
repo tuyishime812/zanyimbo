@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { songsService } from '../lib/supabaseDatabase'
 import { useMusic } from '../context/MusicContext'
 import { Trophy, TrendingUp, Play, Heart, Download } from 'lucide-react'
 import Header from '../components/Header'
@@ -19,29 +19,19 @@ export default function Top10() {
 
   const fetchTopSongs = async () => {
     try {
-      // Fetch songs with plays and downloads, calculate popularity score
-      const { data, error } = await supabase
-        .from('songs')
-        .select(`
-          *,
-          artists (name)
-        `)
-        .order('play_count', { ascending: false })
-        .limit(10)
-
-      if (error) throw error
+      const songsData = await songsService.getAll()
 
       // Calculate popularity score: plays + (downloads * 5)
-      const ranked = data.map((song, index) => ({
+      const ranked = songsData.map((song, index) => ({
         ...song,
-        artist: song.artists?.name || 'Unknown',
-        popularityScore: (song.play_count || 0) + ((song.download_count || 0) * 5),
+        artist: song.artistName || 'Unknown',
+        popularityScore: (song.playCount || 0) + ((song.downloadCount || 0) * 5),
         rank: index + 1
       }))
 
       // Sort by popularity score
       ranked.sort((a, b) => b.popularityScore - a.popularityScore)
-      setTopSongs(ranked)
+      setTopSongs(ranked.slice(0, 10))
     } catch (error) {
       console.error('Error fetching top songs:', error)
     } finally {
@@ -54,18 +44,18 @@ export default function Top10() {
       id: s.id,
       title: s.title,
       artist: s.artist,
-      audio_url: s.audio_url || s.audioUrl,
-      cover_url: s.cover_url || s.coverUrl,
-      is_downloadable: s.is_downloadable
+      audioUrl: s.audioUrl || s.audio_url,
+      coverUrl: s.coverUrl || s.cover_url,
+      isDownloadable: s.isDownloadable
     }))
 
     playSong({
       id: song.id,
       title: song.title,
       artist: song.artist,
-      audio_url: song.audio_url || song.audioUrl,
-      cover_url: song.cover_url || song.coverUrl,
-      is_downloadable: song.is_downloadable
+      audioUrl: song.audioUrl || s.audio_url,
+      coverUrl: song.coverUrl || s.cover_url,
+      isDownloadable: song.isDownloadable
     }, queue)
   }
 
@@ -98,7 +88,7 @@ export default function Top10() {
   return (
     <div className="top10-page">
       <Header />
-      
+
       <div className="top10-hero">
         <div className="top10-header">
           <TrendingUp size={48} className="top10-icon" />
@@ -120,7 +110,7 @@ export default function Top10() {
 
               <div className="song-cover-wrapper">
                 <img
-                  src={song.cover_url || 'https://via.placeholder.com/100x100/2d1f4e/ffffff?text=Music'}
+                  src={song.coverUrl || 'https://via.placeholder.com/100x100/2d1f4e/ffffff?text=Music'}
                   alt={song.title}
                   className="song-cover"
                   onError={(e) => {
@@ -141,10 +131,10 @@ export default function Top10() {
 
                 <div className="song-stats">
                   <span className="stat" title="Plays">
-                    <Play size={14} /> {song.play_count || 0}
+                    <Play size={14} /> {song.playCount || 0}
                   </span>
                   <span className="stat" title="Downloads">
-                    <Download size={14} /> {song.download_count || 0}
+                    <Download size={14} /> {song.downloadCount || 0}
                   </span>
                 </div>
               </div>

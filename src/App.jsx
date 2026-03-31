@@ -1,31 +1,39 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { FavoritesProvider } from './context/FavoritesContext'
 import { useMusic } from './context/MusicContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import MusicPlayer from './components/MusicPlayer'
 import PWAInstall from './components/PWAInstall'
+import LoadingSpinner from './components/LoadingSpinner'
 import NotFound from './pages/NotFound'
 import Home from './pages/Home'
 import MusicPage from './pages/MusicPage'
 import Top10 from './pages/Top10'
 import SearchPage from './pages/SearchPage'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
 import SongDetail from './pages/SongDetail'
-import Contact from './pages/Contact'
-import Terms from './pages/Terms'
-import Privacy from './pages/Privacy'
-import Legal from './pages/Legal'
-import Dashboard from './pages/admin/Dashboard'
-import AdminSongs from './pages/admin/Songs'
-import AdminAlbums from './pages/admin/Albums'
-import AdminArtists from './pages/admin/Artists'
-import AdminUsers from './pages/admin/Users'
-import AdminSettings from './pages/admin/Settings'
 import './App.css'
+
+// Lazy load admin pages for better performance
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
+const AdminSongs = lazy(() => import('./pages/admin/Songs'))
+const AdminAlbums = lazy(() => import('./pages/admin/Albums'))
+const AdminArtists = lazy(() => import('./pages/admin/Artists'))
+const AdminUsers = lazy(() => import('./pages/admin/Users'))
+const AdminSettings = lazy(() => import('./pages/admin/Settings'))
+
+// Lazy load auth pages
+const Login = lazy(() => import('./pages/Login'))
+const Signup = lazy(() => import('./pages/Signup'))
+
+// Lazy load other pages
+const Contact = lazy(() => import('./pages/Contact'))
+const Terms = lazy(() => import('./pages/Terms'))
+const Privacy = lazy(() => import('./pages/Privacy'))
+const Legal = lazy(() => import('./pages/Legal'))
 
 // Pages with player
 const pagesWithPlayer = [
@@ -41,14 +49,28 @@ function AppContent() {
     // This will be handled by MusicContext
   }
 
-  const _showPlayer = pagesWithPlayer.includes(currentPage) && currentSong
+  const showPlayer = pagesWithPlayer.includes(currentPage) && currentSong
 
   return (
     <div className="app">
       <Routes>
         {/* Auth Routes - No Header/Footer */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/login"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <Login />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <Signup />
+            </Suspense>
+          }
+        />
 
         {/* Public Site Routes */}
         <Route
@@ -71,14 +93,8 @@ function AppContent() {
             </>
           }
         />
-        <Route
-          path="/top-10"
-          element={<Top10 />}
-        />
-        <Route
-          path="/search"
-          element={<SearchPage />}
-        />
+        <Route path="/top-10" element={<Top10 />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route
           path="/song/:id"
           element={
@@ -90,31 +106,54 @@ function AppContent() {
           }
         />
 
-        {/* Platform Routes */}
-
         {/* Company Routes */}
         <Route
           path="/contact"
           element={
-            <>
-              <Header />
-              <Contact />
-              <Footer />
-            </>
+            <Suspense fallback={<LoadingSpinner />}>
+              <>
+                <Header />
+                <Contact />
+                <Footer />
+              </>
+            </Suspense>
           }
         />
 
         {/* Legal Routes */}
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/legal" element={<Legal />} />
+        <Route
+          path="/terms"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <Terms />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <Privacy />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/legal"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <Legal />
+            </Suspense>
+          }
+        />
 
         {/* Admin Routes - Protected */}
         <Route
           path="/admin"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminDashboard />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -122,7 +161,9 @@ function AppContent() {
           path="/admin/songs"
           element={
             <ProtectedRoute>
-              <AdminSongs />
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminSongs />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -130,7 +171,9 @@ function AppContent() {
           path="/admin/albums"
           element={
             <ProtectedRoute>
-              <AdminAlbums />
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminAlbums />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -138,7 +181,9 @@ function AppContent() {
           path="/admin/artists"
           element={
             <ProtectedRoute>
-              <AdminArtists />
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminArtists />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -146,7 +191,9 @@ function AppContent() {
           path="/admin/users"
           element={
             <ProtectedRoute>
-              <AdminUsers />
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminUsers />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -154,7 +201,9 @@ function AppContent() {
           path="/admin/settings"
           element={
             <ProtectedRoute>
-              <AdminSettings />
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminSettings />
+              </Suspense>
             </ProtectedRoute>
           }
         />
@@ -165,7 +214,7 @@ function AppContent() {
 
       {/* Music Player - Shows on most pages */}
       {currentSong && <MusicPlayer />}
-      
+
       {/* PWA Install Prompt */}
       <PWAInstall />
     </div>
@@ -175,9 +224,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <FavoritesProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </FavoritesProvider>
     </AuthProvider>
   )
 }
